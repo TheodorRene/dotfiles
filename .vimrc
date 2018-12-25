@@ -1,48 +1,68 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-" set the runtime path to include Vundle and initialize
+
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'JuliaEditorSupport/julia-vim'
 Plugin 'itchyny/lightline.vim'
-Plugin 'christoomey/vim-system-copy'
+Plugin 'sheerun/vim-polyglot'
+Plugin 'airblade/vim-gitgutter'
+Bundle 'gabrielelana/vim-markdown'
+Plugin 'justinmk/vim-sneak'
+Plugin 'junegunn/goyo.vim'
+Plugin 'kien/rainbow_parantheses.vim'
 
 
-
-" All of your Plugins must be added before the following line
 call vundle#end()            " required
 filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
 
+
+"Visuals
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
       \ }
+colorscheme slate
 
-let g:default_julia_version = "devel"
+"Standard mappings
+let mapleader =" "
+nmap <leader>g :Goyo 120<CR>
+nnoremap <leader>w :w<cr>
+nnoremap <leader>c :! ./mdToPdf.sh % <CR><CR>
+
+"Language specifics
 let g:markdown_enable_spell_checking = 0
+let g:default_julia_version = "devel"
+"
+"Spellcheck commands
+"autocmd BufRead,BufNewFile   *.md set spell spelllang=en_us
+nnoremap <leader>z z=
+nnoremap <leader>a zg
+nnoremap <leader>x z=1<CR><CR>
+
+
+"Some standards
 set number relativenumber
 syntax on
 set tabstop=4
 set expandtab
 set shiftwidth=4
+
+"Set jk as combination for going into normal mode
 inoremap jk <esc>
+"For copying into system clipboard
 set clipboard=unnamedplus
-colorscheme slate
+
+"No idea what these do lmao
 set laststatus=2
 set noshowmode
+"
+"Jumps between the characters for easy on the go writing
+imap "" ""<esc>i
+imap '' ''<esc>i
+imap (( ()<esc>i
+imap \[\[ \[\]<esc>i
+imap {{ {}<esc>i

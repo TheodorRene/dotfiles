@@ -1,6 +1,20 @@
 #WELCOME THE ONE I3 CONFIG TO RULE THEM ALL
 set $mod Mod4
 
+#Gaps Settings
+for_window [class="^.*"] border pixel 5
+gaps inner 4
+gaps outer 8
+smart_borders on
+smart_gaps on
+
+#Startup
+exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
+exec --no-startup-id compton -b
+exec xmodmap -e "clear lock"
+exec xmodmap -e "keysym Caps_Lock = Escape" 
+
+
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:monospace 8
@@ -10,13 +24,15 @@ font pango:monospace 8
 bindsym XF86MonBrightnessUp exec xbacklight -inc 5 
 bindsym XF86MonBrightnessDown exec xbacklight -dec 5 
 
-# touchpad controls
-bindsym $mod+aring exec init_.sh
+
 
 #Audiocontrols
 bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioRaiseVolume exec pulseaudio-ctl up
+bindsym XF86AudioLowerVolume exec pulseaudio-ctl down
+bindsym XF86AudioMute exec pulseaudio-ctl mute
 
 #Cycling through workspaces
 bindsym $mod+Tab workspace next
@@ -155,5 +171,6 @@ bindsym $mod+r mode "resize"
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
-        status_command i3status
+        #status_command i3status
+        status_command i3blocks
 }
