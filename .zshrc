@@ -19,4 +19,6 @@ source $ZSH/oh-my-zsh.sh
 
 alias takeover="tmux detach -a"
 alias lr="ls -ltrh"
+alias cass="mosh cassarossa.samfundet.no"
+alias pol="mosh polpot.dhcp.samfundet.no"
 
