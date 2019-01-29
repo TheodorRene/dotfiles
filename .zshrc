@@ -10,6 +10,7 @@ plugins=(
     git
     wd
     catimg
+    last-working-dir
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -21,4 +22,8 @@ alias takeover="tmux detach -a"
 alias lr="ls -ltrh"
 alias cass="mosh cassarossa.samfundet.no"
 alias pol="mosh polpot.dhcp.samfundet.no"
+alias shut="sudo shutdown now"
+alias clip="xclip -selection c"
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
