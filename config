@@ -1,18 +1,19 @@
 #WELCOME THE ONE I3 CONFIG TO RULE THEM ALL
 set $mod Mod4
 
-#Gaps Settings
-for_window [class="^.*"] border pixel 5
-gaps inner 4
-gaps outer 8
-smart_borders on
-smart_gaps on
 
 #Startup
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 exec --no-startup-id compton -b
 exec xmodmap -e "clear lock"
 exec xmodmap -e "keysym Caps_Lock = Escape" 
+exec ~/.screenlayout/standard.sh
+
+#Gaps Settings
+for_window [class="^.*"] border pixel 5
+gaps inner 10
+gaps outer 15
+
 
 
 # Font for window titles. Will also be used by the bar unless a different font
@@ -42,7 +43,7 @@ bindsym $mod+Shift+Tab workspace prev
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec i3-sensible-terminal
+bindsym $mod+Return exec terminator
 
 #start firefox
 bindsym $mod+o exec firefox
