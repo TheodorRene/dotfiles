@@ -15,7 +15,7 @@ Bundle 'gabrielelana/vim-markdown'
 Plugin 'justinmk/vim-sneak'
 Plugin 'junegunn/goyo.vim'
 Plugin 'alvan/vim-closetag'
-Plugin 'Valloric/YouCompleteMe'
+Plugin 'christoomey/vim-system-copy'
 
 
 call vundle#end()            " required

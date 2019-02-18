@@ -24,6 +24,7 @@ alias cass="mosh cassarossa.samfundet.no"
 alias pol="mosh polpot.dhcp.samfundet.no"
 alias shut="sudo shutdown now"
 alias clip="xclip -selection c"
+alias boy="ssh 139.59.147.33"
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
