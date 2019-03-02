@@ -1,7 +1,6 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
 
-
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 "call vundle#begin('~/some/path/here')
@@ -51,6 +50,10 @@ nnoremap <leader>x z=1<CR><CR>
 nnoremap <leader>m :! ./mdToPdf.sh % <CR><CR>
 au BufRead,BufNewFile *.md setlocal textwidth=80 
 nnoremap <leader>l :! latexmk -pdf % <CR><CR>
+
+"layout 
+nnoremap <leader>v :split . <CR>
+nnoremap <leader>s :vs . <CR>
 
 
 
