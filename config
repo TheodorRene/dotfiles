@@ -3,17 +3,20 @@ set $mod Mod4
 
 #Gaps Settings
 for_window [class="^.*"] border pixel 5
-gaps inner 4
-gaps outer 6
-smart_borders on
-smart_gaps on
+#gaps inner 4
+#gaps outer 6
+
+gaps inner 8
+gaps outer 10
+#smart_borders on
+#smart_gaps on
 
 #Startup
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 exec --no-startup-id compton -f
 exec pulseaudio
-exec xmodmap -e "clear lock"
-exec xmodmap -e "keysym Caps_Lock = Escape" 
+exec_always xmodmap -e "clear lock"
+exec_always xmodmap -e "keysym Caps_Lock = Escape" 
 
 
 # Font for window titles. Will also be used by the bar unless a different font
