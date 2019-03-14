@@ -7,5 +7,11 @@
     * zshrc
     * rofi
 
+# TODO
+  
+  * add script for installing dependencies
+  * add script for automagically symlinking everything
+
+
 
 
