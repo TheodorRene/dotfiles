@@ -3,13 +3,16 @@ set $mod Mod4
 
 #Gaps Settings
 for_window [class="^.*"] border pixel 5
-#gaps inner 4
-#gaps outer 6
+gaps inner 4
+gaps outer 6
+smart_borders on
+smart_gaps on
 
-gaps inner 8
-gaps outer 10
-#smart_borders on
-#smart_gaps on
+#Desktop settings
+#gaps inner 8
+#gaps outer 10
+#exec ~/.screenlayout/standard.sh
+#font pango:DejaVu Sans Mono 10
 
 #Startup
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
@@ -18,7 +21,6 @@ exec pulseaudio
 exec_always xmodmap -e "clear lock"
 exec_always xmodmap -e "keysym Caps_Lock = Escape" 
 exec setxkbmap -layout no
-#exec ~/.screenlayout/standard.sh
 
 
 
@@ -26,8 +28,6 @@ exec setxkbmap -layout no
 # Font for window titles. Will also be used by the bar unless a different font
 # is used in the bar {} block below.
 font pango:monospace 8
-#font pango:DejaVu Sans Mono 10
-#font pango:Terminus Semi-Condensed 9
 
 # Change wallpaper
 bindsym $mod+c exec --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
