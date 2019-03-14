@@ -1,2 +1,15 @@
 # Some of my dotfiles
-Remember to add symlinks
+
+# Dependencies - What to install
+  
+  * i3-blocks
+  * i3gaps
+  * vundle
+  * zshrc
+  * rofi
+
+# TODO
+  
+  * add script for installing dependencies
+  * add script for automagically symlinking everything
+
