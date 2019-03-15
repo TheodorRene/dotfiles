@@ -14,7 +14,7 @@ Bundle 'gabrielelana/vim-markdown'
 Plugin 'justinmk/vim-sneak'
 Plugin 'junegunn/goyo.vim'
 Plugin 'alvan/vim-closetag'
-Plugin 'christoomey/vim-system-copy'
+Plugin 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny' }
 
 
 call vundle#end()            " required

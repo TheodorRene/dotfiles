@@ -1,0 +1,97 @@
+[global_config]
+  borderless = True
+[keybindings]
+  broadcast_all = None
+  broadcast_group = None
+  broadcast_off = None
+  close_term = None
+  close_window = None
+  copy = None
+  cycle_next = None
+  cycle_prev = None
+  edit_tab_title = None
+  edit_terminal_title = None
+  edit_window_title = None
+  full_screen = None
+  go_down = None
+  go_left = None
+  go_next = None
+  go_prev = None
+  go_right = None
+  go_up = None
+  group_all = None
+  group_all_toggle = None
+  group_tab = None
+  group_tab_toggle = None
+  help = None
+  hide_window = None
+  insert_number = None
+  insert_padded = None
+  layout_launcher = None
+  line_down = None
+  line_up = None
+  move_tab_left = None
+  move_tab_right = None
+  new_tab = None
+  new_terminator = None
+  new_window = None
+  next_tab = None
+  paste = None
+  prev_tab = None
+  reset = None
+  reset_clear = None
+  resize_down = None
+  resize_left = None
+  resize_right = None
+  resize_up = None
+  rotate_ccw = None
+  rotate_cw = None
+  scaled_zoom = None
+  search = None
+  split_horiz = None
+  split_vert = None
+  switch_to_tab_1 = None
+  switch_to_tab_10 = Down
+  toggle_scrollbar = Delete
+  toggle_zoom = Delete
+  ungroup_all = Delete
+  ungroup_tab = Delete
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      profile = New Profile
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+  [[New Layout]]
+    [[[child0]]]
+      fullscreen = False
+      last_active_term = 4e5aee42-51df-47b4-bd2c-3031f95591f4
+      last_active_window = True
+      maximised = False
+      order = 0
+      parent = ""
+      position = 0:18
+      size = 956, 1161
+      title = theodorc@beklager: ~
+      type = Window
+    [[[terminal1]]]
+      order = 0
+      parent = child0
+      profile = default
+      type = Terminal
+      uuid = 4e5aee42-51df-47b4-bd2c-3031f95591f4
+[plugins]
+[profiles]
+  [[default]]
+    background_darkness = 0.87
+    background_type = transparent
+    cursor_color = "#aaaaaa"
+    show_titlebar = False
+  [[New Profile]]
+    background_color = "#002b36"
+    cursor_color = "#aaaaaa"
+    foreground_color = "#839496"
+    show_titlebar = False
