@@ -55,6 +55,8 @@ nnoremap <leader>l :! latexmk -pdf % <CR><CR>
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 
+"folding
+nnoremap <leader>f :setlocal foldmethod=indent <CR>
 
 
 
