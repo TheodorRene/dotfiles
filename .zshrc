@@ -1,6 +1,7 @@
 
 # Path to your oh-my-zsh installation.
  export ZSH="$HOME/.oh-my-zsh"
+ path+=$HOME/bin
 
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="blinks"
