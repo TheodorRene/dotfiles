@@ -7,6 +7,7 @@
   * vundle
   * zshrc
   * rofi
+  * Oh my zsh
 
 # TODO
   
