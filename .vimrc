@@ -1,5 +1,6 @@
 set nocompatible              " be iMproved, required
 filetype off                  " required
+set encoding=UTF-8
 
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
@@ -15,6 +16,10 @@ Plugin 'justinmk/vim-sneak'
 Plugin 'junegunn/goyo.vim'
 Plugin 'alvan/vim-closetag'
 Plugin 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny' }
+Plugin 'dhruvasagar/vim-table-mode'
+Plugin 'unblevable/quick-scope'
+Plugin 'scrooloose/nerdtree'
+Plugin 'ryanoasis/vim-devicons'
 
 
 call vundle#end()            " required
@@ -56,8 +61,10 @@ nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 
 "folding
-nnoremap <leader>f :setlocal foldmethod=indent <CR>
+nnoremap <leader>f :setlocal foldmethod=syntax <CR>
 
+"Nerdtree
+map <C-n> :NERDTreeToggle<CR>
 
 
 "Some standards

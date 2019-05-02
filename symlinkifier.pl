@@ -11,7 +11,11 @@ foreach my $file (@home_conf){
 # List with config that recides in .config folder
 my @conf_conf = qw(i3 rofi terminator);
 foreach my $name (@conf_conf){
-    my $out = `ln -sf ~/dotfiles/$name/config ~/.config/$name/`;
+    my $out = `ln -sf ~/dotfiles/$name/config ~/.config/$name`;
 };
+
+#Custom for visual studio
+
+my $out = `ln -sf ~/dotfiles/settings.json ~/.config/Code/User/settings.json/`
 
 

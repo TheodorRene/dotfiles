@@ -11,7 +11,6 @@ plugins=(
     git
     wd
     catimg
-    vi-mode
     last-working-dir
     django
     pep8
