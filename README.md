@@ -2,12 +2,15 @@
 
 # Dependencies - What to install
   
-  * i3-blocks
+  * Polybar
   * i3gaps
   * vundle
   * zshrc
   * rofi
   * Oh my zsh
+  * mosh
+  * nvim
+  * FiraCode font
 
 # TODO
   

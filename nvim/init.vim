@@ -1,3 +1,10 @@
+"Great for modularity, not so much for my symlinkscript
+"source $HOME/.config/nvim/config/init.vimrc
+"source $HOME/.config/nvim/config/general.vimrc
+"source $HOME/.config/nvim/config/plugins.vimrc
+"source $HOME/.config/nvim/config/keys.vimrc
+"source $HOME/.config/nvim/config/line.vimrc
+
 set nocompatible              " be iMproved, required
 filetype off                  " required
 set encoding=UTF-8
@@ -22,6 +29,8 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'ryanoasis/vim-devicons'
 Plugin 'mattn/emmet-vim'
 Plugin 'junegunn/fzf.vim'
+Plugin 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
+
 
 
 call vundle#end()            " required
@@ -69,7 +78,6 @@ nnoremap <leader>f :setlocal foldmethod=syntax <CR>
 map <C-n> :NERDTreeToggle<CR>
 map <C-u> :Files .<CR>
 
-
 "Some standards
 set number relativenumber
 syntax on
@@ -79,8 +87,6 @@ set shiftwidth=4
 
 "Set jk as combination for going into normal mode
 inoremap jk <esc>
-"For copying into system clipboard, does not work
-set clipboard=unnamedplus
 
 "No idea what these do lmao
 set laststatus=2
@@ -97,6 +103,7 @@ imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
 
 set fillchars+=vert:│
+
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
 \ { 'fg':      ['fg', 'Normal'],
@@ -118,5 +125,27 @@ let g:fzf_colors =
 " previous-history instead of down and up. If you don't like the change,
 " explicitly bind the keys to down and up in your $FZF_DEFAULT_OPTS.
 let g:fzf_history_dir = '~/.local/share/fzf-history'
+
+"coc autocomplete
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+
+"resizing windows
+nmap ø :vertical resize +10<CR>
+nmap æ :vertical resize -10<CR>
+nmap å :resize -10<CR>
+nmap Å :resize +10<CR>
+
+
 
 
