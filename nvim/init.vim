@@ -58,7 +58,7 @@ autocmd BufRead,BufNewFile   *.md set spell spelllang=nb,en_us
 "show list of recommendation
 nnoremap <leader>z z=
 "add new word
-nnoremap <leader>a zg
+nmap <leader>a zg
 "take first word from recommendation
 nnoremap <leader>x z=1<CR><CR>
 
@@ -137,8 +137,11 @@ function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
+set hidden
+" Better display for messages
+set cmdheight=2
 
-nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+autocmd FileType markdown let b:coc_suggest_disable = 1
 
 "resizing windows
 nmap ø :vertical resize +10<CR>

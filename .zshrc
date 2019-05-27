@@ -4,7 +4,8 @@
  path+=$HOME/bin
 
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="bira"
+ZSH_THEME2="~/dotfiles/theodorc.zsh-theme"
+ZSH_THEME="theodorc"
 
 #Plugins
 plugins=(
