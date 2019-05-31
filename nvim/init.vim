@@ -75,8 +75,11 @@ nnoremap <leader>s :vs . <CR>
 nnoremap <leader>f :setlocal foldmethod=syntax <CR>
 
 "Nerdtree
-map <C-n> :NERDTreeToggle<CR>
-map <C-u> :Files .<CR>
+nmap <C-n> :NERDTreeToggle<CR>
+
+"FZF
+nmap <C-u> :Files .<CR>
+nmap <C-b> :Buffers<CR>
 
 "Some standards
 set number relativenumber
@@ -94,6 +97,9 @@ set noshowmode
 set showmatch
 set ignorecase
 set incsearch
+hi Search ctermbg=LightYellow
+hi Search ctermfg=Red
+
 "
 "Jumps between the characters for easy on the go writing
 imap "" ""<esc>i
@@ -103,6 +109,7 @@ imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
 
 set fillchars+=vert:│
+nnoremap <leader>h :nohls<cr>
 
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
@@ -139,7 +146,7 @@ function! s:check_back_space() abort
 endfunction
 set hidden
 " Better display for messages
-set cmdheight=2
+set cmdheight=1
 
 autocmd FileType markdown let b:coc_suggest_disable = 1
 
@@ -148,7 +155,6 @@ nmap ø :vertical resize +10<CR>
 nmap æ :vertical resize -10<CR>
 nmap å :resize -10<CR>
 nmap Å :resize +10<CR>
-
 
 
 
