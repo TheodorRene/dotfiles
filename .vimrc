@@ -19,8 +19,6 @@ Plugin 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highl
 Plugin 'dhruvasagar/vim-table-mode'
 Plugin 'unblevable/quick-scope'
 Plugin 'scrooloose/nerdtree'
-Plugin 'ryanoasis/vim-devicons'
-Plugin 'mattn/emmet-vim'
 Plugin 'junegunn/fzf.vim'
 
 
@@ -88,6 +86,9 @@ set noshowmode
 set showmatch
 set ignorecase
 set incsearch
+hi Search ctermbg=LightYellow
+hi Search ctermfg=Red
+nnoremap <leader>h :nohls<cr>
 "
 "Jumps between the characters for easy on the go writing
 imap "" ""<esc>i
@@ -95,6 +96,12 @@ imap '' ''<esc>i
 imap (( ()<esc>i
 imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
+
+"resizing windows
+nmap ø :vertical resize +10<CR>
+nmap æ :vertical resize -10<CR>
+nmap å :resize -10<CR>
+nmap Å :resize +10<CR>
 
 set fillchars+=vert:│
 " Customize fzf colors to match your color scheme

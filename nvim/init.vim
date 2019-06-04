@@ -47,7 +47,6 @@ colorscheme slate
 let mapleader =" "
 nmap <leader>g :Goyo 120<CR>
 nnoremap <leader>w :w<CR>
-nnoremap <leader>c :! ./mdToPdf.sh % <CR><CR>
 
 "Language specifics
 let g:markdown_enable_spell_checking = 0
@@ -155,6 +154,10 @@ nmap ø :vertical resize +10<CR>
 nmap æ :vertical resize -10<CR>
 nmap å :resize -10<CR>
 nmap Å :resize +10<CR>
+
+"Prettier
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+nmap <C-p> :Prettier<CR>
 
 
 

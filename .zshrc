@@ -31,6 +31,7 @@ alias shut="sudo shutdown now"
 alias clip="xclip -selection c"
 alias svenv="source venv/bin/activate"
 alias dsize="du -h --max-depth=1 | sort -h"
+alias bc="bc -lq"
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
