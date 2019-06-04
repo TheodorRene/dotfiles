@@ -17,16 +17,14 @@ foreach my $name (@conf_conf){
 };
 
 # Custom for nvim
-my @conf_conf = qw(nvim);
-foreach my $name (@conf_conf){
-    my $out = `ln -sf ~/dotfiles/$name/init.vim ~/.config/$name`;
-};
+my $out = `ln -sf ~/dotfiles/$name/init.vim ~/.config/$name`;
 
-#Custom for visual studio
 
+# zsh theme
 my $out3 = `ln -sf ~/dotfiles/theodorc.zsh-theme ~/.oh-my-zsh/custom/themes/theodorc.zsh-theme`
 
-##this usually crashes
+#Custom for visual code
+##this crashes if visual code isnt installed
 my $out2 = `ln -sf ~/dotfiles/settings.json ~/.config/Code/User/settings.json/`
 
 
