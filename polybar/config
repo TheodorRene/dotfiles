@@ -55,9 +55,9 @@ font-0 = fixed:pixelsize=10;1
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 font-2 = siji:pixelsize=10;1
 
-modules-left = bspwm i3
-modules-center = 
-modules-right = filesystem backlight-acpi alsa pulseaudio memory cpu wlan eth battery date powermenu
+modules-left = i3
+modules-center =  
+modules-right = filesystem pulseaudio memory cpu wlan eth battery date powermenu
 
 tray-position = right
 tray-padding = 2
@@ -208,7 +208,7 @@ interval = 2
 format-prefix = " "
 format-prefix-foreground = ${colors.foreground-alt}
 format-underline = #f90000
-label = %percentage:2%%
+label =CPU: %percentage:2%%
 
 [module/memory]
 type = internal/memory
@@ -216,7 +216,7 @@ interval = 2
 format-prefix = " "
 format-prefix-foreground = ${colors.foreground-alt}
 format-underline = #4bffdc
-label = %percentage_used%%
+label = Mem: %percentage_used%%
 
 [module/wlan]
 type = internal/network
@@ -260,7 +260,7 @@ format-disconnected =
 type = internal/date
 interval = 5
 
-date =
+date = "%Y-%m-%d"
 date-alt = " %Y-%m-%d"
 
 time = %H:%M
@@ -336,7 +336,7 @@ full-at = 98
 format-charging = <animation-charging> <label-charging>
 format-charging-underline = #ffb52a
 
-format-discharging = <animation-discharging> <label-discharging>
+format-discharging = <animation-discharging> Battery: <label-discharging>
 format-discharging-underline = ${self.format-charging-underline}
 
 format-full-prefix = " "

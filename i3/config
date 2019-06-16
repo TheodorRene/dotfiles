@@ -22,7 +22,7 @@ smart_gaps on
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 exec --no-startup-id compton -f
 exec setxkbmap -layout no
-exec_always --no-startup-id killall polybar && polybar example & 
+exec_always --no-startup-id killall polybar && polybar example || polybar example  
 
 
 
