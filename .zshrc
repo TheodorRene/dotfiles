@@ -4,7 +4,8 @@
  path+=$HOME/bin
 
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="blinks"
+ZSH_THEME2="~/dotfiles/theodorc.zsh-theme"
+ZSH_THEME="theodorc"
 
 #Plugins
 plugins=(
@@ -15,6 +16,7 @@ plugins=(
     django
     pep8
     pip
+    fzf
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -25,11 +27,11 @@ source $ZSH/oh-my-zsh.sh
 alias takeover="tmux detach -a"
 alias lr="ls -ltrh"
 alias cass="mosh cassarossa.samfundet.no"
-alias pol="mosh polpot.dhcp.samfundet.no"
 alias shut="sudo shutdown now"
 alias clip="xclip -selection c"
-alias boy="ssh 139.59.147.33"
 alias svenv="source venv/bin/activate"
+alias dsize="du -h --max-depth=1 | sort -h"
+alias bc="bc -lq"
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -42,3 +44,5 @@ PERL_MM_OPT="INSTALL_BASE=/home/theodorc/perl5"; export PERL_MM_OPT;
 
 export EDITOR=/usr/bin/vim
 export VISUAL=/usr/bin/vim
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

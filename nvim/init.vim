@@ -1,3 +1,10 @@
+"Great for modularity, not so much for my symlinkscript
+"source $HOME/.config/nvim/config/init.vimrc
+"source $HOME/.config/nvim/config/general.vimrc
+"source $HOME/.config/nvim/config/plugins.vimrc
+"source $HOME/.config/nvim/config/keys.vimrc
+"source $HOME/.config/nvim/config/line.vimrc
+
 set nocompatible              " be iMproved, required
 filetype off                  " required
 set encoding=UTF-8
@@ -19,7 +26,11 @@ Plugin 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highl
 Plugin 'dhruvasagar/vim-table-mode'
 Plugin 'unblevable/quick-scope'
 Plugin 'scrooloose/nerdtree'
+Plugin 'ryanoasis/vim-devicons'
+Plugin 'mattn/emmet-vim'
 Plugin 'junegunn/fzf.vim'
+Plugin 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
+
 
 
 call vundle#end()            " required
@@ -36,7 +47,6 @@ colorscheme slate
 let mapleader =" "
 nmap <leader>g :Goyo 120<CR>
 nnoremap <leader>w :w<CR>
-nnoremap <leader>c :! ./mdToPdf.sh % <CR><CR>
 
 "Language specifics
 let g:markdown_enable_spell_checking = 0
@@ -47,7 +57,7 @@ autocmd BufRead,BufNewFile   *.md set spell spelllang=nb,en_us
 "show list of recommendation
 nnoremap <leader>z z=
 "add new word
-nnoremap <leader>a zg
+nmap <leader>a zg
 "take first word from recommendation
 nnoremap <leader>x z=1<CR><CR>
 
@@ -64,9 +74,11 @@ nnoremap <leader>s :vs . <CR>
 nnoremap <leader>f :setlocal foldmethod=syntax <CR>
 
 "Nerdtree
-map <C-n> :NERDTreeToggle<CR>
-map <C-u> :Files .<CR>
+nmap <C-n> :NERDTreeToggle<CR>
 
+"FZF
+nmap <C-u> :Files .<CR>
+nmap <C-b> :Buffers<CR>
 
 "Some standards
 set number relativenumber
@@ -77,8 +89,6 @@ set shiftwidth=4
 
 "Set jk as combination for going into normal mode
 inoremap jk <esc>
-"For copying into system clipboard, does not work
-set clipboard=unnamedplus
 
 "No idea what these do lmao
 set laststatus=2
@@ -88,7 +98,7 @@ set ignorecase
 set incsearch
 hi Search ctermbg=LightYellow
 hi Search ctermfg=Red
-nnoremap <leader>h :nohls<cr>
+
 "
 "Jumps between the characters for easy on the go writing
 imap "" ""<esc>i
@@ -97,13 +107,9 @@ imap (( ()<esc>i
 imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
 
-"resizing windows
-nmap ø :vertical resize +10<CR>
-nmap æ :vertical resize -10<CR>
-nmap å :resize -10<CR>
-nmap Å :resize +10<CR>
-
 set fillchars+=vert:│
+nnoremap <leader>h :nohls<cr>
+
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
 \ { 'fg':      ['fg', 'Normal'],
@@ -125,5 +131,33 @@ let g:fzf_colors =
 " previous-history instead of down and up. If you don't like the change,
 " explicitly bind the keys to down and up in your $FZF_DEFAULT_OPTS.
 let g:fzf_history_dir = '~/.local/share/fzf-history'
+
+"coc autocomplete
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+set hidden
+" Better display for messages
+set cmdheight=1
+
+autocmd FileType markdown let b:coc_suggest_disable = 1
+
+"resizing windows
+nmap ø :vertical resize +10<CR>
+nmap æ :vertical resize -10<CR>
+nmap å :resize -10<CR>
+nmap Å :resize +10<CR>
+
+"Prettier
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+nmap <C-p> :Prettier<CR>
+
 
 
