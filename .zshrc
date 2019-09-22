@@ -32,7 +32,8 @@ alias clip="xclip -selection c"
 alias svenv="source venv/bin/activate"
 alias dsize="du -h --max-depth=1 | sort -h"
 alias bc="bc -lq"
-
+alias vim="nvim"
+alias vimnote="nvim $(date +"%m_%d_%Y").md"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -44,5 +45,8 @@ PERL_MM_OPT="INSTALL_BASE=/home/theodorc/perl5"; export PERL_MM_OPT;
 
 export EDITOR=/usr/bin/vim
 export VISUAL=/usr/bin/vim
+
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
