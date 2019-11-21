@@ -22,14 +22,13 @@ Bundle 'gabrielelana/vim-markdown'
 Plugin 'justinmk/vim-sneak'
 Plugin 'junegunn/goyo.vim'
 Plugin 'alvan/vim-closetag'
-Plugin 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny' }
 Plugin 'dhruvasagar/vim-table-mode'
 Plugin 'unblevable/quick-scope'
 Plugin 'scrooloose/nerdtree'
 Plugin 'ryanoasis/vim-devicons'
 Plugin 'mattn/emmet-vim'
 Plugin 'junegunn/fzf.vim'
-Plugin 'Procrat/oz.vim'
+Plugin 'tpope/vim-commentary'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -49,7 +48,7 @@ nnoremap <leader>w :w<CR>
 "Language specifics
 let g:markdown_enable_spell_checking = '0'
 "
-"Spellcheck commands
+" === Spellcheck commands ===
 autocmd BufRead,BufNewFile   *.md set spell spelllang=nb,en_us
 "show list of recommendation
 nnoremap <leader>z z=
@@ -91,6 +90,7 @@ set shiftwidth=4
 
 "Set jk as combination for going into normal mode
 inoremap jk <esc>
+tnoremap jk <C-\><C-n>
 
 "No idea what these do lmao
 set laststatus=2
@@ -110,7 +110,7 @@ imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
 
 set fillchars+=vert:│
-nnoremap <leader>h :nohls<cr>
+nnoremap <leader>h :nohls<CR>
 
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
@@ -141,13 +141,8 @@ nmap å :resize -10<CR>
 nmap Å :resize +10<CR>
 
 "Prettier
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
-nmap <C-p> :Prettier<CR>
+"command! -nargs=0 Prettier :CocCommand prettier.formatFile
+nmap <C-p> :! python %<CR>
 
 
-" terminal mappings
-tnoremap jk <C-\><C-n>
-"wrap in quotes 
-"noremap <leader>r mabi'<Esc>ea'<Esc>`a
-nnoremap <leader>r :! python %<CR>
 
