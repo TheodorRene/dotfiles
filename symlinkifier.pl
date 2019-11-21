@@ -7,7 +7,11 @@ use warnings;
 # List with config that recides in home folder
 my @home_conf = qw(.i3blocks.conf .tmux.conf .vimrc .zshrc);
 foreach my $file (@home_conf){
-    my $out = `ln -sf ~/dotfiles/$file ~/`;
+    if( `test -f ~/dotfiles/$file`){
+        my $out = `ln -sf ~/dotfiles/$file ~/`;
+    } else{
+        say $file . " does not exist"
+    }
 };
 
 # List with config that recides in .config folder
