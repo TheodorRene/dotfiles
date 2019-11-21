@@ -34,6 +34,7 @@ alias dsize="du -h --max-depth=1 | sort -h"
 alias bc="bc -lq"
 alias vim="nvim"
 alias vimnote="nvim $(date +"%m_%d_%Y").md"
+alias py="python"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -49,4 +50,5 @@ export VISUAL=/usr/bin/vim
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+source /home/theodorc/.ghcup/env
