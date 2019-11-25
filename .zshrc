@@ -32,6 +32,8 @@ alias clip="xclip -selection c"
 alias svenv="source venv/bin/activate"
 alias dsize="du -h --max-depth=1 | sort -h"
 alias bc="bc -lq"
+alias sugit="sudo -E git"
+alias suvim="sudo -E vim"
 
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
