@@ -34,7 +34,9 @@ alias dsize="du -h --max-depth=1 | sort -h"
 alias bc="bc -lq"
 alias sugit="sudo -E git"
 alias suvim="sudo -E vim"
-
+alias vim="nvim"
+alias vimnote="nvim $(date +"%m_%d_%Y").md"
+alias py="python"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -47,4 +49,8 @@ PERL_MM_OPT="INSTALL_BASE=/home/theodorc/perl5"; export PERL_MM_OPT;
 export EDITOR=/usr/bin/vim
 export VISUAL=/usr/bin/vim
 
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+
+export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+source /home/theodorc/.ghcup/env

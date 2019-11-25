@@ -22,16 +22,13 @@ Bundle 'gabrielelana/vim-markdown'
 Plugin 'justinmk/vim-sneak'
 Plugin 'junegunn/goyo.vim'
 Plugin 'alvan/vim-closetag'
-Plugin 'vim-perl/vim-perl', { 'for': 'perl', 'do': 'make clean carp dancer highlight-all-pragmas moose test-more try-tiny' }
 Plugin 'dhruvasagar/vim-table-mode'
 Plugin 'unblevable/quick-scope'
 Plugin 'scrooloose/nerdtree'
 Plugin 'ryanoasis/vim-devicons'
 Plugin 'mattn/emmet-vim'
 Plugin 'junegunn/fzf.vim'
-Plugin 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
-
-
+Plugin 'tpope/vim-commentary'
 
 call vundle#end()            " required
 filetype plugin indent on    " required
@@ -49,10 +46,9 @@ nmap <leader>g :Goyo 120<CR>
 nnoremap <leader>w :w<CR>
 
 "Language specifics
-let g:markdown_enable_spell_checking = 0
-let g:default_julia_version = "devel"
+let g:markdown_enable_spell_checking = '0'
 "
-"Spellcheck commands
+" === Spellcheck commands ===
 autocmd BufRead,BufNewFile   *.md set spell spelllang=nb,en_us
 "show list of recommendation
 nnoremap <leader>z z=
@@ -69,6 +65,11 @@ nnoremap <leader>l :! latexmk -pdf % <CR><CR>
 "layout 
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
+nnoremap <leader>t :vs . <CR>:term <CR>
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 "folding
 nnoremap <leader>f :setlocal foldmethod=syntax <CR>
@@ -89,6 +90,7 @@ set shiftwidth=4
 
 "Set jk as combination for going into normal mode
 inoremap jk <esc>
+tnoremap jk <C-\><C-n>
 
 "No idea what these do lmao
 set laststatus=2
@@ -108,7 +110,7 @@ imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
 
 set fillchars+=vert:│
-nnoremap <leader>h :nohls<cr>
+nnoremap <leader>h :nohls<CR>
 
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
@@ -132,23 +134,6 @@ let g:fzf_colors =
 " explicitly bind the keys to down and up in your $FZF_DEFAULT_OPTS.
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
-"coc autocomplete
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-set hidden
-" Better display for messages
-set cmdheight=1
-
-autocmd FileType markdown let b:coc_suggest_disable = 1
-
 "resizing windows
 nmap ø :vertical resize +10<CR>
 nmap æ :vertical resize -10<CR>
@@ -156,8 +141,8 @@ nmap å :resize -10<CR>
 nmap Å :resize +10<CR>
 
 "Prettier
-command! -nargs=0 Prettier :CocCommand prettier.formatFile
-nmap <C-p> :Prettier<CR>
+"command! -nargs=0 Prettier :CocCommand prettier.formatFile
+nmap <C-p> :! python %<CR>
 
 
 
