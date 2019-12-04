@@ -9,29 +9,28 @@ set nocompatible              " be iMproved, required
 filetype off                  " required
 set encoding=UTF-8
 
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin()
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'itchyny/lightline.vim'
-Plugin 'sheerun/vim-polyglot'
-Plugin 'airblade/vim-gitgutter'
-Bundle 'gabrielelana/vim-markdown'
-Plugin 'justinmk/vim-sneak'
-Plugin 'junegunn/goyo.vim'
-Plugin 'alvan/vim-closetag'
-Plugin 'dhruvasagar/vim-table-mode'
-Plugin 'unblevable/quick-scope'
-Plugin 'scrooloose/nerdtree'
-Plugin 'ryanoasis/vim-devicons'
-Plugin 'mattn/emmet-vim'
-Plugin 'junegunn/fzf.vim'
-Plugin 'tpope/vim-commentary'
+Plug 'VundleVim/Vundle.vim'
+Plug 'itchyny/lightline.vim'
+Plug 'sheerun/vim-polyglot'
+Plug 'airblade/vim-gitgutter'
+Plug 'justinmk/vim-sneak'
+Plug 'junegunn/goyo.vim'
+Plug 'alvan/vim-closetag'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'unblevable/quick-scope'
+Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
+Plug 'mattn/emmet-vim'
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-commentary'
+Plug 'godlygeek/tabular'
+Plug 'plasticboy/vim-markdown'
 
-call vundle#end()            " required
-filetype plugin indent on    " required
+call plug#end()
 
 
 "Visuals
