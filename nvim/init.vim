@@ -13,8 +13,6 @@ call plug#begin()
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
-Plug 'VundleVim/Vundle.vim'
-Plug 'itchyny/lightline.vim'
 Plug 'sheerun/vim-polyglot'
 Plug 'airblade/vim-gitgutter'
 Plug 'justinmk/vim-sneak'
@@ -28,16 +26,16 @@ Plug 'mattn/emmet-vim'
 Plug 'junegunn/fzf.vim'
 Plug 'tpope/vim-commentary'
 Plug 'godlygeek/tabular'
-Plug 'plasticboy/vim-markdown'
+Plug 'gabrielelana/vim-markdown'
+Plug 'dense-analysis/ale'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
 
 call plug#end()
 
 
 "Visuals
-let g:lightline = {
-      \ 'colorscheme': 'jellybeans',
-      \ }
-colorscheme slate
+colorscheme default
 
 "Standard mappings
 let mapleader =" "
@@ -143,5 +141,9 @@ nmap Å :resize +10<CR>
 "command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <C-p> :! python %<CR>
 
+" Ale settings
+highlight ALEWarning ctermbg=DarkMagenta
 
-
+" Airline config
+let g:airline_powerline_fonts = 1
+let g:airline_theme='minimalist'
