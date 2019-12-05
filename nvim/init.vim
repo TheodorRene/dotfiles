@@ -55,7 +55,7 @@ nmap <leader>a zg
 nnoremap <leader>x z=1<CR><CR>
 
 "compile md to pdf
-nnoremap <leader>m :! ./mdToPdf.sh % <CR><CR>
+nnoremap <leader>m :! mdtopdf % <CR>
 au BufRead,BufNewFile *.md setlocal textwidth=80 
 nnoremap <leader>l :! latexmk -pdf % <CR><CR>
 
