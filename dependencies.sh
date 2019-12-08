@@ -4,7 +4,6 @@ pacman -Syu
 pacman -S\
     polybar\
     i3-gaps\
-    zshrc\
     rofi\
     neovim\
     fzf
