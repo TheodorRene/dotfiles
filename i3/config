@@ -203,6 +203,10 @@ bindsym $mod+g mode "gaps"
 
 #Rename workspace
 
+exec_always i3-msg rename workspace 1 to 'www'
+exec_always i3-msg rename workspace 2 to 'school'
+exec_always i3-msg rename workspace 3 to 'itk'
+
 bindsym $mod+t exec i3-input -F 'rename workspace to %s' -P 'New name: '
 
 # Start i3bar to display a workspace bar (plus the system information i3status
