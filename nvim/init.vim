@@ -30,6 +30,7 @@ Plug 'gabrielelana/vim-markdown'
 Plug 'dense-analysis/ale'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'liuchengxu/vim-clap', { 'do': function('clap#helper#build_all') }
 
 call plug#end()
 
@@ -63,10 +64,10 @@ nnoremap <leader>l :! latexmk -pdf % <CR><CR>
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 nnoremap <leader>t :vs . <CR>:term <CR>
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+"nnoremap <C-h> <C-w>h
+"nnoremap <C-j> <C-w>j
+"nnoremap <C-k> <C-w>k
+"nnoremap <C-l> <C-w>l
 
 "folding
 nnoremap <leader>f :setlocal foldmethod=syntax <CR>
@@ -77,6 +78,7 @@ nmap <C-n> :NERDTreeToggle<CR>
 "FZF
 nmap <C-u> :Files .<CR>
 nmap <C-b> :Buffers<CR>
+nmap <C-g> :Clap grep <CR>
 
 "Some standards
 set number relativenumber
