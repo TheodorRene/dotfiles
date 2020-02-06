@@ -30,13 +30,14 @@ Plug 'gabrielelana/vim-markdown'
 Plug 'dense-analysis/ale'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'liuchengxu/vim-clap', { 'do': function('clap#helper#build_all') }
+Plug 'liuchengxu/vim-clap'
 
 call plug#end()
 
 
 "Visuals
 colorscheme delek
+let g:clap_theme = 'material_design_dark'
 
 "Standard mappings
 let mapleader =" "

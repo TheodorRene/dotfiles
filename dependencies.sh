@@ -1,9 +1,11 @@
 #!/usr/bin/env bash
 set -e
-pacman -Syu  
+pacman -Syu;  
 pacman -S\
     polybar\
     i3-gaps\
     rofi\
     neovim\
-    fzf
+    fzf\
+    firefox\
+    mosh;
