@@ -13,10 +13,9 @@ plugins=(
     wd
     catimg
     last-working-dir
-    django
-    pep8
-    pip
     fzf
+    extract
+    sudo
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -32,6 +31,8 @@ alias clip="xclip -selection c"
 alias svenv="source venv/bin/activate"
 alias dsize="du -h --max-depth=1 | sort -h"
 alias bc="bc -lq"
+alias sugit="sudo -E git"
+alias suvim="sudo -E vim"
 alias vim="nvim"
 alias vimnote="nvim $(date +"%m_%d_%Y").md"
 alias py="python"
@@ -45,8 +46,8 @@ PERL_LOCAL_LIB_ROOT="/home/theodorc/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LI
 PERL_MB_OPT="--install_base \"/home/theodorc/perl5\""; export PERL_MB_OPT;
 PERL_MM_OPT="INSTALL_BASE=/home/theodorc/perl5"; export PERL_MM_OPT;
 
-export EDITOR=/usr/bin/vim
-export VISUAL=/usr/bin/vim
+export EDITOR=/usr/bin/nvim
+export VISUAL=/usr/bin/nvim
 
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

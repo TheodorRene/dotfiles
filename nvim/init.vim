@@ -9,36 +9,34 @@ set nocompatible              " be iMproved, required
 filetype off                  " required
 set encoding=UTF-8
 
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin()
 "call vundle#begin('~/some/path/here')
 
 " let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'itchyny/lightline.vim'
-Plugin 'sheerun/vim-polyglot'
-Plugin 'airblade/vim-gitgutter'
-Bundle 'gabrielelana/vim-markdown'
-Plugin 'justinmk/vim-sneak'
-Plugin 'junegunn/goyo.vim'
-Plugin 'alvan/vim-closetag'
-Plugin 'dhruvasagar/vim-table-mode'
-Plugin 'unblevable/quick-scope'
-Plugin 'scrooloose/nerdtree'
-Plugin 'ryanoasis/vim-devicons'
-Plugin 'mattn/emmet-vim'
-Plugin 'junegunn/fzf.vim'
-Plugin 'tpope/vim-commentary'
+Plug 'sheerun/vim-polyglot'
+Plug 'airblade/vim-gitgutter'
+Plug 'justinmk/vim-sneak'
+Plug 'junegunn/goyo.vim'
+Plug 'alvan/vim-closetag'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'unblevable/quick-scope'
+Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
+Plug 'mattn/emmet-vim'
+Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-commentary'
+Plug 'godlygeek/tabular'
+Plug 'gabrielelana/vim-markdown'
+Plug 'dense-analysis/ale'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'liuchengxu/vim-clap', { 'do': function('clap#helper#build_all') }
 
-call vundle#end()            " required
-filetype plugin indent on    " required
+call plug#end()
 
 
 "Visuals
-let g:lightline = {
-      \ 'colorscheme': 'jellybeans',
-      \ }
-colorscheme slate
+colorscheme delek
 
 "Standard mappings
 let mapleader =" "
@@ -58,7 +56,7 @@ nmap <leader>a zg
 nnoremap <leader>x z=1<CR><CR>
 
 "compile md to pdf
-nnoremap <leader>m :! ./mdToPdf.sh % <CR><CR>
+nnoremap <leader>m :! mdtopdf % <CR><CR>
 au BufRead,BufNewFile *.md setlocal textwidth=80 
 nnoremap <leader>l :! latexmk -pdf % <CR><CR>
 
@@ -66,10 +64,10 @@ nnoremap <leader>l :! latexmk -pdf % <CR><CR>
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 nnoremap <leader>t :vs . <CR>:term <CR>
-nnoremap <C-h> <C-w>h
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-l> <C-w>l
+"nnoremap <C-h> <C-w>h
+"nnoremap <C-j> <C-w>j
+"nnoremap <C-k> <C-w>k
+"nnoremap <C-l> <C-w>l
 
 "folding
 nnoremap <leader>f :setlocal foldmethod=syntax <CR>
@@ -80,6 +78,7 @@ nmap <C-n> :NERDTreeToggle<CR>
 "FZF
 nmap <C-u> :Files .<CR>
 nmap <C-b> :Buffers<CR>
+nmap <C-g> :Clap grep <CR>
 
 "Some standards
 set number relativenumber
@@ -144,5 +143,9 @@ nmap Å :resize +10<CR>
 "command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <C-p> :! python %<CR>
 
+" Ale settings
+highlight ALEWarning ctermbg=DarkMagenta
 
-
+" Airline config
+let g:airline_powerline_fonts = 1
+let g:airline_theme='minimalist'
