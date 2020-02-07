@@ -36,6 +36,7 @@ alias suvim="sudo -E vim"
 alias vim="nvim"
 alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias py="python"
+alias lock="xscreensaver-command -lock"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

@@ -30,15 +30,16 @@ Plug 'Yggdroot/indentline'
 Plug 'gabrielelana/vim-markdown'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'liuchengxu/vim-clap', { 'do': function('clap#helper#build_all') }
 Plug 'skywind3000/asyncrun.vim'
 Plug 'dstein64/vim-startuptime'
+Plug 'liuchengxu/vim-clap'
 
 call plug#end()
 
 
 "Visuals
 colorscheme delek
+let g:clap_theme = 'material_design_dark'
 
 "Standard mappings
 let mapleader =" "

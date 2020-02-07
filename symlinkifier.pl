@@ -7,7 +7,11 @@ use warnings;
 # List with config that recides in home folder
 my @home_conf = qw(.i3blocks.conf .tmux.conf .vimrc .zshrc);
 foreach my $file (@home_conf){
-    my $out = `ln -sf ~/dotfiles/$file ~/`;
+    if( `test -f ~/dotfiles/$file`){
+        my $out = `ln -sf ~/dotfiles/$file ~/`;
+    } else{
+        printf $file . " does not exist\n"
+    }
 };
 
 # List with config that recides in .config folder
@@ -17,7 +21,7 @@ foreach my $name (@conf_conf){
 };
 
 # Custom for nvim
-my $out = `ln -sf ~/dotfiles/$name/init.vim ~/.config/$name`;
+my $out = `ln -sf ~/dotfiles/nvim/init.vim ~/.config/nvim/init.vim`;
 
 
 # zsh theme
@@ -25,6 +29,6 @@ my $out3 = `ln -sf ~/dotfiles/theodorc.zsh-theme ~/.oh-my-zsh/custom/themes/theo
 
 #Custom for visual code
 ##this crashes if visual code isnt installed
-my $out2 = `ln -sf ~/dotfiles/settings.json ~/.config/Code/User/settings.json/`
+#my $out2 = `ln -sf ~/dotfiles/settings.json ~/.config/Code/User/settings.json/`
 
 
