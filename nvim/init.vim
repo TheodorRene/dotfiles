@@ -24,13 +24,15 @@ Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
 Plug 'mattn/emmet-vim'
 Plug 'junegunn/fzf.vim'
-Plug 'tpope/vim-commentary'
-Plug 'godlygeek/tabular'
-Plug 'gabrielelana/vim-markdown'
 Plug 'dense-analysis/ale'
+Plug 'tpope/vim-commentary'
+Plug 'Yggdroot/indentline'
+Plug 'gabrielelana/vim-markdown'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'liuchengxu/vim-clap', { 'do': function('clap#helper#build_all') }
+Plug 'skywind3000/asyncrun.vim'
+Plug 'dstein64/vim-startuptime'
 
 call plug#end()
 
@@ -79,6 +81,8 @@ nmap <C-n> :NERDTreeToggle<CR>
 nmap <C-u> :Files .<CR>
 nmap <C-b> :Buffers<CR>
 nmap <C-g> :Clap grep <CR>
+
+"let g:clap_theme = 'material_design_dark
 
 "Some standards
 set number relativenumber
@@ -141,7 +145,8 @@ nmap Å :resize +10<CR>
 
 "Prettier
 "command! -nargs=0 Prettier :CocCommand prettier.formatFile
-nmap <C-p> :! python %<CR>
+nmap <C-p> :! rocaf %<CR>
+nmap <C-o> :AsyncRun -raw rocaf %<CR>
 
 " Ale settings
 highlight ALEWarning ctermbg=DarkMagenta
@@ -149,3 +154,4 @@ highlight ALEWarning ctermbg=DarkMagenta
 " Airline config
 let g:airline_powerline_fonts = 1
 let g:airline_theme='minimalist'
+

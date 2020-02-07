@@ -34,7 +34,7 @@ alias bc="bc -lq"
 alias sugit="sudo -E git"
 alias suvim="sudo -E vim"
 alias vim="nvim"
-alias vimnote="nvim $(date +"%m_%d_%Y").md"
+alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias py="python"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -51,5 +51,5 @@ export VISUAL=/usr/bin/nvim
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-source /home/theodorc/.ghcup/env
+export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin"
+#source /home/theodorc/.ghcup/env
