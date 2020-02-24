@@ -50,7 +50,8 @@ nnoremap <leader>w :w<CR>
 let g:markdown_enable_spell_checking = '0'
 "
 " === Spellcheck commands ===
-autocmd BufRead,BufNewFile   *.md set spell spelllang=nb,en_us
+autocmd BufRead,BufNewFile   *.md setlocal spell spelllang=nb,en_us
+au BufRead,BufNewFile *.md setlocal textwidth=80 
 "show list of recommendation
 nnoremap <leader>z z=
 "add new word
@@ -58,15 +59,11 @@ nmap <leader>a zg
 "take first word from recommendation
 nnoremap <leader>x z=1<CR><CR>
 
-"compile md to pdf
-nnoremap <leader>m :! mdtopdf % <CR><CR>
-au BufRead,BufNewFile *.md setlocal textwidth=80 
-nnoremap <leader>l :! latexmk -pdf % <CR><CR>
 
 "layout 
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
-nnoremap <leader>t :vs . <CR>:term <CR>
+nnoremap <leader>t :vs <CR> :term <CR>
 "nnoremap <C-h> <C-w>h
 "nnoremap <C-j> <C-w>j
 "nnoremap <C-k> <C-w>k
@@ -114,7 +111,7 @@ imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
 
 set fillchars+=vert:│
-nnoremap <leader>h :nohls<CR>
+nnoremap <leader>h :nohls<CR> 
 
 " Customize fzf colors to match your color scheme
 let g:fzf_colors =
