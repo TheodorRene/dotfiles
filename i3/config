@@ -70,6 +70,9 @@ bindsym $mod+Return exec $terminal
 
 #start firefox
 bindsym $mod+o exec $browser
+#start screenshot
+bindsym $mod+s exec xfce4-screenshooter -r
+
 
 # kill focused window
 bindsym $mod+Shift+q kill
