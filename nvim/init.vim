@@ -148,6 +148,7 @@ nmap <C-o> :AsyncRun -raw rocaf %<CR>
 
 " Ale settings
 highlight ALEWarning ctermbg=DarkMagenta
+nmap <C-a> :ALEDetail<CR>
 
 " Airline config
 let g:airline_powerline_fonts = 1
