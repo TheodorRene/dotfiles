@@ -8,4 +8,6 @@ pacman -S\
     neovim\
     fzf\
     firefox\
-    mosh;
+    alacritty
+    mosh\
+    feh;
