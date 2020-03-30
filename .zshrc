@@ -37,6 +37,7 @@ alias vim="nvim"
 alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias lock="xscreensaver-command -lock"
 alias ukenr="date +%V"
+alias dir="ls -d */"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
