@@ -145,6 +145,8 @@ nmap Å :resize +10<CR>
 "command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <C-p> :! rocaf %<CR>
 nmap <C-o> :AsyncRun -raw rocaf %<CR>
+nmap <C-a> :ALEDetail<CR>
+nmap <leader>c :! 
 
 " Ale settings
 highlight ALEWarning ctermbg=DarkMagenta
