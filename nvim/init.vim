@@ -6,7 +6,7 @@
 "source $HOME/.config/nvim/config/line.vimrc
 
 set nocompatible              " be iMproved, required
-filetype off                  " required
+filetype plugin on                " required
 set encoding=UTF-8
 
 call plug#begin()
@@ -31,8 +31,7 @@ Plug 'gabrielelana/vim-markdown'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'skywind3000/asyncrun.vim'
-Plug 'dstein64/vim-startuptime'
-Plug 'liuchengxu/vim-clap'
+Plug 'mbbill/undotree'
 
 call plug#end()
 
@@ -64,10 +63,10 @@ nnoremap <leader>x z=1<CR><CR>
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 nnoremap <leader>t :vs <CR> :term <CR>
-"nnoremap <C-h> <C-w>h
-"nnoremap <C-j> <C-w>j
-"nnoremap <C-k> <C-w>k
-"nnoremap <C-l> <C-w>l
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
 
 "folding
 nnoremap <leader>f :setlocal foldmethod=syntax <CR>
@@ -76,9 +75,11 @@ nnoremap <leader>f :setlocal foldmethod=syntax <CR>
 nmap <C-n> :NERDTreeToggle<CR>
 
 "FZF
-nmap <C-u> :Files .<CR>
-nmap <C-b> :Buffers<CR>
-nmap <C-g> :Clap grep <CR>
+nmap <C-f> :Files .<CR>
+nmap <C-g> :Rg<CR>
+nmap <leader>b :Buffers<CR>
+nmap <C-t> :Tags<CR>
+nnoremap <F5> :UndotreeToggle<cr>
 
 "let g:clap_theme = 'material_design_dark
 
@@ -109,6 +110,7 @@ imap '' ''<esc>i
 imap (( ()<esc>i
 imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
+imap $$ $$<esc>i
 
 set fillchars+=vert:│
 nnoremap <leader>h :nohls<CR> 
@@ -140,12 +142,14 @@ nmap ø :vertical resize +10<CR>
 nmap æ :vertical resize -10<CR>
 nmap å :resize -10<CR>
 nmap Å :resize +10<CR>
+nmap <leader>o :call Open_pdf()<CR>
 
 "Prettier
 "command! -nargs=0 Prettier :CocCommand prettier.formatFile
-nmap <C-p> :! rocaf %<CR>
-nmap <C-o> :AsyncRun -raw rocaf %<CR>
+nmap <C-p> :w <CR> :! rocaf %<CR>
+nmap <C-o> :w <CR>:AsyncRun -raw rocaf %<CR>
 nmap <C-a> :ALEDetail<CR>
+"nmap <leader>a :ALEToggle<CR>
 nmap <leader>c :! 
 
 " Ale settings
@@ -154,4 +158,10 @@ highlight ALEWarning ctermbg=DarkMagenta
 " Airline config
 let g:airline_powerline_fonts = 1
 let g:airline_theme='minimalist'
+
+let g:file_name = expand('%:t:r')
+
+function Open_pdf()
+    execute "!pdf " . g:file_name . ".pdf"
+endfunction
 
