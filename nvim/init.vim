@@ -6,7 +6,7 @@
 "source $HOME/.config/nvim/config/line.vimrc
 
 set nocompatible              " be iMproved, required
-filetype off                  " required
+filetype plugin indent on                  " required
 set encoding=UTF-8
 
 call plug#begin()
@@ -33,6 +33,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'dstein64/vim-startuptime'
 Plug 'liuchengxu/vim-clap'
+Plug 'neovimhaskell/haskell-vim'
 
 call plug#end()
 
