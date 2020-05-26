@@ -1,0 +1,9 @@
+{
+    "workbench.colorTheme": "Solarized Light+",
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "k"],
+            "after": ["<esc>"]
+        }
+   ]
+}
