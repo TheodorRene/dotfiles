@@ -2,7 +2,7 @@
 
 set $mod Mod4 
 set $browser firefox
-set $terminal konsole
+set $terminal alacritty
 set $lock i3lock-fancy
 
 #Gaps Settings
@@ -13,11 +13,12 @@ for_window [class="^.*"] border pixel 5
 #smart_gaps on
 
 #Desktop settings
-#gaps inner 8
-#gaps outer 10
+gaps inner 8
+gaps outer 10
 exec ~/.screenlayout/standard.sh
 #font pango:DejaVu Sans Mono 10
 
+bindsym $mod+t exec i3-input -F 'rename workspace to %s' -P 'New name: '
 #Startup
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 exec --no-startup-id compton -f
