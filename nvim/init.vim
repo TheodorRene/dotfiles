@@ -8,6 +8,7 @@
 set nocompatible              " be iMproved, required
 filetype plugin on                " required
 set encoding=UTF-8
+set mouse=a
 
 call plug#begin()
 "call vundle#begin('~/some/path/here')
@@ -32,6 +33,7 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'skywind3000/asyncrun.vim'
 Plug 'mbbill/undotree'
+Plug 'majutsushi/tagbar'
 
 call plug#end()
 
@@ -62,7 +64,8 @@ nnoremap <leader>x z=1<CR><CR>
 "layout 
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
-nnoremap <leader>t :vs <CR> :term <CR>
+nnoremap <leader>t :vs <CR> :term <CR>i
+autocmd TermOpen * setlocal norelativenumber | setlocal nonumber
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -80,6 +83,7 @@ nmap <C-g> :Rg<CR>
 nmap <leader>b :Buffers<CR>
 nmap <C-t> :Tags<CR>
 nnoremap <F5> :UndotreeToggle<cr>
+nmap <F8> :TagbarToggle<cr>
 
 "let g:clap_theme = 'material_design_dark
 
