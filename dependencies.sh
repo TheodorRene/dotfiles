@@ -2,10 +2,14 @@
 set -e
 pacman -Syu;  
 pacman -S\
-    polybar\
-    i3-gaps\
-    rofi\
-    neovim\
-    fzf\
+    alacritty
+    feh;
     firefox\
-    mosh;
+    fzf\
+    i3-gaps\
+    mosh\
+    neofetch\
+    neovim\
+    playerctl\
+    polybar\
+    rofi\

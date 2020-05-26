@@ -197,6 +197,7 @@ mode "resize" {
 }
 
 bindsym $mod+r mode "resize"
+
 mode "gaps" {
     bindsym h gaps outer current plus 5
     bindsym j gaps outer current minus 5
@@ -210,9 +211,6 @@ bindsym $mod+g mode "gaps"
 
 #Rename workspace
 
-exec_always i3-msg rename workspace 1 to 'www'
-exec_always i3-msg rename workspace 2 to 'school'
-exec_always i3-msg rename workspace 3 to 'itk'
 
 bindsym $mod+t exec i3-input -F 'rename workspace to %s' -P 'New name: '
 
