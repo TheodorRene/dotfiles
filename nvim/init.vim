@@ -9,6 +9,7 @@ set nocompatible              " be iMproved, required
 filetype plugin indent on                  " required
 set encoding=UTF-8
 set mouse=a
+set splitbelow
 
 call plug#begin()
 "call vundle#begin('~/some/path/here')
@@ -66,7 +67,7 @@ nnoremap <leader>x z=1<CR><CR>
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 nnoremap <leader>t :vs <CR> :term <CR>i
-autocmd TermOpen * setlocal norelativenumber | setlocal nonumber
+autocmd TermOpen * setlocal nonumber
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -89,7 +90,7 @@ nmap <F8> :TagbarToggle<cr>
 "let g:clap_theme = 'material_design_dark
 
 "Some standards
-set number relativenumber
+set number 
 syntax on
 set tabstop=4
 set expandtab
