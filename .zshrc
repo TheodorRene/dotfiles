@@ -16,6 +16,7 @@ plugins=(
     fzf
     extract
     sudo
+    docker
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -23,6 +24,7 @@ source $ZSH/oh-my-zsh.sh
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
 
+# ALIAS
 alias takeover="tmux detach -a"
 alias lr="ls -ltrh"
 alias cass="mosh cassarossa.samfundet.no"
@@ -38,14 +40,10 @@ alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias lock="xscreensaver-command -lock"
 alias ukenr="date +%V"
 alias dir="ls -d */"
+alias rm_all_stopped_docker="docker rm $(docker ps -a -q)"
+alias ports="sudo lsof -i -P -n | grep LISTEN"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-PATH="/home/theodorc/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="/home/theodorc/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/home/theodorc/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/home/theodorc/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/home/theodorc/perl5"; export PERL_MM_OPT;
 
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
@@ -56,3 +54,7 @@ export VISUAL=/usr/bin/nvim
 export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin"
 #source /home/theodorc/.ghcup/env
 [ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
+
+export PATH=$PATH:/home/theodorc/bin
+
+source '/home/theodorc/lib/azure-cli/az.completion'
