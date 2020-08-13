@@ -43,16 +43,17 @@ alias ukenr="date +%V"
 alias dir="ls -d */"
 alias rm_all_stopped_docker="docker rm $(docker ps -a -q)"
 alias ports="sudo lsof -i -P -n | grep LISTEN"
+alias cat="bat"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
+
 
 #export NVM_DIR="$HOME/.nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 
-export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin"
+export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin:$HOME/.npm-global/bin"
 #source /home/theodorc/.ghcup/env
 [ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
 
