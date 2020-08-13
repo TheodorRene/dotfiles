@@ -23,6 +23,7 @@ source $ZSH/oh-my-zsh.sh
 
 # ssh
 # export SSH_KEY_PATH="~/.ssh/rsa_id"
+setopt EXTENDED_HISTORY
 
 # ALIAS
 alias takeover="tmux detach -a"

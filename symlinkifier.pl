@@ -16,12 +16,12 @@ foreach my $file (@home_conf){
 
 # List with config that recides in .config folder
 my @conf_conf = qw(i3 rofi terminator polybar);
-foreach my $name (@conf_conf){
+    foreach my $name (@conf_conf){
     my $out = `ln -sf ~/dotfiles/$name/config ~/.config/$name`;
 };
 
 # Custom for nvim
-my $out = `ln -sf ~/dotfiles/nvim/init.vim ~/.config/nvim/init.vim`;
+        my $out=`ln -sf ~/dotfiles/nvim/init.vim ~/.config/nvim/init.vim`;
 
 
 # zsh theme
