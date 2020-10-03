@@ -1,7 +1,6 @@
 "Great for modularity, not so much for my symlinkscript
 "source $HOME/.config/nvim/config/init.vimrc
 "source $HOME/.config/nvim/config/general.vimrc
-"source $HOME/.config/nvim/config/plugins.vimrc
 "source $HOME/.config/nvim/config/keys.vimrc
 "source $HOME/.config/nvim/config/line.vimrc
 
@@ -26,7 +25,8 @@ Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
 Plug 'mattn/emmet-vim'
 Plug 'junegunn/fzf.vim'
-Plug 'dense-analysis/ale'
+"Plug 'dense-analysis/ale'
+Plug 'neoclide/coc.nvim', {'branch':'release'}
 Plug 'tpope/vim-commentary'
 Plug 'Yggdroot/indentline'
 Plug 'gabrielelana/vim-markdown'
@@ -172,3 +172,4 @@ function Open_pdf()
     execute "!pdf " . g:file_name . ".pdf"
 endfunction
 
+source $HOME/.config/nvim/config/coc.vimrc
