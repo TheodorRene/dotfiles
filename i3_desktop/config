@@ -34,6 +34,7 @@ font pango:monospace 8
 
 # Change wallpaper
 bindsym $mod+c exec --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
+bindsym $mod+e exec rofi -show emoji -modi emoji
 
 # Screen brightness control
 #bindsym XF86MonBrightnessUp exec xbacklight -inc 5 

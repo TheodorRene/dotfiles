@@ -41,9 +41,9 @@ alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias lock="xscreensaver-command -lock"
 alias ukenr="date +%V"
 alias dir="ls -d */"
-alias rm_all_stopped_docker="docker rm $(docker ps -a -q)"
 alias ports="sudo lsof -i -P -n | grep LISTEN"
 alias cat="bat"
+alias lfile="$(ls -tr $HOME/Downloads | tail -n1)"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export EDITOR=/usr/bin/nvim
@@ -58,5 +58,3 @@ export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_mod
 [ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
 
 export PATH=$PATH:/home/theodorc/bin
-
-source '/home/theodorc/lib/azure-cli/az.completion'
