@@ -26,7 +26,7 @@ my $out=`mkdir -p ~/.config/nvim/config && ln -sf ~/dotfiles/nvim/coc.vimrc ~/.c
 
 
 # zsh theme
-my $out3 = `ln -sf ~/dotfiles/theodorc.zsh-theme ~/.oh-my-zsh/custom/themes/theodorc.zsh-theme`
+#my $out3 = `ln -sf ~/dotfiles/theodorc.zsh-theme ~/.oh-my-zsh/custom/themes/theodorc.zsh-theme`
 
 #Custom for visual code
 ##this crashes if visual code isnt installed

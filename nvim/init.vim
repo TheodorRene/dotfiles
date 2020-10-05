@@ -26,6 +26,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'mattn/emmet-vim'
 Plug 'junegunn/fzf.vim'
 "Plug 'dense-analysis/ale'
+Plug 'inside/vim-search-pulse'
 Plug 'neoclide/coc.nvim', {'branch':'release'}
 Plug 'tpope/vim-commentary'
 Plug 'Yggdroot/indentline'
