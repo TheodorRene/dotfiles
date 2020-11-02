@@ -39,6 +39,12 @@ alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias lock="xscreensaver-command -lock"
 alias ukenr="date +%V"
 alias dir="ls -d */"
+alias ports="sudo lsof -i -P -n | grep LISTEN"
+alias py="python"
+alias sys="systemctl"
+alias pacupgrade="sudo pacman -Syyu"
+alias pacsearch="sudo pacman -Ss"
+alias pacinstall="sudo pacman -S"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
