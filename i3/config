@@ -216,22 +216,22 @@ bindsym $mod+t exec i3-input -F 'rename workspace to %s' -P 'New name: '
 
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
-#bar {
-#        #status_command i3status
-#        #status_command i3blocks
-#        status_command polybar example
-#
-#        colors {
-#        separator #444444
-#        background #222222
-#        #statusline #B1B1B1
-        #statusline #6D6A64
-#        statusline #FFFFFF
-        #focused_workspace #CECECE #CECECE #000000
-#        focused_workspace #CECECE #CECECE #5F8700
-#        active_workspace #333333 #333333 #888888
-        #inactive_workspace #CECECE #333333 #f1f1f1
-#        inactive_workspace #CECECE #333333 #9E9E9E
-#        urgent_workspace #eb709b #eb709b #ffffff
-#           }
-#}
+bar {
+        status_command i3status
+        #status_command i3blocks
+        #status_command polybar example
+
+        colors {
+        separator #444444
+        background #222222
+        #statusline #B1B1B1
+       #statusline #6D6A64
+        statusline #FFFFFF
+       #focused_workspace #CECECE #CECECE #000000
+        focused_workspace #CECECE #CECECE #5F8700
+        active_workspace #333333 #333333 #888888
+       #inactive_workspace #CECECE #333333 #f1f1f1
+        inactive_workspace #CECECE #333333 #9E9E9E
+        urgent_workspace #eb709b #eb709b #ffffff
+           }
+}
