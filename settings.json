@@ -5,5 +5,9 @@
             "before": ["j", "k"],
             "after": ["<esc>"]
         }
-   ]
+],
+"vim.commandLineModeKeyBindingsNonRecursive": [
+
+],
+ "vscode-neovim.neovimPath": "/usr/bin/nvim"
 }

@@ -45,6 +45,7 @@ alias sys="systemctl"
 alias pacupgrade="sudo pacman -Syyu"
 alias pacsearch="sudo pacman -Ss"
 alias pacinstall="sudo pacman -S"
+alias lfile="ls -tr $HOME/Downloads | tail -n1"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 

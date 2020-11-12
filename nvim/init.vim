@@ -74,8 +74,6 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-"folding
-nnoremap <leader>f :setlocal foldmethod=syntax <CR>
 
 "Nerdtree
 nmap <C-n> :NERDTreeToggle<CR>
