@@ -56,7 +56,7 @@ font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
 font-2 = siji:pixelsize=10;1
 
 modules-left = i3 scratchpad
-modules-center =  
+modules-center =  spotify
 modules-right = filesystem pulseaudio memory cpu wlan eth battery date powermenu
 
 tray-position = right
@@ -416,6 +416,14 @@ tail = true
 exec-if = i3-msg -t get_tree | grep -c fresh
 format-padding = 10
 label= Scratchpad:%output%
+
+[module/spotify]
+type = custom/script
+interval = 1
+format-prefix = "🎵"
+format = <label>
+exec = python /home/theodorc/dotfiles/polybar/polybar-spotify/spotify_status.py -f '{play_pause} {song} - {artist} - {album}' -p '>, ||' -t 100
+format-underline = #1db954
 
 [settings]
 screenchange-reload = true
