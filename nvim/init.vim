@@ -37,6 +37,7 @@ Plug 'skywind3000/asyncrun.vim'
 Plug 'neovimhaskell/haskell-vim'
 Plug 'mbbill/undotree'
 Plug 'majutsushi/tagbar'
+Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 
 call plug#end()
 
@@ -164,6 +165,8 @@ nmap <C-a> :ALEDetail<CR>
 " Airline config
 let g:airline_powerline_fonts = 1
 let g:airline_theme='minimalist'
+" next slide
+nnoremap <leader>n :bd <CR>
 
 let g:file_name = expand('%:t:r')
 
