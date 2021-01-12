@@ -209,6 +209,7 @@ bindsym $mod+g mode "gaps"
 mode "media" {
     #Audiocontrols
     bindsym space exec playerctl play-pause
+    bindsym p exec playerctl play-pause
     bindsym  l exec playerctl next
     bindsym  h exec playerctl previous
     bindsym  k exec pulseaudio-ctl up
