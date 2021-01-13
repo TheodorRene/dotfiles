@@ -1,0 +1,19 @@
+[user]
+	email = theodor.rene@gmail.com
+	name = Theodor René Carlsen
+[gui]
+	encoding = utf-8
+[core]
+	quotepath = off
+	autocrlf = input
+[alias]
+	co = checkout
+[filesystem "N/A|14.0.1|tmpfs"]
+	timestampResolution = 9000 nanoseconds
+	minRacyThreshold = 12860 microseconds
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
+[merge]
+	tool = nvimdiff

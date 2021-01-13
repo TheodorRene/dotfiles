@@ -1,7 +1,7 @@
 
 # Path to your oh-my-zsh installation.
- export ZSH="$HOME/.oh-my-zsh"
- path+=$HOME/bin
+export ZSH="$HOME/.oh-my-zsh"
+path+=$HOME/bin
 
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME2="~/dotfiles/theodorc.zsh-theme"
@@ -17,6 +17,7 @@ plugins=(
     extract
     sudo
     docker
+    stack
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -45,27 +46,25 @@ alias sys="systemctl"
 alias pacupgrade="sudo pacman -Syyu"
 alias pacsearch="sudo pacman -Ss"
 alias pacinstall="sudo pacman -S"
-alias lfile="ls -tr $HOME/Downloads | tail -n1"
+alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
+alias dc="cd"
+alias cp="cp -n"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-PATH="/home/theodorc/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="/home/theodorc/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/home/theodorc/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/home/theodorc/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/home/theodorc/perl5"; export PERL_MM_OPT;
 
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
 
-#export NVM_DIR="$HOME/.nvm"
-#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+man(){
+    command man $1 || $_ --help
+}
+
+wifi_pass(){
+    sudo grep -oP '^psk=\K\w+' /etc/NetworkManager/system-connections/$(nmcli -t -f name connection show --active | head -n1).nmconnection
+}
 
 export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin"
-#source /home/theodorc/.ghcup/env
-[ -f "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env" ] && source "${GHCUP_INSTALL_BASE_PREFIX:=$HOME}/.ghcup/env"
+[ -f "/home/theodorc/.ghcup/env" ] && source "/home/theodorc/.ghcup/env" # ghcup-env
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/theodorc/.sdkman"
-export _JAVA_AWT_WM_NONREPARENTING=1
-[[ -s "/home/theodorc/.sdkman/bin/sdkman-init.sh" ]] && source "/home/theodorc/.sdkman/bin/sdkman-init.sh"
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

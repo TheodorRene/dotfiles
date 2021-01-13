@@ -4,18 +4,15 @@
 "source $HOME/.config/nvim/config/keys.vimrc
 "source $HOME/.config/nvim/config/line.vimrc
 
-set nocompatible              " be iMproved, required
-filetype plugin indent on                  " required
+set nocompatible  
+filetype plugin indent on   
 set encoding=UTF-8
 set mouse=a
 set splitbelow
 
 call plug#begin()
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
 Plug 'sheerun/vim-polyglot'
-Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
 Plug 'justinmk/vim-sneak'
 Plug 'junegunn/goyo.vim'
 Plug 'alvan/vim-closetag'
@@ -24,13 +21,17 @@ Plug 'unblevable/quick-scope'
 Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
 Plug 'mattn/emmet-vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 "Plug 'dense-analysis/ale'
+Plug 'sbdchd/neoformat'
 Plug 'inside/vim-search-pulse'
 Plug 'neoclide/coc.nvim', {'branch':'release'}
 Plug 'tpope/vim-commentary'
 Plug 'Yggdroot/indentline'
-Plug 'gabrielelana/vim-markdown'
+"Plug 'gabrielelana/vim-markdown'
+Plug 'overcache/NeoSolarized'
+Plug 'morhetz/gruvbox'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'skywind3000/asyncrun.vim'
@@ -41,20 +42,18 @@ Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 
 call plug#end()
 
-
 "Visuals
-colorscheme delek
-let g:clap_theme = 'material_design_dark'
+"colorscheme NeoSolarized
+autocmd vimenter * ++nested colorscheme gruvbox
+set termguicolors
 
 "Standard mappings
 let mapleader =" "
 nmap <leader>g :Goyo 120<CR>
 nnoremap <leader>w :w<CR>
 
-"Language specifics
-let g:markdown_enable_spell_checking = '0'
-"
 " === Spellcheck commands ===
+let g:markdown_enable_spell_checking = '0'
 autocmd BufRead,BufNewFile   *.md setlocal spell spelllang=nb,en_us
 au BufRead,BufNewFile *.md setlocal textwidth=80 
 "show list of recommendation
@@ -69,25 +68,25 @@ nnoremap <leader>x z=1<CR><CR>
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 nnoremap <leader>t :vs <CR> :term <CR>i
-autocmd TermOpen * setlocal nonumber
+autocmd TermOpen * setlocal nonumber "remove numbers for terminal
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
+nnoremap <leader>f :Neoformat<CR>
 
 "Nerdtree
 nmap <C-n> :NERDTreeToggle<CR>
 
 "FZF
-nmap <C-f> :Files .<CR>
-nmap <C-g> :Rg<CR>
-nmap <leader>b :Buffers<CR>
-nmap <C-t> :Tags<CR>
+nnoremap <C-f> :Files .<CR>
+nnoremap <C-g> :Rg<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <C-t> :Tags<CR>
 nnoremap <F5> :UndotreeToggle<cr>
-nmap <F8> :TagbarToggle<cr>
+nnoremap <F8> :TagbarToggle<cr>
 
-"let g:clap_theme = 'material_design_dark
 
 "Some standards
 set number 
@@ -144,19 +143,18 @@ let g:fzf_colors =
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
 "resizing windows
-nmap ø :vertical resize +10<CR>
-nmap æ :vertical resize -10<CR>
-nmap å :resize -10<CR>
-nmap Å :resize +10<CR>
-nmap <leader>o :call Open_pdf()<CR>
+nnoremap ø :vertical resize +10<CR>
+nnoremap æ :vertical resize -10<CR>
+nnoremap å :resize -10<CR>
+nnoremap Å :resize +10<CR>
+nnoremap <leader>o :call Open_pdf()<CR>
 
 "Prettier
 "command! -nargs=0 Prettier :CocCommand prettier.formatFile
 nmap <C-p> :w <CR> :! rocaf %<CR>
 nmap <C-o> :w <CR>:AsyncRun -raw rocaf %<CR>
-nmap <C-a> :ALEDetail<CR>
-"nmap <leader>a :ALEToggle<CR>
 nmap <leader>c :! 
+nmap <leader>n :bd <CR>
 
 " Ale settings
 highlight ALEWarning ctermbg=DarkMagenta
@@ -164,14 +162,26 @@ nmap <C-a> :ALEDetail<CR>
 
 " Airline config
 let g:airline_powerline_fonts = 1
-let g:airline_theme='minimalist'
-" next slide
-nnoremap <leader>n :bd <CR>
+let g:airline_theme='zenburn'
 
-let g:file_name = expand('%:t:r')
 
-function Open_pdf()
-    execute "!pdf " . g:file_name . ".pdf"
-endfunction
+if !exists('*Open_pdf')
+    function Open_pdf()
+        execute "!pdf " . expand('%:t:r') . ".pdf"
+    endfunction
+endif
+
+let g:tagbar_type_elm = {
+      \ 'kinds' : [
+      \ 'f:function:0:0',
+      \ 'm:modules:0:0',
+      \ 'i:imports:1:0',
+      \ 't:types:1:0',
+      \ 'a:type aliases:0:0',
+      \ 'c:type constructors:0:0',
+      \ 'p:ports:0:0',
+      \ 's:functions:0:0',
+      \ ]
+      \}
 
 source $HOME/.config/nvim/config/coc.vimrc

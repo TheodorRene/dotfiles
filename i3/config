@@ -10,12 +10,12 @@ set $lock betterlockscreen --lock blur
 
 
 #Gaps Settings
-for_window [class="^.*"] border pixel 3
+for_window [class="^.*"] border pixel 4
 gaps inner 11
 gaps outer 5
 smart_borders on
 smart_gaps on
-border_radius 5
+border_radius 3
 
 #Desktop settings
 #gaps inner 8
@@ -27,7 +27,7 @@ border_radius 5
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 exec --no-startup-id compton -f
 exec setxkbmap -layout no
-exec_always --no-startup-id killall polybar && polybar example || polybar example  
+exec_always xbanish
 
 
 
@@ -67,7 +67,6 @@ bindsym $mod+q workspace prev
 floating_modifier $mod
 
 # start a terminal
-#bindsym $mod+Return exec terminator
 bindsym $mod+Return exec $terminal
 
 #start firefox
@@ -206,6 +205,8 @@ mode "gaps" {
     bindsym k gaps inner current plus 5
     bindsym l gaps inner current minus 5
 
+    bindsym w gaps inner current set 0; gaps outer current set 0; mode "default";
+
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
@@ -220,20 +221,13 @@ bindsym $mod+t exec i3-input -F 'rename workspace to %s' -P 'New name: '
 # finds out, if available)
 bar {
         status_command i3status
-        #status_command i3blocks
-        #status_command polybar example
-
         colors {
         separator #444444
         background #222222
-        #statusline #B1B1B1
-       #statusline #6D6A64
         statusline #FFFFFF
-       #focused_workspace #CECECE #CECECE #000000
         focused_workspace #CECECE #CECECE #5F8700
         active_workspace #333333 #333333 #888888
-       #inactive_workspace #CECECE #333333 #f1f1f1
         inactive_workspace #CECECE #333333 #9E9E9E
         urgent_workspace #eb709b #eb709b #ffffff
-           }
+        }
 }
