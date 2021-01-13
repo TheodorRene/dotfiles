@@ -51,6 +51,8 @@ set termguicolors
 let mapleader =" "
 nmap <leader>g :Goyo 120<CR>
 nnoremap <leader>w :w<CR>
+nmap <C-i> O<Esc>
+nmap <CR> o<Esc>
 
 " === Spellcheck commands ===
 let g:markdown_enable_spell_checking = '0'
