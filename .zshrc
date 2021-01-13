@@ -2,6 +2,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 path+=$HOME/bin
+path+=/var/lib/snapd/snap/bin
 
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME2="~/dotfiles/theodorc.zsh-theme"
