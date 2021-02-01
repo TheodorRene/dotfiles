@@ -2,6 +2,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 path+=$HOME/bin
+path+=$HOME/.local/bin
 path+=/var/lib/snapd/snap/bin
 
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
@@ -50,8 +51,12 @@ alias pacinstall="sudo pacman -S"
 alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 alias dc="cd"
 alias cp="cp -n"
+alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Add completion to custom pdf command
+zstyle ':completion:*:*:pdf:*' file-patterns '*.pdf'
 
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
