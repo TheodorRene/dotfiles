@@ -64,6 +64,10 @@ nnoremap <leader>z z=
 nmap <leader>a zg
 "take first word from recommendation
 nnoremap <leader>x z=1<CR><CR>
+" Do not conceal syntax
+let g:vim_json_syntax_conceal = 0
+let g:vim_markdown_conceal = 0
+let g:vim_markdown_conceal_code_blocks = 0
 
 
 "layout 
@@ -91,7 +95,7 @@ nnoremap <F8> :TagbarToggle<cr>
 
 
 "Some standards
-set number 
+"set number 
 syntax on
 set tabstop=4
 set expandtab
