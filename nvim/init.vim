@@ -7,49 +7,47 @@
 set nocompatible  
 filetype plugin indent on   
 set encoding=UTF-8
-set mouse=a
-set splitbelow
+set mouse=a                       " Use mouse
+set splitbelow                    " Set default split
 
 call plug#begin()
-Plug 'sheerun/vim-polyglot'
-Plug 'tpope/vim-fugitive'
-Plug 'justinmk/vim-sneak'
-Plug 'junegunn/goyo.vim'
-Plug 'alvan/vim-closetag'
-Plug 'dhruvasagar/vim-table-mode'
-Plug 'unblevable/quick-scope'
-Plug 'scrooloose/nerdtree'
-Plug 'ryanoasis/vim-devicons'
-Plug 'mattn/emmet-vim'
+
+" Syntax highlighting
+Plug 'sheerun/vim-polyglot'       " Syntax for most languages
+Plug 'neovimhaskell/haskell-vim'  " Syntax for haskell
+" Git
+Plug 'tpope/vim-fugitive'         " Easier to do git operations in vim
+" Navigation
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-"Plug 'dense-analysis/ale'
-Plug 'sbdchd/neoformat'
-Plug 'inside/vim-search-pulse'
-Plug 'neoclide/coc.nvim', {'branch':'release'}
-Plug 'tpope/vim-commentary'
-Plug 'Yggdroot/indentline'
-"Plug 'gabrielelana/vim-markdown'
-Plug 'overcache/NeoSolarized'
-Plug 'morhetz/gruvbox'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'skywind3000/asyncrun.vim'
-Plug 'neovimhaskell/haskell-vim'
-Plug 'mbbill/undotree'
-Plug 'majutsushi/tagbar'
-Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
+Plug 'junegunn/fzf.vim'           " Fuzzy finder
+Plug 'justinmk/vim-sneak'         " 2-gram seach basically
+Plug 'unblevable/quick-scope'     " Highlights fastest way to get to word in line using 'f'
+Plug 'scrooloose/nerdtree'        " File explorer
+Plug 'ryanoasis/vim-devicons'     " Nice icons for nerdtree
+" Nice to haves
+Plug 'alvan/vim-closetag'         " Autoclose HTML tags
+Plug 'dhruvasagar/vim-table-mode' " Make nice tables in vim
+Plug 'inside/vim-search-pulse'    " Highlights line when press enter after search
+Plug 'tpope/vim-commentary'       " Comments out blocks of text for nearly every language
+" IDE
+Plug 'sbdchd/neoformat'           " Formatting
+Plug 'neoclide/coc.nvim', {'branch':'release'} " Conquerer of Completion
+Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for running rocaf
+Plug 'majutsushi/tagbar'          " Show functions in file using ctags
+" STYLING
+Plug 'Yggdroot/indentline'        " Show indents
+Plug 'morhetz/gruvbox'            " Gruvbox theme
+Plug 'vim-airline/vim-airline'    " Give 'toolbar'  on the bottom
+Plug 'vim-airline/vim-airline-themes' "themes
 
 call plug#end()
 
 "Visuals
-"colorscheme NeoSolarized
 autocmd vimenter * ++nested colorscheme gruvbox
 set termguicolors
 
 "Standard mappings
 let mapleader =" "
-nmap <leader>g :Goyo 120<CR>
 nnoremap <leader>w :w<CR>
 nmap <C-i> O<Esc>
 nmap <CR> o<Esc>
@@ -68,6 +66,7 @@ nnoremap <leader>x z=1<CR><CR>
 let g:vim_json_syntax_conceal = 0
 let g:vim_markdown_conceal = 0
 let g:vim_markdown_conceal_code_blocks = 0
+" ==========================
 
 
 "layout 
@@ -75,11 +74,14 @@ nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 nnoremap <leader>t :vs <CR> :term <CR>i
 autocmd TermOpen * setlocal nonumber "remove numbers for terminal
+
+" Easier to jump between splits
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
+" Format file
 nnoremap <leader>f :Neoformat<CR>
 
 "Nerdtree
@@ -90,8 +92,8 @@ nnoremap <C-f> :Files .<CR>
 nnoremap <C-g> :Rg<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <C-t> :Tags<CR>
-nnoremap <F5> :UndotreeToggle<cr>
 nnoremap <F8> :TagbarToggle<cr>
+let g:fzf_history_dir = '~/.local/share/fzf-history'
 
 
 "Some standards
@@ -105,7 +107,7 @@ set shiftwidth=4
 inoremap jk <esc>
 tnoremap jk <C-\><C-n>
 
-"No idea what these do lmao
+"Dont remember idea what these do lmao
 set laststatus=2
 set noshowmode
 set showmatch
@@ -123,7 +125,10 @@ imap \[\[ \[\]<esc>i
 imap {{ {}<esc>i
 imap $$ $$<esc>i
 
+" Set char split between panes
 set fillchars+=vert:│
+
+" Remove highlighting after a search (so annoying)
 nnoremap <leader>h :nohls<CR> 
 
 " Customize fzf colors to match your color scheme
@@ -142,36 +147,27 @@ let g:fzf_colors =
   \ 'spinner': ['fg', 'Label'],
   \ 'header':  ['fg', 'Comment'] }
 
-" Enable per-command history.
-" CTRL-N and CTRL-P will be automatically bound to next-history and
-" previous-history instead of down and up. If you don't like the change,
-" explicitly bind the keys to down and up in your $FZF_DEFAULT_OPTS.
-let g:fzf_history_dir = '~/.local/share/fzf-history'
-
-"resizing windows
+" resizing windows
 nnoremap ø :vertical resize +10<CR>
 nnoremap æ :vertical resize -10<CR>
 nnoremap å :resize -10<CR>
 nnoremap Å :resize +10<CR>
-nnoremap <leader>o :call Open_pdf()<CR>
 
-"Prettier
-"command! -nargs=0 Prettier :CocCommand prettier.formatFile
+" Run Rocaf
 nmap <C-p> :w <CR> :! rocaf %<CR>
 nmap <C-o> :w <CR>:AsyncRun -raw rocaf %<CR>
-nmap <leader>c :! 
-nmap <leader>n :bd <CR>
 
-" Ale settings
-highlight ALEWarning ctermbg=DarkMagenta
-nmap <C-a> :ALEDetail<CR>
+" Run shell commands
+nmap <leader>c :!
 
 " Airline config
 let g:airline_powerline_fonts = 1
 let g:airline_theme='zenburn'
 
 
-if !exists('*Open_pdf')
+" Open pdf with same filename but with pdf extension
+nnoremap <leader>o :call Open_pdf()<CR>
+if !exists('*Open_pdf') 
     function Open_pdf()
         execute "!pdf " . expand('%:t:r') . ".pdf"
     endfunction
