@@ -5,7 +5,7 @@ use warnings;
 ##TODO Make single function that retrives path and name from dictionary
 
 # List with config that recides in home folder
-my @home_conf = qw(.tmux.conf .vimrc .zshrc);
+my @home_conf = qw(.tmux.conf .vimrc .zshrc .gitconfig);
 foreach my $file (@home_conf){
     if( `test -f ~/dotfiles/$file`){
         my $out = `ln -sf ~/dotfiles/$file ~/`;
