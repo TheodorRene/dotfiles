@@ -57,6 +57,7 @@ alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
 
 # Add completion to custom pdf command
 zstyle ':completion:*:*:pdf:*' file-patterns '*.pdf'
+zstyle ':completion:*:*:(nvim|vim):*' ignored-patterns '*.pdf'
 
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
