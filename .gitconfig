@@ -3,11 +3,14 @@
 	name = Theodor René Carlsen
 [gui]
 	encoding = utf-8
+[init]
+	defaultBranch = main
 [core]
 	quotepath = off
 	autocrlf = input
 [alias]
 	co = checkout
+	st = status
 [filesystem "N/A|14.0.1|tmpfs"]
 	timestampResolution = 9000 nanoseconds
 	minRacyThreshold = 12860 microseconds
