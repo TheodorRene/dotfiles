@@ -11,6 +11,8 @@
 [alias]
 	co = checkout
 	st = status
+	c = commit -a
+    am = commit --ammend --no-edit
 [filesystem "N/A|14.0.1|tmpfs"]
 	timestampResolution = 9000 nanoseconds
 	minRacyThreshold = 12860 microseconds

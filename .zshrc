@@ -45,12 +45,15 @@ alias dir="ls -d */"
 alias ports="sudo lsof -i -P -n | grep LISTEN"
 alias py="python"
 alias sys="systemctl"
+
+# Pacman specific
 alias pacupgrade="sudo pacman -Syyu"
 alias pacsearch="sudo pacman -Ss"
 alias pacinstall="sudo pacman -S"
+alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
+
 alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 alias dc="cd"
-alias cp="cp -n"
 alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -62,10 +65,12 @@ zstyle ':completion:*:*:(nvim|vim):*' ignored-patterns '*.pdf'
 export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
 
+# Betterman tm
 man(){
     command man $1 || $_ --help
 }
 
+# This doesnt work all the time
 wifi_pass(){
     sudo grep -oP '^psk=\K\w+' /etc/NetworkManager/system-connections/$(nmcli -t -f name connection show --active | head -n1).nmconnection
 }
