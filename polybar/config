@@ -57,7 +57,7 @@ font-2 = siji:pixelsize=10;1
 
 modules-left = i3 scratchpad
 modules-center =  spotify
-modules-right = filesystem pulseaudio memory cpu wlan eth battery date powermenu
+modules-right = filesystem pulseaudio memory cpu wlan eth battery date powermenu temperature
 
 tray-position = right
 tray-padding = 2
@@ -362,15 +362,16 @@ animation-discharging-framerate = 750
 
 [module/temperature]
 type = internal/temperature
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon2/temp1_input
 thermal-zone = 0
-warn-temperature = 60
+warn-temperature = 70
 
 format = <ramp> <label>
 format-underline = #f50a4d
 format-warn = <ramp> <label-warn>
 format-warn-underline = ${self.format-underline}
 
-label = %temperature-c%
+label = CPU %temperature-c%
 label-warn = %temperature-c%
 label-warn-foreground = ${colors.secondary}
 
