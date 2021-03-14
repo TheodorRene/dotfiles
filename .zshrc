@@ -9,6 +9,12 @@ path+=/var/lib/snapd/snap/bin
 ZSH_THEME2="~/dotfiles/theodorc.zsh-theme"
 ZSH_THEME="theodorc"
 
+# If you want to do machine specific config
+[[ $HOST == "abba" ]] && export MACHINE="desktop"
+[[ $HOST == "disco" ]] && export MACHINE="spectre"
+! [[ -v MACHINE ]] && export MACHINE="fjerde"
+
+
 #Plugins
 plugins=(
     git
@@ -55,6 +61,8 @@ alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
 alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 alias dc="cd"
 alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
+alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
+alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -80,3 +88,4 @@ export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_mod
 
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+source /usr/share/nvm/init-nvm.sh
