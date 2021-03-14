@@ -88,7 +88,7 @@ nnoremap <leader>f :Neoformat<CR>
 nmap <C-n> :NERDTreeToggle<CR>
 
 "FZF
-nnoremap <C-f> :Files .<CR>
+nnoremap <C-f> :GitFiles .<CR>
 nnoremap <C-g> :Rg<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <C-t> :Tags<CR>
