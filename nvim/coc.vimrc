@@ -30,6 +30,6 @@ endfunction
 
 command! -nargs=0 Format :call CocAction('format')
 
-"folding
+"Format
 nnoremap <leader>f :Format<CR>
 

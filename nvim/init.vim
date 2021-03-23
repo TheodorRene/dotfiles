@@ -9,6 +9,7 @@ filetype plugin indent on
 set encoding=UTF-8
 set mouse=a                       " Use mouse
 set splitbelow                    " Set default split
+set clipboard=unnamedplus
 
 call plug#begin()
 
@@ -47,7 +48,7 @@ autocmd vimenter * ++nested colorscheme gruvbox
 set termguicolors
 
 "Standard mappings
-let mapleader =" "
+let mapleader =" " 
 nnoremap <leader>w :w<CR>
 nmap <C-i> O<Esc>
 nmap <CR> o<Esc>
@@ -153,7 +154,7 @@ nnoremap æ :vertical resize -10<CR>
 nnoremap å :resize -10<CR>
 nnoremap Å :resize +10<CR>
 
-" Run Rocaf
+" Run Rocaf https://github.com/TheodorRene/Scripts/blob/master/rocaf
 nmap <C-p> :w <CR> :! rocaf %<CR>
 nmap <C-o> :w <CR>:AsyncRun -raw rocaf %<CR>
 
@@ -166,6 +167,7 @@ let g:airline_theme='zenburn'
 
 
 " Open pdf with same filename but with pdf extension
+" Mostly used with markdown files
 nnoremap <leader>o :call Open_pdf()<CR>
 if !exists('*Open_pdf') 
     function Open_pdf()
