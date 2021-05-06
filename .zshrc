@@ -1,9 +1,9 @@
-
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-path+=$HOME/bin
 path+=$HOME/.local/bin
 path+=/var/lib/snapd/snap/bin
+
+export MANPAGER='nvim +Man!'
 
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME2="~/dotfiles/theodorc.zsh-theme"
@@ -31,9 +31,10 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 alias takeover="tmux detach -a"
+alias ls="lsd"
 alias lr="ls -ltrh"
 alias cass="mosh cassarossa.samfundet.no"
-alias shut="sudo shutdown now"
+alias shut="shutdown now"
 alias clip="xclip -selection c"
 alias svenv="source venv/bin/activate"
 alias dsize="du -h --max-depth=1 | sort -h"
@@ -82,7 +83,7 @@ wifi_pass(){
     sudo grep -oP '^psk=\K\w+' /etc/NetworkManager/system-connections/$(nmcli -t -f name connection show --active | head -n1).nmconnection
 }
 
-export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin"
+export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin:$HOME/bin"
 [ -f "/home/theodorc/.ghcup/env" ] && source "/home/theodorc/.ghcup/env" # ghcup-env
 
 source /usr/share/nvm/init-nvm.sh
