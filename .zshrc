@@ -50,6 +50,7 @@ alias ports="sudo lsof -i -P -n | grep LISTEN"
 alias py="python"
 alias sys="systemctl"
 alias locate="plocate"
+alias lsblk="lsblk -f"
 
 # Pacman specific
 alias pacupgrade="sudo pacman -Syyu"
