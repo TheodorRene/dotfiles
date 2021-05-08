@@ -51,6 +51,7 @@ alias py="python"
 alias sys="systemctl"
 alias locate="plocate"
 alias lsblk="lsblk -f"
+alias rg="rg -i"
 
 # Pacman specific
 alias pacupgrade="sudo pacman -Syyu"
@@ -76,6 +77,15 @@ export VISUAL=/usr/bin/nvim
 # Betterman tm
 man(){
     command man $1 || $_ --help
+}
+
+#make grep work like rg and ag
+tgrep(){
+    command grep -RIin --color=auto --exclude-dir={.git,venv,node_modules} $1 *
+}
+
+pdfgrep(){
+    command pdfgrep -i $1 *
 }
 
 # This doesnt work all the time
