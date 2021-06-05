@@ -40,6 +40,7 @@ Plug 'Yggdroot/indentline'        " Show indents
 Plug 'morhetz/gruvbox'            " Gruvbox theme
 Plug 'vim-airline/vim-airline'    " Give 'toolbar'  on the bottom
 Plug 'vim-airline/vim-airline-themes' "themes
+Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
 
 call plug#end()
 
@@ -55,14 +56,14 @@ nmap <CR> o<Esc>
 
 " === Spellcheck commands ===
 let g:markdown_enable_spell_checking = '0'
-autocmd BufRead,BufNewFile   *.md setlocal spell spelllang=nb,en_us
-au BufRead,BufNewFile *.md setlocal textwidth=80 
-"show list of recommendation
-nnoremap <leader>z z=
-"add new word
-nmap <leader>a zg
-"take first word from recommendation
-nnoremap <leader>x z=1<CR><CR>
+"autocmd BufRead,BufNewFile   *.md setlocal spell spelllang=nb,en_us
+"au BufRead,BufNewFile *.md setlocal textwidth=80 
+""show list of recommendation
+"nnoremap <leader>z z=
+""add new word
+"nmap <leader>a zg
+""take first word from recommendation
+"nnoremap <leader>x z=1<CR><CR>
 " Do not conceal syntax
 let g:vim_json_syntax_conceal = 0
 let g:vim_markdown_conceal = 0
