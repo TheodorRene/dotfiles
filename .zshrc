@@ -57,6 +57,7 @@ alias rg="rg -i"
 alias pacupgrade="sudo pacman -Syyu"
 alias pacsearch="sudo pacman -Ss"
 alias pacinstall="sudo pacman -S"
+alias pacremove="sudo pacman -R"
 alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
 alias ipp="curl ifconfig.me"
 alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
