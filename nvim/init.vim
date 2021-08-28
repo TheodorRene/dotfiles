@@ -37,7 +37,7 @@ Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for ru
 Plug 'majutsushi/tagbar'          " Show functions in file using ctags
 " STYLING
 Plug 'Yggdroot/indentline'        " Show indents
-Plug 'morhetz/gruvbox'            " Gruvbox theme
+"Plug 'morhetz/gruvbox'            " Gruvbox theme
 Plug 'vim-airline/vim-airline'    " Give 'toolbar'  on the bottom
 Plug 'vim-airline/vim-airline-themes' "themes
 Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
@@ -45,8 +45,9 @@ Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mu
 call plug#end()
 
 "Visuals
-autocmd vimenter * ++nested colorscheme gruvbox
+"autocmd vimenter * ++nested colorscheme gruvbox
 set termguicolors
+colorscheme slate
 
 "Standard mappings
 let mapleader =" " 
@@ -190,3 +191,4 @@ let g:tagbar_type_elm = {
       \}
 
 source $HOME/.config/nvim/config/coc.vimrc
+let g:coc_node_path = '/home/theodorc/.nvm/versions/node/v15.11.0/bin/node'
