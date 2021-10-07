@@ -31,7 +31,7 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 alias takeover="tmux detach -a"
-alias ls="lsd"
+[[ $HOST == "abba" ]] && alias ls="lsd"
 alias lr="ls -ltrh"
 alias cass="mosh cassarossa.samfundet.no"
 alias shut="shutdown now"
@@ -52,18 +52,24 @@ alias sys="systemctl"
 alias locate="plocate"
 alias lsblk="lsblk -f"
 alias rg="rg -i"
+alias dif03="ssh -fN -L 7474:localhost:7474 -L 7687:localhost:7687 dif03.idi.ntnu.no"
 
 # Pacman specific
 alias pacupgrade="sudo pacman -Syyu"
 alias pacsearch="sudo pacman -Ss"
 alias pacinstall="sudo pacman -S"
 alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
+
+# Very specific 
 alias ipp="curl ifconfig.me"
 alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
-alias dc="cd"
 alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
 alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
+
+# Missspellings
+alias dc="cd"
+alias xdd="xxd"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -75,8 +81,9 @@ export EDITOR=/usr/bin/nvim
 export VISUAL=/usr/bin/nvim
 
 # Betterman tm
+# If there is no man page, try --help, if no help try just running with no arguments
 man(){
-    command man $1 || $_ --help
+    command man $1 || $1 --help || $1 
 }
 
 #make grep work like rg and ag
@@ -99,3 +106,6 @@ export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_mod
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 source /usr/share/nvm/init-nvm.sh
+alias unfuckHLS="stack build --fast --test"
+alias woman="man"
+. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'

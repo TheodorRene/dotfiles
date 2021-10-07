@@ -25,7 +25,7 @@ exec --no-startup-id compton -f
 exec setxkbmap -layout no
 exec_always --no-startup-id killall polybar && polybar example || polybar example  
 exec xscreensaver
-
+exec_always --no-startup-id autotiling
 
 
 

@@ -37,15 +37,18 @@ Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for ru
 Plug 'majutsushi/tagbar'          " Show functions in file using ctags
 " STYLING
 Plug 'Yggdroot/indentline'        " Show indents
-Plug 'morhetz/gruvbox'            " Gruvbox theme
+"Plug 'morhetz/gruvbox'            " Gruvbox theme
 Plug 'vim-airline/vim-airline'    " Give 'toolbar'  on the bottom
 Plug 'vim-airline/vim-airline-themes' "themes
 Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
 
 call plug#end()
 
+"autocmd BufWritePost *.dot !rocaf %
+autocmd BufWritePost *.dot AsyncRun -raw rocaf %
+
 "Visuals
-autocmd vimenter * ++nested colorscheme gruvbox
+"autocmd vimenter * ++nested colorscheme gruvbox
 set termguicolors
 
 "Standard mappings
@@ -173,6 +176,13 @@ nnoremap <leader>o :call Open_pdf()<CR>
 if !exists('*Open_pdf') 
     function Open_pdf()
         execute "!pdf " . expand('%:t:r') . ".pdf"
+    endfunction
+endif
+
+nnoremap <leader>u :call Open_dot()<CR>
+if !exists('*Open_dot') 
+    function Open_dot()
+        execute "!img " . expand('%:t:r') . ".png"
     endfunction
 endif
 
