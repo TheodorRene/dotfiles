@@ -14,8 +14,8 @@ set clipboard=unnamedplus
 call plug#begin()
 
 " Syntax highlighting
-Plug 'sheerun/vim-polyglot'       " Syntax for most languages
-Plug 'neovimhaskell/haskell-vim'  " Syntax for haskell
+"Plug 'sheerun/vim-polyglot'       " Syntax for most languages
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 " Git
 Plug 'tpope/vim-fugitive'         " Easier to do git operations in vim
 " Navigation
@@ -27,17 +27,15 @@ Plug 'scrooloose/nerdtree'        " File explorer
 Plug 'ryanoasis/vim-devicons'     " Nice icons for nerdtree
 " Nice to haves
 Plug 'alvan/vim-closetag'         " Autoclose HTML tags
-Plug 'dhruvasagar/vim-table-mode' " Make nice tables in vim
 Plug 'inside/vim-search-pulse'    " Highlights line when press enter after search
 Plug 'tpope/vim-commentary'       " Comments out blocks of text for nearly every language
 " IDE
-Plug 'sbdchd/neoformat'           " Formatting
-Plug 'neoclide/coc.nvim', {'branch':'release'} " Conquerer of Completion
+Plug 'neovim/nvim-lspconfig'
+Plug 'Procrat/oz.vim'
 Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for running rocaf
 Plug 'majutsushi/tagbar'          " Show functions in file using ctags
 " STYLING
 Plug 'Yggdroot/indentline'        " Show indents
-"Plug 'morhetz/gruvbox'            " Gruvbox theme
 Plug 'vim-airline/vim-airline'    " Give 'toolbar'  on the bottom
 Plug 'vim-airline/vim-airline-themes' "themes
 Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
@@ -45,9 +43,8 @@ Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mu
 call plug#end()
 
 "Visuals
-"autocmd vimenter * ++nested colorscheme gruvbox
 set termguicolors
-colorscheme slate
+
 
 "Standard mappings
 let mapleader =" " 
@@ -84,8 +81,6 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" Format file
-nnoremap <leader>f :Neoformat<CR>
 
 "Nerdtree
 nmap <C-n> :NERDTreeToggle<CR>
@@ -165,7 +160,7 @@ nmap <leader>c :!
 
 " Airline config
 let g:airline_powerline_fonts = 1
-let g:airline_theme='zenburn'
+"let g:airline_theme='zenburn'
 
 
 " Open pdf with same filename but with pdf extension
@@ -190,5 +185,66 @@ let g:tagbar_type_elm = {
       \ ]
       \}
 
-source $HOME/.config/nvim/config/coc.vimrc
-let g:coc_node_path = '/home/theodorc/.nvm/versions/node/v15.11.0/bin/node'
+""Lua
+lua << EOF
+require'lspconfig'.hls.setup{}
+local nvim_lsp = require('lspconfig')
+nvim_lsp.pyright.setup{}
+
+-- Use an on_attach function to only map the following keys
+-- after the language server attaches to the current buffer
+local on_attach = function(client, bufnr)
+  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+  -- Enable completion triggered by <c-x><c-o>
+  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+  -- Mappings.
+  local opts = { noremap=true, silent=true }
+
+  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+
+end
+
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = { 'hls', 'pyright' }
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup {
+    on_attach = on_attach,
+    flags = {
+      debounce_text_changes = 150,
+    }
+  }
+end
+
+-- Treesitter
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+
+"source $HOME/.config/nvim/config/coc.vimrc
+"let g:coc_node_path = '/home/theodorc/.nvm/versions/node/v15.11.0/bin/node'

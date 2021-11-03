@@ -25,7 +25,7 @@ border_radius 3
 
 #Startup
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
-exec --no-startup-id compton -f
+exec --no-startup-id picom -f --backend glx --vsync
 exec setxkbmap -layout no
 exec_always xbanish
 

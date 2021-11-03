@@ -17,6 +17,7 @@
     pl = pull
     pf = push --force-with-lease
     prfix = !git commit -a --amend --no-edit && git push --force-with-lease
+    pb = !git push --set-upstream origin HEAD
 [filesystem "N/A|14.0.1|tmpfs"]
 	timestampResolution = 9000 nanoseconds
 	minRacyThreshold = 12860 microseconds
