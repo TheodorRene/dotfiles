@@ -39,6 +39,7 @@ Plug 'Yggdroot/indentline'        " Show indents
 Plug 'vim-airline/vim-airline'    " Give 'toolbar'  on the bottom
 Plug 'vim-airline/vim-airline-themes' "themes
 Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
+Plug 'Olical/conjure'             " Clojure
 
 call plug#end()
 
@@ -48,6 +49,7 @@ set termguicolors
 
 "Standard mappings
 let mapleader =" " 
+let maplocalleader =" "
 nnoremap <leader>w :w<CR>
 nmap <C-i> O<Esc>
 nmap <CR> o<Esc>
