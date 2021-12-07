@@ -14,37 +14,36 @@ set clipboard=unnamedplus
 call plug#begin()
 
 " Syntax highlighting
-"Plug 'sheerun/vim-polyglot'       " Syntax for most languages
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 " Git
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 Plug 'tpope/vim-fugitive'         " Easier to do git operations in vim
 " Navigation
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'           " Fuzzy finder
-Plug 'justinmk/vim-sneak'         " 2-gram seach basically
-Plug 'unblevable/quick-scope'     " Highlights fastest way to get to word in line using 'f'
-Plug 'scrooloose/nerdtree'        " File explorer
-Plug 'ryanoasis/vim-devicons'     " Nice icons for nerdtree
+Plug 'nvim-lua/plenary.nvim'      " Library needed for telescope
+Plug 'nvim-telescope/telescope.nvim' " Seach inside file, files and filenames
+Plug 'ggandor/lightspeed.nvim'    " easy navigation
 " Nice to haves
-Plug 'alvan/vim-closetag'         " Autoclose HTML tags
 Plug 'inside/vim-search-pulse'    " Highlights line when press enter after search
 Plug 'tpope/vim-commentary'       " Comments out blocks of text for nearly every language
 " IDE
-Plug 'neovim/nvim-lspconfig'
-Plug 'Procrat/oz.vim'
+Plug 'neovim/nvim-lspconfig'      "LSP
+Plug 'hrsh7th/nvim-cmp'           " Autocomplete engine
+Plug 'hrsh7th/cmp-nvim-lsp'       " Autocomplete source
 Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for running rocaf
 Plug 'majutsushi/tagbar'          " Show functions in file using ctags
 " STYLING
 Plug 'Yggdroot/indentline'        " Show indents
-Plug 'vim-airline/vim-airline'    " Give 'toolbar'  on the bottom
-Plug 'vim-airline/vim-airline-themes' "themes
+Plug 'nvim-lualine/lualine.nvim'   " statusline
+Plug 'kyazdani42/nvim-web-devicons' " statusline icons
 Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
 Plug 'Olical/conjure'             " Clojure
+Plug 'p00f/nvim-ts-rainbow'        "rainbow parens
+Plug 'tpope/vim-surround'         " surround
 
 call plug#end()
 
 "Visuals
 set termguicolors
+highlight Pmenu guibg=black
 
 
 "Standard mappings
@@ -54,16 +53,6 @@ nnoremap <leader>w :w<CR>
 nmap <C-i> O<Esc>
 nmap <CR> o<Esc>
 
-" === Spellcheck commands ===
-let g:markdown_enable_spell_checking = '0'
-"autocmd BufRead,BufNewFile   *.md setlocal spell spelllang=nb,en_us
-"au BufRead,BufNewFile *.md setlocal textwidth=80 
-""show list of recommendation
-"nnoremap <leader>z z=
-""add new word
-"nmap <leader>a zg
-""take first word from recommendation
-"nnoremap <leader>x z=1<CR><CR>
 " Do not conceal syntax
 let g:vim_json_syntax_conceal = 0
 let g:vim_markdown_conceal = 0
@@ -85,15 +74,15 @@ nnoremap <C-l> <C-w>l
 
 
 "Nerdtree
-nmap <C-n> :NERDTreeToggle<CR>
+nmap <C-n> <cmd> Telescope file_browser <cr>
 
 "FZF
-nnoremap <C-f> :GitFiles .<CR>
-nnoremap <C-g> :Rg<CR>
-nnoremap <leader>b :Buffers<CR>
-nnoremap <C-t> :Tags<CR>
+nnoremap <C-s> <cmd> Telescope current_buffer_fuzzy_find <cr>
+nnoremap <C-f> <cmd>Telescope git_files<cr>
+nnoremap <C-g> <cmd>Telescope live_grep<cr>
+nnoremap <leader>b <cmd>Telescope buffers<cr>
+nnoremap <C-t> <cmd>Telescope tags<cr>
 nnoremap <F8> :TagbarToggle<cr>
-let g:fzf_history_dir = '~/.local/share/fzf-history'
 
 
 "Some standards
@@ -131,27 +120,18 @@ set fillchars+=vert:│
 " Remove highlighting after a search (so annoying)
 nnoremap <leader>h :nohls<CR> 
 
-" Customize fzf colors to match your color scheme
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'Normal'],
-  \ 'bg':      ['bg', 'Normal'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'Ignore'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
 
 " resizing windows
 nnoremap ø :vertical resize +10<CR>
 nnoremap æ :vertical resize -10<CR>
 nnoremap å :resize -10<CR>
 nnoremap Å :resize +10<CR>
+
+" Git 
+nnoremap <A-g> :Git 
+nnoremap <A-a> :Git add % <CR>
+nnoremap <A-s> :Git status <CR>
+nnoremap <A-d> :Git diff <CR>
 
 " Run Rocaf https://github.com/TheodorRene/Scripts/blob/master/rocaf
 nmap <C-p> :w <CR> :! rocaf %<CR>
@@ -162,7 +142,6 @@ nmap <leader>c :!
 
 " Airline config
 let g:airline_powerline_fonts = 1
-"let g:airline_theme='zenburn'
 
 
 " Open pdf with same filename but with pdf extension
@@ -174,24 +153,16 @@ if !exists('*Open_pdf')
     endfunction
 endif
 
-let g:tagbar_type_elm = {
-      \ 'kinds' : [
-      \ 'f:function:0:0',
-      \ 'm:modules:0:0',
-      \ 'i:imports:1:0',
-      \ 't:types:1:0',
-      \ 'a:type aliases:0:0',
-      \ 'c:type constructors:0:0',
-      \ 'p:ports:0:0',
-      \ 's:functions:0:0',
-      \ ]
-      \}
-
 ""Lua
 lua << EOF
 require'lspconfig'.hls.setup{}
+require'lualine'.setup()
 local nvim_lsp = require('lspconfig')
 nvim_lsp.pyright.setup{}
+nvim_lsp.clojure_lsp.setup{}
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
@@ -228,24 +199,69 @@ end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'hls', 'pyright' }
+local servers = { 'hls', 'pyright','clojure_lsp' }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
+    capabilities = capabilities,
     flags = {
       debounce_text_changes = 150,
     }
   }
 end
 
--- Treesitter
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
-  highlight = {
-    enable = true,              -- false will disable the whole extension
-    additional_vim_regex_highlighting = false,
+local cmp = require 'cmp'
+-- Set completeopt to have a better completion experience
+vim.o.completeopt = 'menuone,noselect'
+cmp.setup {
+  mapping = {
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<C-e>'] = cmp.mapping.close(),
+    ['<CR>'] = cmp.mapping.confirm {
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true,
+    },
+    ['<Tab>'] = function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      else
+        fallback()
+      end
+    end,
+    ['<S-Tab>'] = function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      else
+        fallback()
+      end
+    end,
+  },
+  sources = {
+    { name = 'nvim_lsp' },
   },
 }
+
+-- Treesitter
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    additional_vim_regex_highlighting = true,
+  },
+  rainbow = {
+    enable = true,
+    -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
+    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+    max_file_lines = nil, -- Do not enable for files with more than n lines, int
+    -- colors = {}, -- table of hex strings
+    -- termcolors = {} -- table of colour name strings
+  },
+}
+
 EOF
 
 "source $HOME/.config/nvim/config/coc.vimrc
