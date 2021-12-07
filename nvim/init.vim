@@ -13,54 +13,56 @@ set clipboard=unnamedplus
 
 call plug#begin()
 
-" Syntax highlighting
-" Git
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " Syntax highlighting
 Plug 'tpope/vim-fugitive'         " Easier to do git operations in vim
 " Navigation
 Plug 'nvim-lua/plenary.nvim'      " Library needed for telescope
-Plug 'nvim-telescope/telescope.nvim' " Seach inside file, files and filenames
-Plug 'ggandor/lightspeed.nvim'    " easy navigation
+Plug 'nvim-telescope/telescope.nvim' " Seach inside file, files and filenames etc
+Plug 'ggandor/lightspeed.nvim'    " easy navigation on visible lines
+"
 " Nice to haves
-Plug 'inside/vim-search-pulse'    " Highlights line when press enter after search
+Plug 'inside/vim-search-pulse'    " Highlights line after search is finished
 Plug 'tpope/vim-commentary'       " Comments out blocks of text for nearly every language
+"
 " IDE
-Plug 'neovim/nvim-lspconfig'      "LSP
+Plug 'neovim/nvim-lspconfig'      " LSP
 Plug 'hrsh7th/nvim-cmp'           " Autocomplete engine
 Plug 'hrsh7th/cmp-nvim-lsp'       " Autocomplete source
-Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for running rocaf
 Plug 'majutsushi/tagbar'          " Show functions in file using ctags
+"
+Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for running rocaf
 " STYLING
 Plug 'Yggdroot/indentline'        " Show indents
-Plug 'nvim-lualine/lualine.nvim'   " statusline
+Plug 'nvim-lualine/lualine.nvim'    " statusline
 Plug 'kyazdani42/nvim-web-devicons' " statusline icons
 Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
-Plug 'Olical/conjure'             " Clojure
-Plug 'p00f/nvim-ts-rainbow'        "rainbow parens
+Plug 'Olical/conjure'             " Clojure plugin
+Plug 'p00f/nvim-ts-rainbow'       " Rainbow parens
 Plug 'tpope/vim-surround'         " surround
 
 call plug#end()
 
 "Visuals
 set termguicolors
+"The overlay window has some weird colors
 highlight Pmenu guibg=black
+"Show tabs
+set list lcs=tab:\|\
 
 
-"Standard mappings
-let mapleader =" " 
-let maplocalleader =" "
+"Standard mappings for leader key
+let mapleader = " " 
+let maplocalleader = " "
+
+"Save buffer with space+w
 nnoremap <leader>w :w<CR>
 nmap <C-i> O<Esc>
-nmap <CR> o<Esc>
 
-" Do not conceal syntax
-let g:vim_json_syntax_conceal = 0
-let g:vim_markdown_conceal = 0
-let g:vim_markdown_conceal_code_blocks = 0
-" ==========================
-
+" Insert newlines in normal mode
+nmap <CR> o<Esc> 
 
 "layout 
+"Will possible be changed wit
 nnoremap <leader>v :split . <CR>
 nnoremap <leader>s :vs . <CR>
 nnoremap <leader>t :vs <CR> :term <CR>i
@@ -73,15 +75,14 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 
-"Nerdtree
-nmap <C-n> <cmd> Telescope file_browser <cr>
-
-"FZF
+" Telescope
+nnoremap <C-n> <cmd> Telescope file_browser <cr>
 nnoremap <C-s> <cmd> Telescope current_buffer_fuzzy_find <cr>
-nnoremap <C-f> <cmd>Telescope git_files<cr>
-nnoremap <C-g> <cmd>Telescope live_grep<cr>
-nnoremap <leader>b <cmd>Telescope buffers<cr>
-nnoremap <C-t> <cmd>Telescope tags<cr>
+nnoremap <C-f> <cmd> Telescope git_files<cr>
+nnoremap <C-g> <cmd> Telescope live_grep<cr>
+nnoremap <leader>b <cmd> Telescope buffers<cr>
+nnoremap <C-t> <cmd> Telescope tags<cr>
+
 nnoremap <F8> :TagbarToggle<cr>
 
 
@@ -102,6 +103,7 @@ set noshowmode
 set showmatch
 set ignorecase
 set incsearch
+set autoread
 hi Search ctermbg=LightYellow
 hi Search ctermfg=Red
 
@@ -155,9 +157,10 @@ endif
 
 ""Lua
 lua << EOF
-require'lspconfig'.hls.setup{}
 require'lualine'.setup()
+
 local nvim_lsp = require('lspconfig')
+nvim_lsp.hls.setup{}
 nvim_lsp.pyright.setup{}
 nvim_lsp.clojure_lsp.setup{}
 
@@ -249,7 +252,7 @@ cmp.setup {
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   highlight = {
-    enable = true,              -- false will disable the whole extension
+    enable = true,  
     additional_vim_regex_highlighting = true,
   },
   rainbow = {
@@ -257,12 +260,8 @@ require'nvim-treesitter.configs'.setup {
     -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
     extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
     max_file_lines = nil, -- Do not enable for files with more than n lines, int
-    -- colors = {}, -- table of hex strings
-    -- termcolors = {} -- table of colour name strings
   },
 }
 
 EOF
 
-"source $HOME/.config/nvim/config/coc.vimrc
-"let g:coc_node_path = '/home/theodorc/.nvm/versions/node/v15.11.0/bin/node'
