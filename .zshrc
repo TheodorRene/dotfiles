@@ -30,6 +30,7 @@ plugins=(
     sudo
     docker
     stack
+    autojump
 )
 
 source $ZSH/oh-my-zsh.sh
@@ -69,12 +70,15 @@ alias pacsearch="sudo pacman -Ss"
 alias pacinstall="sudo pacman -S"
 alias pacremove="sudo pacman -R"
 alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
+
 alias ipp="curl -w "\n" ifconfig.me"
 alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 alias dc="cd"
 alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
 alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
+alias work="sleep $((60*20)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
+alias break="sleep $((60*5)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -111,6 +115,12 @@ mnt(){
 umnt(){
     sudo umount /mnt/usb
 }
+
+pass() {
+    bw get password $1 | xclip -selection c
+    echo "Password copied"
+}
+
 # Conditionally open less based on size of input
 # I like having small git diffs not in a pager
 export LESS="-RFX"
@@ -120,5 +130,5 @@ export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_mod
 
 # export NVM_DIR="$HOME/.nvm"
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-source /usr/share/nvm/init-nvm.sh
+#source /usr/share/nvm/init-nvm.sh
 #. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
