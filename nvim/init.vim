@@ -19,10 +19,12 @@ Plug 'tpope/vim-fugitive'         " Easier to do git operations in vim
 Plug 'nvim-lua/plenary.nvim'      " Library needed for telescope
 Plug 'nvim-telescope/telescope.nvim' " Seach inside file, files and filenames etc
 Plug 'ggandor/lightspeed.nvim'    " easy navigation on visible lines
+"Plug 'nvim-treesitter/playground' " treesitter visualisation
 "
 " Nice to haves
 Plug 'inside/vim-search-pulse'    " Highlights line after search is finished
 Plug 'tpope/vim-commentary'       " Comments out blocks of text for nearly every language
+"Plug 'rinx/nvim-minimap'         " Minimap
 "
 " IDE
 Plug 'neovim/nvim-lspconfig'      " LSP
