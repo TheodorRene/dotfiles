@@ -36,7 +36,6 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 alias takeover="tmux detach -a"
-alias ls="lsd"
 alias lr="ls -ltrh"
 alias cass="mosh cassarossa.samfundet.no"
 alias shut="shutdown now"
@@ -132,3 +131,4 @@ export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_mod
 # [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 #source /usr/share/nvm/init-nvm.sh
 #. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+if [ -e /home/theodorc/.nix-profile/etc/profile.d/nix.sh ]; then . /home/theodorc/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
