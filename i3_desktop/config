@@ -2,7 +2,7 @@
 
 set $mod Mod4 
 set $browser firefox
-set $terminal gnome-terminal
+set $terminal konsole
 set $lock i3lock-fancy
 
 #Gaps Settings
