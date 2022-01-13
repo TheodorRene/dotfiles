@@ -116,8 +116,7 @@ umnt(){
 }
 
 pass() {
-    bw get password $1 | xclip -selection c
-    echo "Password copied"
+    bw get password $1 | xclip -selection c && "Password copied"
 }
 
 # Conditionally open less based on size of input
