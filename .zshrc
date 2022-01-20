@@ -31,6 +31,7 @@ plugins=(
     docker
     stack
     autojump
+    nix-shell
 )
 
 source $ZSH/oh-my-zsh.sh

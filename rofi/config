@@ -1,5 +1,5 @@
 rofi.combi-modi:    window,drun,ssh,run
-rofi.theme:         solarized
+#rofi.theme:         solarized
 rofi.font:          hack 10
 rofi.modi:          combi
-rofi.theme: /usr/share/rofi/themes/DarkBlue.rasi
+#@theme "/usr/share/rofi/themes/DarkBlue.rasi"
