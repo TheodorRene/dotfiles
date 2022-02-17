@@ -62,7 +62,10 @@ nuke_containers() {docker rm -f $(docker ps -a -q)}
 
 nuke_volumes() {docker volume rm $(docker volume ls -q)}
 
-nuke_images() {docker rmi $(docker images -aq)}
+nuke_images() {docker rmi $(docker images -aq) && echo "Images nuked"}
+
+nuke_everything() {nuke_containers && nuke_images && nuke_volumes && echo "Nuked everything"}
+
 
 # Pacman specific
 alias pacupgrade="sudo pacman -Syyu"
@@ -79,6 +82,7 @@ alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
 alias work="sleep $((60*20)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
 alias break="sleep $((60*5)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
+alias server="python -m http.server 8000"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
