@@ -21,45 +21,43 @@ mango(){
 
 #Plugins
 plugins=(
-    git
-    wd
-    catimg
-    last-working-dir
-    fzf
-    extract
-    sudo
-    docker
-    stack
     autojump
+    catimg
+    docker
+    extract
+    fzf
+    git
+    last-working-dir
     nix-shell
+    stack
+    sudo
+    wd
 )
 
 source $ZSH/oh-my-zsh.sh
 
-
-
-alias takeover="tmux detach -a"
-alias lr="ls -ltrh"
+alias bc="bc -lq"
 alias cass="mosh cassarossa.samfundet.no"
 alias cat="bat"
-alias shut="shutdown now"
 alias clip="xclip -selection c"
-alias svenv="source venv/bin/activate"
-alias dsize="du -h --max-depth=1 | sort -h"
-alias bc="bc -lq"
-alias sugit="sudo -E git"
-alias suvim="sudo -E vim"
-alias vim="nvim"
-alias vimnote="vim $(date +"%m_%d_%Y").md"
-alias lock="xscreensaver-command -lock"
-alias ukenr="date +%V"
 alias dir="ls -d */"
+alias dsize="du -h --max-depth=1 | sort -h"
+alias locate="plocate"
+alias lock="xscreensaver-command -lock"
+alias lr="ls -ltrh"
+alias lsblk="lsblk -f"
 alias ports="sudo lsof -i -P -n | grep LISTEN"
 alias py="python"
-alias sys="systemctl"
-alias locate="plocate"
-alias lsblk="lsblk -f"
 alias rg="rg -i"
+alias shut="shutdown now"
+alias sugit="sudo -E git"
+alias suvim="sudo -E vim"
+alias svenv="source venv/bin/activate"
+alias sys="systemctl"
+alias takeover="tmux detach -a"
+alias ukenr="date +%V"
+alias vim="nvim"
+alias vimnote="vim $(date +"%m_%d_%Y").md"
 
 nuke_containers() {docker rm -f $(docker ps -a -q)}
 
@@ -71,21 +69,22 @@ nuke_everything() {nuke_containers && nuke_images && nuke_volumes && echo "Nuked
 
 
 # Pacman specific
-alias pacupgrade="sudo pacman -Syyu"
-alias pacsearch="sudo pacman -Ss"
+alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
 alias pacinstall="sudo pacman -S"
 alias pacremove="sudo pacman -R"
-alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
+alias pacsearch="sudo pacman -Ss"
+alias pacupgrade="sudo pacman -Syyu"
 
-alias ipp="curl -w "\n" ifconfig.me"
-alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 alias dc="cd"
-alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
-alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
+alias ipp="curl -w "\n" ifconfig.me"
+alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
+alias server="python -m http.server 8000"
+alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
+alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
+
 alias work="sleep $((60*20)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
 alias break="sleep $((60*5)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
-alias server="python -m http.server 8000"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
