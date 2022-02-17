@@ -215,7 +215,7 @@ for _, lsp in ipairs(servers) do
 end
 
 nvim_lsp.clangd.setup{
-    cmd = { 'clangd-12' };
+    -- cmd = { 'clangd-12' };
     on_attach = on_attach,
     capabilities = capabilities,
     flags = {
@@ -260,7 +260,7 @@ cmp.setup {
 
 -- Treesitter
 require'nvim-treesitter.configs'.setup {
-  ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ensure_installed = "maintained", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   highlight = {
     enable = true,  
     additional_vim_regex_highlighting = true,
