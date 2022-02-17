@@ -16,9 +16,9 @@ call plug#begin()
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " Syntax highlighting
 Plug 'tpope/vim-fugitive'         " Easier to do git operations in vim
 " Navigation
+Plug 'ggandor/lightspeed.nvim'    " easy navigation on visible lines
 Plug 'nvim-lua/plenary.nvim'      " Library needed for telescope
 Plug 'nvim-telescope/telescope.nvim' " Seach inside file, files and filenames etc
-Plug 'ggandor/lightspeed.nvim'    " easy navigation on visible lines
 "Plug 'nvim-treesitter/playground' " treesitter visualisation
 "
 " Nice to haves
@@ -27,18 +27,18 @@ Plug 'tpope/vim-commentary'       " Comments out blocks of text for nearly every
 "Plug 'rinx/nvim-minimap'         " Minimap
 "
 " IDE
-Plug 'neovim/nvim-lspconfig'      " LSP
-Plug 'hrsh7th/nvim-cmp'           " Autocomplete engine
 Plug 'hrsh7th/cmp-nvim-lsp'       " Autocomplete source
+Plug 'hrsh7th/nvim-cmp'           " Autocomplete engine
 Plug 'majutsushi/tagbar'          " Show functions in file using ctags
+Plug 'neovim/nvim-lspconfig'      " LSP
 "
 Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for running rocaf
 " STYLING
-Plug 'Yggdroot/indentline'        " Show indents
-Plug 'nvim-lualine/lualine.nvim'    " statusline
-Plug 'kyazdani42/nvim-web-devicons' " statusline icons
-Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
 Plug 'Olical/conjure'             " Clojure plugin
+Plug 'TheodorRene/skriveleif'     " Check for spellingserrors in markdown and mutt
+Plug 'Yggdroot/indentline'        " Show indents
+Plug 'kyazdani42/nvim-web-devicons' " statusline icons
+Plug 'nvim-lualine/lualine.nvim'    " statusline
 Plug 'p00f/nvim-ts-rainbow'       " Rainbow parens
 Plug 'tpope/vim-surround'         " surround
 
