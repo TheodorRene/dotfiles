@@ -36,9 +36,12 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+
+
 alias takeover="tmux detach -a"
 alias lr="ls -ltrh"
 alias cass="mosh cassarossa.samfundet.no"
+alias cat="bat"
 alias shut="shutdown now"
 alias clip="xclip -selection c"
 alias svenv="source venv/bin/activate"
