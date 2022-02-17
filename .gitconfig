@@ -1,17 +1,18 @@
 [user]
-	email = theodor.rene@gmail.com
-	name = Theodor René Carlsen
+    email = theodor.rene@gmail.com
+    name = Theodor René Carlsen
 [gui]
-	encoding = utf-8
+    encoding = utf-8
 [init]
-	defaultBranch = main
+    defaultBranch = main
 [core]
-	quotepath = off
-	autocrlf = input
+    quotepath = off
+    autocrlf = input
+    pager = delta
 [alias]
-	co = checkout
-	st = status
-	c = commit -a
+    co = checkout
+    st = status
+    c = commit -a
     amend = commit --amend --no-edit
     p = push
     pl = pull
@@ -19,11 +20,17 @@
     prfix = !git commit -a --amend --no-edit && git push --force-with-lease
     pb = !git push --set-upstream origin HEAD
 [filesystem "N/A|14.0.1|tmpfs"]
-	timestampResolution = 9000 nanoseconds
-	minRacyThreshold = 12860 microseconds
+    timestampResolution = 9000 nanoseconds
+    minRacyThreshold = 12860 microseconds
 [pull]
-	rebase = true
+    rebase = true
 [rebase]
-	autoStash = true
+    autoStash = true
 [merge]
-	tool = nvimdiff
+    conflictstyle = diff3
+[delta]
+    navigate = true  # use n and N to move between diff sections
+[interactive]
+    diffFilter = delta --color-only
+[diff]
+    colorMoved = default
