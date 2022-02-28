@@ -29,8 +29,11 @@ Plug 'tpope/vim-commentary'       " Comments out blocks of text for nearly every
 " IDE
 Plug 'hrsh7th/cmp-nvim-lsp'       " Autocomplete source
 Plug 'hrsh7th/nvim-cmp'           " Autocomplete engine
+Plug 'hrsh7th/cmp-buffer'         " Autocomplete from buffer
+Plug 'onsails/lspkind-nvim'               " Get some icons
 Plug 'majutsushi/tagbar'          " Show functions in file using ctags
 Plug 'neovim/nvim-lspconfig'      " LSP
+Plug 'simrat39/rust-tools.nvim'   " Rust settings
 "
 Plug 'skywind3000/asyncrun.vim'   " Run jobs async in the backgrund, used for running rocaf
 " STYLING
@@ -43,6 +46,7 @@ Plug 'p00f/nvim-ts-rainbow'       " Rainbow parens
 Plug 'tpope/vim-surround'         " surround
 
 call plug#end()
+
 
 "Visuals
 set termguicolors
@@ -201,9 +205,15 @@ local on_attach = function(client, bufnr)
 
 end
 
+require'rust-tools'.setup({
+    server = {
+        on_attach = on_attach
+        }
+    })
+
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'hls', 'pyright','clojure_lsp', 'rls'}
+local servers = { 'hls', 'pyright','clojure_lsp'}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
@@ -224,6 +234,8 @@ nvim_lsp.clangd.setup{
 }
 
 local cmp = require 'cmp'
+local lspkind = require 'lspkind'
+
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 cmp.setup {
@@ -255,7 +267,14 @@ cmp.setup {
   },
   sources = {
     { name = 'nvim_lsp' },
+    { name = 'buffer' },
   },
+  formatting = {
+    format = lspkind.cmp_format({
+      mode = 'symbol-text', -- show only symbol annotations
+      maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+    })
+  }
 }
 
 -- Treesitter
