@@ -8,7 +8,6 @@
 [core]
     quotepath = off
     autocrlf = input
-    pager = delta
 [alias]
     co = checkout
     st = status
@@ -28,9 +27,5 @@
     autoStash = true
 [merge]
     conflictstyle = diff3
-[delta]
-    navigate = true  # use n and N to move between diff sections
-[interactive]
-    diffFilter = delta --color-only
 [diff]
     colorMoved = default
