@@ -37,6 +37,7 @@ plugins=(
 source $ZSH/oh-my-zsh.sh
 
 alias bc="bc -lq"
+alias cal="cal -3"
 alias cass="mosh cassarossa.samfundet.no"
 alias cat="bat"
 alias clip="xclip -selection c"
@@ -133,8 +134,5 @@ export LESS="-RFX"
 export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin:$HOME/bin"
 [ -f "/home/theodorc/.ghcup/env" ] && source "/home/theodorc/.ghcup/env" # ghcup-env
 
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-#source /usr/share/nvm/init-nvm.sh
-#. '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
 if [ -e /home/theodorc/.nix-profile/etc/profile.d/nix.sh ]; then . /home/theodorc/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
