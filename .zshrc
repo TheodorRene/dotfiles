@@ -2,6 +2,7 @@
 export ZSH="$HOME/.oh-my-zsh"
 path+=$HOME/.local/bin
 path+=/var/lib/snapd/snap/bin
+path+=$HOME/.cargo/bin
 
 export MANPAGER='nvim +Man!'
 
@@ -78,7 +79,7 @@ alias pacupgrade="sudo pacman -Syyu"
 
 alias dc="cd"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
-alias ipp="curl -w "\n" ifconfig.me"
+alias ipp="curl ip.xxd.no"
 alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
 alias server="python -m http.server 8000"
 alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
@@ -120,11 +121,14 @@ mnt(){
 }
 
 umnt(){
-    sudo umount /mnt/usb
+    sudo umount /mnt/usb && echo "Unmounted successfully"
 }
 
 pass() {
     bw get password $1 | xclip -selection c && "Password copied"
+}
+tsv() {
+    column -s$'\t' -t < $1 | less -N -S
 }
 
 # Conditionally open less based on size of input
