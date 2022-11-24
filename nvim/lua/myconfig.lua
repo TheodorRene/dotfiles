@@ -26,8 +26,8 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 nmap('<Leader>w',':w<CR>')
-nmap('<Leader>v', ':split . <CR>')
-nmap('<Leader>s', ':vsplit . <CR>')
+nmap('<M-v>', ':split . <CR>')
+nmap('<M-s>', ':vsplit . <CR>')
 
 nmap('<C-i>', 'O<Esc>')
 
@@ -35,10 +35,10 @@ nmap('<CR>', 'o<Esc>')
 
 vim.cmd('autocmd TermOpen * setlocal nonumber')
 
-nmap('<C-h>', '<C-w>h')
-nmap('<C-j>', '<C-w>j')
-nmap('<C-k>', '<C-w>k')
-nmap('<C-l>', '<C-w>l')
+nmap('<M-h>', '<C-w>h')
+nmap('<M-j>', '<C-w>j')
+nmap('<M-k>', '<C-w>k')
+nmap('<M-l>', '<C-w>l')
 nmap('<M-q>', ':bn <CR>')
 nmap('<M-w>', ':bp <CR>')
 
@@ -88,8 +88,51 @@ endif
 " Git 
 nnoremap <A-g> :Git 
 nnoremap <A-a> :Git add % <CR>
-nnoremap <A-s> :Git status <CR>
-nnoremap <A-d> :Git diff <CR>
+nnoremap <A-t> :Git status <CR>
+nnoremap <A-d> :Git diff --no-ext-diff <CR>
+
+"Buffer
+" Move to previous/next
+nnoremap <silent>    <A-,> <Cmd>BufferPrevious<CR>
+nnoremap <silent>    <A-.> <Cmd>BufferNext<CR>
+" Re-order to previous/next
+nnoremap <silent>    <A-<> <Cmd>BufferMovePrevious<CR>
+nnoremap <silent>    <A->> <Cmd>BufferMoveNext<CR>
+" Goto buffer in position...
+nnoremap <silent>    <A-1> <Cmd>BufferGoto 1<CR>
+nnoremap <silent>    <A-2> <Cmd>BufferGoto 2<CR>
+nnoremap <silent>    <A-3> <Cmd>BufferGoto 3<CR>
+nnoremap <silent>    <A-4> <Cmd>BufferGoto 4<CR>
+nnoremap <silent>    <A-5> <Cmd>BufferGoto 5<CR>
+nnoremap <silent>    <A-6> <Cmd>BufferGoto 6<CR>
+nnoremap <silent>    <A-7> <Cmd>BufferGoto 7<CR>
+nnoremap <silent>    <A-8> <Cmd>BufferGoto 8<CR>
+nnoremap <silent>    <A-9> <Cmd>BufferGoto 9<CR>
+nnoremap <silent>    <A-0> <Cmd>BufferLast<CR>
+" Pin/unpin buffer
+nnoremap <silent>    <A-p> <Cmd>BufferPin<CR>
+" Close buffer
+nnoremap <silent>    <A-c> <Cmd>BufferClose<CR>
+" Wipeout buffer
+"                          :BufferWipeout
+" Close commands
+"                          :BufferCloseAllButCurrent
+"                          :BufferCloseAllButVisible
+"                          :BufferCloseAllButPinned
+"                          :BufferCloseAllButCurrentOrPinned
+"                          :BufferCloseBuffersLeft
+"                          :BufferCloseBuffersRight
+" Magic buffer-picking mode
+" nnoremap <silent> <C-p>    <Cmd>BufferPick<CR>
+" Sort automatically by...
+nnoremap <silent> <Space>bb <Cmd>BufferOrderByBufferNumber<CR>
+nnoremap <silent> <Space>bd <Cmd>BufferOrderByDirectory<CR>
+nnoremap <silent> <Space>bl <Cmd>BufferOrderByLanguage<CR>
+nnoremap <silent> <Space>bw <Cmd>BufferOrderByWindowNumber<CR>
+
+" Other:
+" :BarbarEnable - enables barbar (enabled by default)
+" :BarbarDisable - very bad command, should never be used
 ]])
 
 

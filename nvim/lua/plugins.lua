@@ -48,7 +48,7 @@ return require('packer').startup(function(use)
   use 'Olical/conjure'           
   use 'TheodorRene/skriveleif'   
   use 'Yggdroot/indentline'      
-  use 'kyazdani42/nvim-web-devicons' 
+  use 'nvim-tree/nvim-web-devicons'
   use {'romgrk/barbar.nvim', wants = 'nvim-web-devicons'}
   use 'nvim-lualine/lualine.nvim'   
   use 'folke/tokyonight.nvim'
