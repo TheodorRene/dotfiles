@@ -10,9 +10,30 @@ function tmap(comb, cmd)
 	vim.api.nvim_set_keymap('t', comb, cmd, {noremap = true, silent = true})
 end
 
+require('nvim-cursorline').setup {
+  cursorline = {
+    enable = true,
+    timeout = 1000,
+    number = false,
+  },
+  cursorword = {
+    enable = true,
+    min_length = 3,
+    hl = { underline = true },
+  }
+}
+
 -- Colorscheme
 vim.cmd[[colorscheme tokyonight]]
-
+require'shade'.setup({
+  overlay_opacity = 50,
+  opacity_step = 1,
+  keys = {
+    brightness_up    = '<C-Up>',
+    brightness_down  = '<C-Down>',
+    toggle           = '<Leader>s',
+  }
+})
 
 imap('jk', '<esc>')
 
