@@ -18,14 +18,30 @@
     pf = push --force-with-lease
     prfix = !git commit -a --amend --no-edit && git push --force-with-lease
     pb = !git push --set-upstream origin HEAD
+    difflock = diff -- . ':(exclude)package-lock.json'
+    view = !gh repo view --web
+    prview = !gh pr view --web
+    pr = !gh pr create
+    prunebranches = remote prune origin
+    suntracked = !git ls-files --others --exclude-standard | xargs bat
+    fixup = !git log -n 50 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup
+    coz = !git branch | fzf | xargs git checkout 
 [filesystem "N/A|14.0.1|tmpfs"]
     timestampResolution = 9000 nanoseconds
     minRacyThreshold = 12860 microseconds
 [pull]
     rebase = true
+    autoStash = true
 [rebase]
     autoStash = true
+    autosquash = true
 [merge]
     conflictstyle = diff3
 [diff]
     colorMoved = default
+    external = difft
+
+[maintenance]
+	repo = /home/theodorc/dev/blank/folq_web
+[rerere]
+	enabled = true
