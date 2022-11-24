@@ -10,6 +10,9 @@ function tmap(comb, cmd)
 	vim.api.nvim_set_keymap('t', comb, cmd, {noremap = true, silent = true})
 end
 
+-- Colorscheme
+vim.cmd[[colorscheme tokyonight]]
+
 
 imap('jk', '<esc>')
 
@@ -36,11 +39,16 @@ nmap('<C-h>', '<C-w>h')
 nmap('<C-j>', '<C-w>j')
 nmap('<C-k>', '<C-w>k')
 nmap('<C-l>', '<C-w>l')
+nmap('<M-q>', ':bn <CR>')
+nmap('<M-w>', ':bp <CR>')
 
 nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
-nmap('<C-s>', '<CMD> Telescope current_buffer_fuzzy_find <CR>')
-nmap('<C-p>', '<CMD> Telescope git_files <CR>')
-nmap('<C-g>', '<CMD> Telescope live_grep <CR>')
+nmap('/', '<CMD> Telescope current_buffer_fuzzy_find <CR>')
+nmap('<C-p>', ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>')
+nmap('<leader>p', ':lua require"telescope.builtin".commands{} <CR> <CR>')
+
+
+nmap('<C-f>', '<CMD> Telescope live_grep <CR>')
 nmap('<leader>b', '<CMD> Telescope buffers <CR>')
 nmap('<C-t>', '<CMD> Telescope tags <CR>')
 

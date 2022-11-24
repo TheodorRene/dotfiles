@@ -12,15 +12,15 @@ return require('packer').startup(function(use)
   use 'nvim-lua/plenary.nvim'
   -- Simple plugins can be specified as strings
   use {
-	'nvim-treesitter/nvim-treesitter',
-	run = ':TSUpdate'
-	}
-  use {
   'nvim-telescope/telescope.nvim', tag = '0.1.0',
   requires = { {'nvim-lua/plenary.nvim'} }
   }
   use 'nvim-telescope/telescope-file-browser.nvim'
   --use 'nvim-treesitter/playground' 
+  use {
+	'nvim-treesitter/nvim-treesitter',
+	run = ':TSUpdate'
+  }
   use 'ggandor/leap.nvim'
   use 'inside/vim-search-pulse'   
   use 'tpope/vim-commentary'      
@@ -49,7 +49,9 @@ return require('packer').startup(function(use)
   use 'TheodorRene/skriveleif'   
   use 'Yggdroot/indentline'      
   use 'kyazdani42/nvim-web-devicons' 
+  use {'romgrk/barbar.nvim', wants = 'nvim-web-devicons'}
   use 'nvim-lualine/lualine.nvim'   
+  use 'folke/tokyonight.nvim'
   use 'p00f/nvim-ts-rainbow'       
 
 end)
