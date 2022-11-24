@@ -1,13 +1,126 @@
 {
-    "workbench.colorTheme": "Solarized Light+",
-    "vim.insertModeKeyBindings": [
-        {
-            "before": ["j", "k"],
-            "after": ["<esc>"]
-        }
-],
-"vim.commandLineModeKeyBindingsNonRecursive": [
-
-],
- "vscode-neovim.neovimPath": "/usr/bin/nvim"
+  "keyboard.dispatch": "keyCode",
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.formatOnSave": true,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "haskell.manageHLS": "GHCup",
+  "vim.insertModeKeyBindings": [
+    {
+      "before": ["j", "k"],
+      "after": ["<Esc>"]
+    }
+  ],
+  "vim.normalModeKeyBindings": [
+    {
+      "before": ["<leader>", "s"],
+      "commands": [":vsplit"]
+    },
+    {
+      "before": ["<leader>", "v"],
+      "commands": [":split"]
+    },
+    {
+      "before": ["J"],
+      "after": ["3", "j"]
+    },
+    {
+      "before": ["K"],
+      "after": ["3", "k"]
+    },
+    {
+      "before": ["H"],
+      "after": ["3", "h"]
+    },
+    {
+      "before": ["L"],
+      "after": ["3", "l"]
+    },
+    {
+      "before": ["C-u"],
+      "after": ["C-u", "z", "z"]
+    },
+    {
+      "before": ["C-d"],
+      "after": ["C-d", "z", "z"]
+    },
+    {
+      "before": ["n"],
+      "after": ["n", "z", "z"]
+    },
+    {
+      "before": ["C-e"],
+      "after": ["C-e", "M"]
+    },
+    {
+      "before": ["C-y"],
+      "after": ["C-y", "M"]
+    },
+    {
+      "before": ["g", "r"],
+      "commands": ["editor.action.goToReferences"]
+    },
+    {
+      "before": ["]", "d"],
+      "commands": ["editor.action.marker.next"]
+    },
+    {
+      "before": ["[", "d"],
+      "commands": ["editor.action.marker.prev"]
+    },
+    {
+      "before": ["]", "D"],
+      "commands": ["editor.action.marker.nextInFiles"]
+    },
+    {
+      "before": ["[", "D"],
+      "commands": ["editor.action.marker.prevInFiles"]
+    }
+  ],
+  "editor.minimap.enabled": false,
+  "editor.lineNumbers": "off",
+  "editor.folding": false,
+  "editor.glyphMargin": false,
+  "editor.hideCursorInOverviewRuler": true,
+  "editor.scrollbar.horizontal": "hidden",
+  "editor.scrollbar.vertical": "hidden",
+  "vim.easymotion": false,
+  "vim.sneak": true,
+  "vim.leader": "<space>",
+  "vim.handleKeys": {
+    "<C-a>": false,
+    "<C-f>": false,
+    "<C-t>": false,
+    "<C-b>": false
+  },
+  "vim.useSystemClipboard": true,
+  "workbench.colorTheme": "Gruvbox Dark Hard",
+  "redhat.telemetry.enabled": false,
+  "editor.renderWhitespace": "all",
+  "editor.inlineSuggest.enabled": true,
+  "workbench.startupEditor": "none",
+  "editor.tabSize": 2,
+  "github.copilot.enable": {
+    "*": true,
+    "yaml": false,
+    "plaintext": true,
+    "markdown": false
+  },
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
+  "explorer.confirmDragAndDrop": false,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "scm.alwaysShowActions": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "git.confirmSync": false,
+  "codesnap.showWindowControls": false,
+  "codesnap.shutterAction": "copy",
+  "window.zoomLevel": 2
 }
