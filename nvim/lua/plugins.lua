@@ -10,6 +10,7 @@ return require('packer').startup(function(use)
   use 'wbthomason/packer.nvim'
   use 'tpope/vim-fugitive'
   use 'nvim-lua/plenary.nvim'
+  use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
   use 'yamatsum/nvim-cursorline'
   use {
     "folke/which-key.nvim",
@@ -32,7 +33,6 @@ return require('packer').startup(function(use)
       }
     end
   }
-  use 'sunjon/shade.nvim'
   use {
   'nvim-telescope/telescope.nvim', tag = '0.1.0',
   requires = { {'nvim-lua/plenary.nvim'} }

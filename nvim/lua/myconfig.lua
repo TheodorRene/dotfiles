@@ -22,19 +22,28 @@ require('nvim-cursorline').setup {
     hl = { underline = true },
   }
 }
+local neogit = require('neogit')
+
+neogit.setup {
+   integrations = {
+    -- Neogit only provides inline diffs. If you want a more traditional way to look at diffs, you can use `sindrets/diffview.nvim`.
+    -- The diffview integration enables the diff popup, which is a wrapper around `sindrets/diffview.nvim`.
+    --
+    -- Requires you to have `sindrets/diffview.nvim` installed.
+    -- use { 
+    --   'TimUntersberger/neogit', 
+    --   requires = { 
+    --     'nvim-lua/plenary.nvim',
+    --     'sindrets/diffview.nvim' 
+    --   }
+    -- }
+    --
+    diffview = true  
+  },
+}
 
 -- Colorscheme
 vim.cmd[[colorscheme tokyonight]]
-require'shade'.setup({
-  overlay_opacity = 50,
-  opacity_step = 1,
-  keys = {
-    brightness_up    = '<C-Up>',
-    brightness_down  = '<C-Down>',
-    toggle           = '<Leader>s',
-  }
-})
-
 imap('jk', '<esc>')
 
 opt = vim.opt
@@ -107,10 +116,7 @@ if !exists('*Open_pdf')
 endif
 
 " Git 
-nnoremap <A-g> :Git 
-nnoremap <A-a> :Git add % <CR>
-nnoremap <A-t> :Git status <CR>
-nnoremap <A-d> :Git diff --no-ext-diff <CR>
+nnoremap <A-g> :Neogit <CR> 
 
 "Buffer
 " Move to previous/next
