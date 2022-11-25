@@ -4,18 +4,19 @@
 set $mod Mod4 
 set $browser firefox
 set $terminal alacritty
-set $lock2 i3lock-fancy
-set $lock betterlockscreen --lock blur
+set $screenshot screenshot
+set $lock i3lock-fancy
+set $lock2 /usr/local/bin/betterlockscreen --lock blur
 # === END CONFIG===
 
 
 #Gaps Settings
 for_window [class="^.*"] border pixel 4
-gaps inner 11
-gaps outer 5
-smart_borders on
-smart_gaps on
-border_radius 3
+# gaps inner 11
+# gaps outer 5
+# smart_borders on
+# smart_gaps on
+# border_radius 3
 
 #Desktop settings
 #gaps inner 8
@@ -27,6 +28,7 @@ border_radius 3
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 exec --no-startup-id picom -f --backend glx --vsync
 exec setxkbmap -layout no
+exec setxkbmap -option ctrl:nocaps
 
 
 
@@ -40,8 +42,8 @@ bindsym $mod+c exec --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 # emoji
 bindsym $mod+e exec --no-startup-id rofi -show emoji -modi emoji
 
-bindsym --locked XF86MonBrightnessDown exec brightnessctl set 5%-
-bindsym --locked XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
 
 #Audiocontrols
 bindsym XF86AudioPlay exec playerctl play-pause
@@ -66,7 +68,7 @@ bindsym $mod+Return exec $terminal
 #start firefox
 bindsym $mod+o exec $browser
 #start screenshot
-bindsym $mod+s exec xfce4-screenshooter -r
+bindsym --release $mod+s exec /home/theodorc/bin/screenshot
 
 
 # kill focused window
