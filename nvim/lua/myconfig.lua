@@ -25,6 +25,7 @@ require('nvim-cursorline').setup {
 local neogit = require('neogit')
 
 neogit.setup {
+   kind="vsplit",
    integrations = {
     -- Neogit only provides inline diffs. If you want a more traditional way to look at diffs, you can use `sindrets/diffview.nvim`.
     -- The diffview integration enables the diff popup, which is a wrapper around `sindrets/diffview.nvim`.
@@ -56,12 +57,10 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
 nmap('<Leader>w',':w<CR>')
-nmap('<M-v>', ':split . <CR>')
-nmap('<M-s>', ':vsplit . <CR>')
+nmap('<M-v>', ':split <CR>')
+nmap('<M-s>', ':vsplit <CR>')
 
 nmap('<C-i>', 'O<Esc>')
-
-nmap('<CR>', 'o<Esc>')
 
 vim.cmd('autocmd TermOpen * setlocal nonumber')
 
@@ -76,6 +75,8 @@ nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
 nmap('/', '<CMD> Telescope current_buffer_fuzzy_find <CR>')
 nmap('<C-p>', ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>')
 nmap('<leader>p', ':lua require"telescope.builtin".commands{} <CR> <CR>')
+nmap('<C-x>j', ':cnext <CR>')
+nmap('<C-x>k', ':cprev <CR>')
 
 
 nmap('<C-f>', '<CMD> Telescope live_grep <CR>')
