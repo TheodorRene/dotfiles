@@ -1,6 +1,5 @@
 let g:prettier#autoformat_require_pragma = 0
 let g:prettier#exec_cmd_async = 1
-autocmd BufWritePre *.tsx PrettierAsync
 set clipboard=unnamedplus
 nnoremap <C-u> <C-u>zz
 nnoremap <C-d> <C-d>zz
@@ -11,4 +10,5 @@ lua << EOF
 require('myconfig')
 require('plugins')
 require('oldlua')
+require'opts'
 EOF

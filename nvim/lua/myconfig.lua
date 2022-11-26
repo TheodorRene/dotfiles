@@ -1,15 +1,16 @@
-function imap(comb, cmd)
+local function imap(comb, cmd)
 	vim.api.nvim_set_keymap('i', comb, cmd, {noremap = true, silent = true})
 end
 
-function nmap(comb, cmd)
+local function nmap(comb, cmd)
 	vim.api.nvim_set_keymap('n', comb, cmd, {noremap = true, silent = true})
 end
 
-function tmap(comb, cmd)
+local function tmap(comb, cmd)
 	vim.api.nvim_set_keymap('t', comb, cmd, {noremap = true, silent = true})
 end
-
+vim.opt.updatetime = 750
+vim.opt.colorcolumn = "80"
 require('nvim-cursorline').setup {
   cursorline = {
     enable = true,
@@ -39,7 +40,7 @@ neogit.setup {
     --   }
     -- }
     --
-    diffview = true  
+    diffview = false -- It crashes
   },
 }
 
@@ -47,11 +48,12 @@ neogit.setup {
 vim.cmd[[colorscheme tokyonight]]
 imap('jk', '<esc>')
 
-opt = vim.opt
+local opt = vim.opt
 
 opt.encoding = "UTF-8"
 opt.mouse = "a"
 opt.splitbelow = true
+vim.opt.cmdheight = 1
 
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
@@ -75,8 +77,8 @@ nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
 nmap('/', '<CMD> Telescope current_buffer_fuzzy_find <CR>')
 nmap('<C-p>', ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>')
 nmap('<leader>p', ':lua require"telescope.builtin".commands{} <CR> <CR>')
-nmap('<C-x>j', ':cnext <CR>')
-nmap('<C-x>k', ':cprev <CR>')
+-- nmap('<C-x>j', ':cnext <CR>') Dont use quicklist as much
+-- nmap('<C-x>k', ':cprev <CR>') 
 
 
 nmap('<C-f>', '<CMD> Telescope live_grep <CR>')

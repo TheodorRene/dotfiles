@@ -7,10 +7,13 @@ vim.cmd([[
 
 return require('packer').startup(function(use)
   -- Packer can manage itself
+  -- Infrastructure
   use 'wbthomason/packer.nvim'
-  use 'tpope/vim-fugitive'
-  use 'nvim-lua/plenary.nvim'
-  use { 'TimUntersberger/neogit', requires = 'nvim-lua/plenary.nvim' }
+  use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
+  use 'sbdchd/neoformat'
+  use { 'TimUntersberger/neogit',
+    requires = 'nvim-lua/plenary.nvim'
+  }
   use 'yamatsum/nvim-cursorline'
   use {
     "folke/which-key.nvim",
@@ -38,23 +41,29 @@ return require('packer').startup(function(use)
   requires = { {'nvim-lua/plenary.nvim'} }
   }
   use 'nvim-telescope/telescope-file-browser.nvim'
+  use {
+      'goolord/alpha-nvim',
+      config = function ()
+          require'alpha'.setup(require'alpha.themes.startify'.config)
+      end
+  }
   --use 'nvim-treesitter/playground' 
   use {
 	'nvim-treesitter/nvim-treesitter',
 	run = ':TSUpdate'
   }
   use 'ggandor/leap.nvim'
-  use 'inside/vim-search-pulse'   
-  use 'tpope/vim-commentary'      
+  use 'inside/vim-search-pulse'
+  use 'tpope/vim-commentary'
   use 'prettier/vim-prettier'
 
-  use 'neovim/nvim-lspconfig'      
-  use 'hrsh7th/cmp-nvim-lsp'       
-  use 'hrsh7th/nvim-cmp'          
-  use 'hrsh7th/cmp-buffer'       
-  use 'onsails/lspkind-nvim'               
-  use 'majutsushi/tagbar'          
-  use 'simrat39/rust-tools.nvim'   
+  use 'neovim/nvim-lspconfig'
+  use 'hrsh7th/cmp-nvim-lsp'
+  use 'hrsh7th/nvim-cmp'
+  use 'hrsh7th/cmp-buffer'
+  use 'onsails/lspkind-nvim'
+  use 'majutsushi/tagbar'
+  use 'simrat39/rust-tools.nvim'
   use {
   "folke/trouble.nvim",
   requires = "kyazdani42/nvim-web-devicons",
@@ -67,14 +76,14 @@ return require('packer').startup(function(use)
   end
 }
 
-  use 'Olical/conjure'           
-  use 'TheodorRene/skriveleif'   
-  use 'Yggdroot/indentline'      
+  use 'Olical/conjure'
+  use 'TheodorRene/skriveleif'
+  use 'Yggdroot/indentline'
   use 'nvim-tree/nvim-web-devicons'
   use {'romgrk/barbar.nvim', wants = 'nvim-web-devicons'}
-  use 'nvim-lualine/lualine.nvim'   
+  use 'nvim-lualine/lualine.nvim'
   use 'folke/tokyonight.nvim'
-  use 'p00f/nvim-ts-rainbow'       
+  use 'p00f/nvim-ts-rainbow'
 
 end)
 
