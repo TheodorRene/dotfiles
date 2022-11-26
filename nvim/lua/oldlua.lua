@@ -6,21 +6,21 @@ require('leap').set_default_keymaps()
 
 
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
+local capabilities = V.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(_, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+  local function buf_set_keymap(...) V.api.nvim_buf_set_keymap(bufnr, ...) end
+  local function buf_set_option(...) V.api.nvim_buf_set_option(bufnr, ...) end
 
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
   local opts = { noremap=true, silent=true }
-  vim.cmd([[autocmd BufWritePre *.tsx Neoformat]])
+  V.cmd([[autocmd BufWritePre *.tsx Neoformat]])
   --
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
@@ -77,7 +77,7 @@ local cmp = require 'cmp'
 local lspkind = require 'lspkind'
 
 -- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
+V.o.completeopt = 'menuone,noselect'
 cmp.setup {
   mapping = {
     ['<C-p>'] = cmp.mapping.select_prev_item(),
@@ -116,7 +116,6 @@ cmp.setup {
     })
   }
 }
--- You don't need to set any of these options.
 local fb_actions = require "telescope".extensions.file_browser.actions
 require("telescope").setup {
   extensions = {
@@ -127,9 +126,6 @@ require("telescope").setup {
       mappings = {
         ["i"] = {
           ["<C-e>"] = fb_actions.create
-        },
-        ["n"] = {
-          -- your custom normal mode mappings
         },
       },
     },
@@ -146,9 +142,8 @@ require'nvim-treesitter.configs'.setup {
   },
   rainbow = {
     enable = true,
-    -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
-    extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-    max_file_lines = nil, -- Do not enable for files with more than n lines, int
+    extended_mode = true,
+    max_file_lines = nil,
   },
 }
 

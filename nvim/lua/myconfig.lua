@@ -1,16 +1,14 @@
 local function imap(comb, cmd)
-	vim.api.nvim_set_keymap('i', comb, cmd, {noremap = true, silent = true})
+	V.api.nvim_set_keymap('i', comb, cmd, {noremap = true, silent = true})
 end
 
 local function nmap(comb, cmd)
-	vim.api.nvim_set_keymap('n', comb, cmd, {noremap = true, silent = true})
+	V.api.nvim_set_keymap('n', comb, cmd, {noremap = true, silent = true})
 end
 
 local function tmap(comb, cmd)
-	vim.api.nvim_set_keymap('t', comb, cmd, {noremap = true, silent = true})
+	V.api.nvim_set_keymap('t', comb, cmd, {noremap = true, silent = true})
 end
-vim.opt.updatetime = 750
-vim.opt.colorcolumn = "80"
 require('nvim-cursorline').setup {
   cursorline = {
     enable = true,
@@ -28,35 +26,17 @@ local neogit = require('neogit')
 neogit.setup {
    kind="vsplit",
    integrations = {
-    -- Neogit only provides inline diffs. If you want a more traditional way to look at diffs, you can use `sindrets/diffview.nvim`.
-    -- The diffview integration enables the diff popup, which is a wrapper around `sindrets/diffview.nvim`.
-    --
-    -- Requires you to have `sindrets/diffview.nvim` installed.
-    -- use { 
-    --   'TimUntersberger/neogit', 
-    --   requires = { 
-    --     'nvim-lua/plenary.nvim',
-    --     'sindrets/diffview.nvim' 
-    --   }
-    -- }
-    --
-    diffview = false -- It crashes
+    diffview = false -- It crashes, but looks promising
   },
 }
 
 -- Colorscheme
-vim.cmd[[colorscheme tokyonight]]
+V.cmd[[colorscheme tokyonight]]
 imap('jk', '<esc>')
 
-local opt = vim.opt
 
-opt.encoding = "UTF-8"
-opt.mouse = "a"
-opt.splitbelow = true
-vim.opt.cmdheight = 1
-
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+V.g.mapleader = " "
+V.g.maplocalleader = " "
 
 nmap('<Leader>w',':w<CR>')
 nmap('<M-v>', ':split <CR>')
@@ -64,7 +44,7 @@ nmap('<M-s>', ':vsplit <CR>')
 
 nmap('<C-i>', 'O<Esc>')
 
-vim.cmd('autocmd TermOpen * setlocal nonumber')
+V.cmd('autocmd TermOpen * setlocal nonumber')
 
 nmap('<M-h>', '<C-w>h')
 nmap('<M-j>', '<C-w>j')
@@ -74,41 +54,71 @@ nmap('<M-q>', ':bn <CR>')
 nmap('<M-w>', ':bp <CR>')
 
 nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
-nmap('/', '<CMD> Telescope current_buffer_fuzzy_find <CR>')
+-- nmap('/', '<CMD> Telescope current_buffer_fuzzy_find <CR>')
+nmap('<C-x>f', '<CMD> Telescope current_buffer_fuzzy_find <CR>')
 nmap('<C-p>', ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>')
-nmap('<leader>p', ':lua require"telescope.builtin".commands{} <CR> <CR>')
+nmap('<leader>p', ':lua require"telescope.builtin".commands() <CR>')
 -- nmap('<C-x>j', ':cnext <CR>') Dont use quicklist as much
 -- nmap('<C-x>k', ':cprev <CR>') 
 
 
 nmap('<C-f>', '<CMD> Telescope live_grep <CR>')
 nmap('<leader>b', '<CMD> Telescope buffers <CR>')
-nmap('<C-t>', '<CMD> Telescope tags <CR>')
+nmap('<C-t>', '<CMD> Telescope treesitter <CR>')
+nmap('<C-x>t', '<CMD> Telescope tags <CR>')
+nmap('<C-g>c', '<CMD> Telescope git_commits <CR>')
+nmap('<C-g>f', '<CMD> Telescope git_bcommits <CR>')
+nmap('<C-g>b', '<CMD> Telescope git_branches <CR>')
+nmap('<C-g>h', '<CMD> Telescope git_stash <CR>')
+nmap('<C-g>s', '<CMD> Telescope git_status <CR>')
+nmap('<C-g>l', '<CMD> Telescope builtin  <CR>')
 
+nmap('<A-g>', ':Neogit <CR>')
 nmap('<F8>', ':TagbarToggle<CR>')
 
-vim.cmd([[
-syntax on
-set tabstop=4
-set expandtab
-set shiftwidth=4
-"Dont remember idea what these do lmao
-set laststatus=2
-set noshowmode
-set showmatch
-set ignorecase
-set incsearch
-set autoread
-hi Search ctermbg=LightYellow
-hi Search ctermfg=Red
-set fillchars+=vert:│
-" Airline config
-let g:airline_powerline_fonts = 1
-tnoremap jk <C-\><C-n>
-let g:prettier#autoformat_require_pragma = 0
-let g:prettier#exec_cmd_async = 1
-let g:prettier#config#tab_width = '2'
+-- Move to previous/next
+nmap('<A-,>', '<Cmd>BufferPrevious<CR>')
+nmap('<A-.>', '<Cmd>BufferNext<CR>')
+-- Rer to previous/next
+nmap('<A-<>', '<Cmd>BufferMovePrevious<CR>')
+nmap('<A->>', '<Cmd>BufferMoveNext<CR>')
+-- Goto buffer in position...
+nmap( '<A-1>', '<Cmd>BufferGoto 1<CR>')
+nmap( '<A-2>', '<Cmd>BufferGoto 2<CR>')
+nmap( '<A-3>', '<Cmd>BufferGoto 3<CR>')
+nmap( '<A-4>', '<Cmd>BufferGoto 4<CR>')
+nmap( '<A-5>', '<Cmd>BufferGoto 5<CR>')
+nmap( '<A-6>', '<Cmd>BufferGoto 6<CR>')
+nmap( '<A-7>', '<Cmd>BufferGoto 7<CR>')
+nmap( '<A-8>', '<Cmd>BufferGoto 8<CR>')
+nmap( '<A-9>', '<Cmd>BufferGoto 9<CR>')
+nmap( '<A-0>', '<Cmd>BufferLast<CR>')
+-- Pipin buffer
+nmap( '<A-p>', '<Cmd>BufferPin<CR>')
+-- Clbuffer
+nmap( '<A-c>', '<Cmd>BufferClose<CR>')
+-- Wipeout buffer
+--                 :BufferWipeout
+-- Close commands
+--                 :BufferCloseAllButCurrent
+--                 :BufferCloseAllButPinned
+--                 :BufferCloseAllButCurrentOrPinned
+--                 :BufferCloseBuffersLeft
+--                 :BufferCloseBuffersRight
+-- Magic buffer-picking mode
+nmap('<C-p>', '<Cmd>BufferPick<CR>')
+-- Sort automatically by...
+nmap('<Space>bb', '<Cmd>BufferOrderByBufferNumber<CR>')
+nmap('<Space>bd', '<Cmd>BufferOrderByDirectory<CR>')
+nmap('<Space>bl', '<Cmd>BufferOrderByLanguage<CR>')
+nmap('<Space>bw', '<Cmd>BufferOrderByWindowNumber<CR>')
+tmap('jk', [[<C-\><C-n>]])
 
+-- Other:
+-- :BarbarEnable - enables barbar (enabled by default)
+-- :BarbarDisable - very bad command, should never be used
+
+V.cmd([[
 " Open pdf with same filename but with pdf extension
 " Mostly used with markdown files
 nnoremap <leader>o :call Open_pdf()<CR>
@@ -117,52 +127,6 @@ if !exists('*Open_pdf')
         execute "!pdf " . expand('%:t:r') . ".pdf"
     endfunction
 endif
-
-" Git 
-nnoremap <A-g> :Neogit <CR> 
-
-"Buffer
-" Move to previous/next
-nnoremap <silent>    <A-,> <Cmd>BufferPrevious<CR>
-nnoremap <silent>    <A-.> <Cmd>BufferNext<CR>
-" Re-order to previous/next
-nnoremap <silent>    <A-<> <Cmd>BufferMovePrevious<CR>
-nnoremap <silent>    <A->> <Cmd>BufferMoveNext<CR>
-" Goto buffer in position...
-nnoremap <silent>    <A-1> <Cmd>BufferGoto 1<CR>
-nnoremap <silent>    <A-2> <Cmd>BufferGoto 2<CR>
-nnoremap <silent>    <A-3> <Cmd>BufferGoto 3<CR>
-nnoremap <silent>    <A-4> <Cmd>BufferGoto 4<CR>
-nnoremap <silent>    <A-5> <Cmd>BufferGoto 5<CR>
-nnoremap <silent>    <A-6> <Cmd>BufferGoto 6<CR>
-nnoremap <silent>    <A-7> <Cmd>BufferGoto 7<CR>
-nnoremap <silent>    <A-8> <Cmd>BufferGoto 8<CR>
-nnoremap <silent>    <A-9> <Cmd>BufferGoto 9<CR>
-nnoremap <silent>    <A-0> <Cmd>BufferLast<CR>
-" Pin/unpin buffer
-nnoremap <silent>    <A-p> <Cmd>BufferPin<CR>
-" Close buffer
-nnoremap <silent>    <A-c> <Cmd>BufferClose<CR>
-" Wipeout buffer
-"                          :BufferWipeout
-" Close commands
-"                          :BufferCloseAllButCurrent
-"                          :BufferCloseAllButVisible
-"                          :BufferCloseAllButPinned
-"                          :BufferCloseAllButCurrentOrPinned
-"                          :BufferCloseBuffersLeft
-"                          :BufferCloseBuffersRight
-" Magic buffer-picking mode
-" nnoremap <silent> <C-p>    <Cmd>BufferPick<CR>
-" Sort automatically by...
-nnoremap <silent> <Space>bb <Cmd>BufferOrderByBufferNumber<CR>
-nnoremap <silent> <Space>bd <Cmd>BufferOrderByDirectory<CR>
-nnoremap <silent> <Space>bl <Cmd>BufferOrderByLanguage<CR>
-nnoremap <silent> <Space>bw <Cmd>BufferOrderByWindowNumber<CR>
-
-" Other:
-" :BarbarEnable - enables barbar (enabled by default)
-" :BarbarDisable - very bad command, should never be used
 ]])
 
 
