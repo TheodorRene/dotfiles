@@ -1,13 +1,13 @@
 local function imap(comb, cmd)
-	V.api.nvim_set_keymap('i', comb, cmd, {noremap = true, silent = true})
+	vim.api.nvim_set_keymap('i', comb, cmd, {noremap = true, silent = true})
 end
 
 local function nmap(comb, cmd)
-	V.api.nvim_set_keymap('n', comb, cmd, {noremap = true, silent = true})
+	vim.api.nvim_set_keymap('n', comb, cmd, {noremap = true, silent = true})
 end
 
 local function tmap(comb, cmd)
-	V.api.nvim_set_keymap('t', comb, cmd, {noremap = true, silent = true})
+	vim.api.nvim_set_keymap('t', comb, cmd, {noremap = true, silent = true})
 end
 require('nvim-cursorline').setup {
   cursorline = {
@@ -31,12 +31,12 @@ neogit.setup {
 }
 
 -- Colorscheme
-V.cmd[[colorscheme tokyonight]]
+vim.cmd[[colorscheme tokyonight]]
 imap('jk', '<esc>')
 
 
-V.g.mapleader = " "
-V.g.maplocalleader = " "
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 nmap('<Leader>w',':w<CR>')
 nmap('<M-v>', ':split <CR>')
@@ -44,7 +44,7 @@ nmap('<M-s>', ':vsplit <CR>')
 
 nmap('<C-i>', 'O<Esc>')
 
-V.cmd('autocmd TermOpen * setlocal nonumber')
+vim.cmd('autocmd TermOpen * setlocal nonumber')
 
 nmap('<M-h>', '<C-w>h')
 nmap('<M-j>', '<C-w>j')
@@ -97,17 +97,6 @@ nmap( '<A-0>', '<Cmd>BufferLast<CR>')
 nmap( '<A-p>', '<Cmd>BufferPin<CR>')
 -- Clbuffer
 nmap( '<A-c>', '<Cmd>BufferClose<CR>')
--- Wipeout buffer
---                 :BufferWipeout
--- Close commands
---                 :BufferCloseAllButCurrent
---                 :BufferCloseAllButPinned
---                 :BufferCloseAllButCurrentOrPinned
---                 :BufferCloseBuffersLeft
---                 :BufferCloseBuffersRight
--- Magic buffer-picking mode
-nmap('<C-p>', '<Cmd>BufferPick<CR>')
--- Sort automatically by...
 nmap('<Space>bb', '<Cmd>BufferOrderByBufferNumber<CR>')
 nmap('<Space>bd', '<Cmd>BufferOrderByDirectory<CR>')
 nmap('<Space>bl', '<Cmd>BufferOrderByLanguage<CR>')
@@ -118,7 +107,7 @@ tmap('jk', [[<C-\><C-n>]])
 -- :BarbarEnable - enables barbar (enabled by default)
 -- :BarbarDisable - very bad command, should never be used
 
-V.cmd([[
+vim.cmd([[
 " Open pdf with same filename but with pdf extension
 " Mostly used with markdown files
 nnoremap <leader>o :call Open_pdf()<CR>
