@@ -1,6 +1,7 @@
 lua << EOF
-require('myconfig')
-require('plugins')
-require('oldlua')
 require'opts'
+require'plugins'
+require'plugin_conf'
+require'keybindings'
+require'oldlua'
 EOF

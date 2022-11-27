@@ -96,5 +96,4 @@ nmap('Å', ':resize -10<CR>')
 
 nmap('<C-o>', ':w <CR> :! rocaf %<CR>')
 
-nmap('<leader>c', ':!')
 
