@@ -13,4 +13,6 @@ vim.o.showmatch = true
 vim.o.ignorecase = true
 vim.o.incsearch = true
 vim.o.autoread = true
-vim.o.clipboard = unnamedplus
+vim.o.clipboard = "unnamedplus"
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
