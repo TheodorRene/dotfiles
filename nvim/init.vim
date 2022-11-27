@@ -3,5 +3,5 @@ require'opts'
 require'plugins'
 require'plugin_conf'
 require'keybindings'
-require'oldlua'
+require'lsp_conf'
 EOF
