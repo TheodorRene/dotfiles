@@ -128,6 +128,11 @@ imap('$$', '$$<esc>i')
 
 
 nmap('<leader>h', ':nohls<CR>')
+nmap('<C-u>', '<C-u>zz')
+nmap('<C-d>','<C-d>zz')
+nmap('<C-e>','<C-e>M')
+nmap('<C-y>', '<C-y>M')
+nmap('n', 'nzz')
 
 nmap('ø', ':vertical resize +10<CR>')
 nmap('æ', ':vertical resize -10<CR>')
