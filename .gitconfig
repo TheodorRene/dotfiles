@@ -37,6 +37,9 @@
     autosquash = true
 [merge]
     conflictstyle = diff3
+    tool = vscode
+[mergetool "vscode"]
+        cmd = code --new-window --wait $MERGED
 [diff]
     colorMoved = default
     external = difft
