@@ -3,19 +3,8 @@ local nvim_lsp = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 --
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
-local servers = { 'hls', 'pyright','clojure_lsp', 'tsserver', 'tailwindcss', 'elmls', 'sumneko_lua'}
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    flags = {
-      debounce_text_changes = 150,
-    }
-  }
-end
 
+vim.cmd[[au FocusGained,BufEnter * :checktime]]
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(_, bufnr)
@@ -27,8 +16,13 @@ local on_attach = function(_, bufnr)
 
     -- Mappings.
     local opts = { noremap=true, silent=true }
-    vim.cmd([[autocmd BufWritePre *.tsx Neoformat]]) -- Run format on save
     --
+    vim.cmd([[
+    augroup fmt
+        autocmd!
+        autocmd BufWritePre * undojoin | Neoformat
+    augroup END
+    ]])
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
     buf_set_keymap('n', 'gd', ':lua require"telescope.builtin".lsp_definitions()<CR>', opts)
@@ -41,7 +35,7 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
     buf_set_keymap('n', '<C-x>d', ':lua require"telescope.builtin".diagnostics()<CR>', opts)
     buf_set_keymap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', '<C-space>', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+    buf_set_keymap('n', '<C-x>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     buf_set_keymap('n', 'gr', ':lua require"telescope.builtin".lsp_references()<CR>', opts)
     buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
     buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
@@ -49,6 +43,20 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
     buf_set_keymap('n', '<space>f', ':Neoformat <CR>', opts)
 
+end
+
+-- Use a loop to conveniently call 'setup' on multiple servers and
+-- map buffer local keybindings when the language server attaches
+local servers = { 'hls', 'pyright','clojure_lsp', 'tsserver', 'tailwindcss',
+'elmls', 'sumneko_lua'}
+for _, lsp in ipairs(servers) do
+  nvim_lsp[lsp].setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    flags = {
+      debounce_text_changes = 150,
+    }
+  }
 end
 
 require'rust-tools'.setup({

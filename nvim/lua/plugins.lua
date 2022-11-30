@@ -15,6 +15,7 @@ use 'github/copilot.vim'
 use { 'TimUntersberger/neogit', -- Magit for neovim
     requires = 'nvim-lua/plenary.nvim'
 }
+use 'tpope/vim-fugitive'
 use 'yamatsum/nvim-cursorline' -- Cursorline under same words as cursor
 use {
     "folke/which-key.nvim",

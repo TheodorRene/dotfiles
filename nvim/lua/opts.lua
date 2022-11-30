@@ -16,3 +16,7 @@ vim.o.autoread = true
 vim.o.clipboard = "unnamedplus"
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+-- SQLComplete stuff
+-- SQLComplete is apparently bundled with Vim (IMO it shouldn't these days)
+vim.g.sql_type_default = "postgresql"
+vim.g.omni_sql_default_compl_type = 'syntax'
