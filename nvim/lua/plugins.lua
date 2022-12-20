@@ -9,14 +9,28 @@ return require('packer').startup(function(use)
     -- Packer can manage itself
     -- Infrastructure
 use 'wbthomason/packer.nvim'
+use 'lewis6991/impatient.nvim' -- Speed up startup time, maybe delete later
 use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
 use 'sbdchd/neoformat' -- Formatting
+use 'lewis6991/gitsigns.nvim'
+use {
+  'nvim-tree/nvim-tree.lua',
+  requires = {
+    'nvim-tree/nvim-web-devicons', -- optional, for file icons
+  },
+  tag = 'nightly' -- optional, updated every week. (see issue #1193)
+}
 use 'github/copilot.vim'
+use({ "yioneko/nvim-yati", tag = "*", requires = "nvim-treesitter/nvim-treesitter" }) -- Yet Another Treesitter indent plugin
 use { 'TimUntersberger/neogit', -- Magit for neovim
     requires = 'nvim-lua/plenary.nvim'
 }
 use 'tpope/vim-fugitive'
-use 'yamatsum/nvim-cursorline' -- Cursorline under same words as cursor
+use 'chentoast/marks.nvim'
+use 'hrsh7th/cmp-vsnip'
+use 'hrsh7th/vim-vsnip'
+use 'hrsh7th/vim-vsnip-integ'
+use 'sindrets/diffview.nvim'
 use {
     "folke/which-key.nvim",
     config = function()
@@ -27,11 +41,29 @@ use {
         }
     end
 } -- Show key hints
-use "folke/twilight.nvim" -- Dim parts of the code not relevant
 use {
-    'nvim-telescope/telescope.nvim', tag = '0.1.0',
+    'nvim-telescope/telescope.nvim', branch = '0.1.x',
     requires = { {'nvim-lua/plenary.nvim'} }
     } -- Telescope
+use {
+  'kdheepak/tabline.nvim',
+  config = function()
+    require'tabline'.setup {
+      -- Defaults configuration options
+      enable = true,
+      options = {
+      -- If lualine is installed tabline will use separators configured in lualine by default.
+      -- These options can be used to override those settings.
+        show_tabs_only = false, -- this shows only tabs instead of tabs + buffers
+      }
+    }
+    vim.cmd[[
+      set guioptions-=e " Use showtabline in gui vim
+      set sessionoptions+=tabpages,globals " store tabpages and globals in session
+    ]]
+  end,
+  requires = { { 'hoob3rt/lualine.nvim', opt=true }, {'kyazdani42/nvim-web-devicons', opt = true} }
+}
 use {
     'nvim-telescope/telescope-file-browser.nvim',
     config = function()
@@ -63,23 +95,23 @@ use 'hrsh7th/cmp-nvim-lsp' -- LSP source for cmp
 use 'hrsh7th/cmp-buffer' -- Buffer source for cmp
 use 'onsails/lspkind-nvim' -- Nice icons for autocopmlete like VSCode
 
-use 'majutsushi/tagbar' -- Tagbar
-
 use { "folke/trouble.nvim", requires = "kyazdani42/nvim-web-devicons" } -- Show diagnotics in quicklist
 
 use 'TheodorRene/skriveleif'
 use 'nvim-tree/nvim-web-devicons' -- Show cool icon
-use {'romgrk/barbar.nvim', wants = 'nvim-web-devicons'} -- Show buffers as tabs
 
 -- Styling/Visuals
 use 'folke/tokyonight.nvim' -- Theme
 use 'p00f/nvim-ts-rainbow' -- Rainbow matching brackets
 use "lukas-reineke/indent-blankline.nvim" -- Show indentline
-use {'nvim-lualine/lualine.nvim', config = function() require'lualine'.setup() end} -- Line
+use 'nvim-lualine/lualine.nvim' -- Line
 
 -- Language specific
-use 'Olical/conjure' -- Clojure 
+use{'Olical/conjure',
+    ft = {'clojure'}
+} -- Clojure 
 use 'simrat39/rust-tools.nvim' -- Rust
+use 'theprimeagen/harpoon' -- Jump between files
 
 end)
 

@@ -11,44 +11,56 @@ local on_attach = function(_, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
     local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-    -- Enable completion triggered by <c-x><c-o>
+   -- Enable completion triggered by <c-x><c-o>
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
     -- Mappings.
-    local opts = { noremap=true, silent=true }
+    local function opts(desc)
+        return { noremap=true, silent=true, desc = desc }
+    end
     --
     vim.cmd([[
     augroup fmt
-        autocmd!
-        autocmd BufWritePre * undojoin | Neoformat
+    autocmd!
+    au BufWritePre * try | undojoin | Neoformat | catch /E790/ | Neoformat | endtry
     augroup END
     ]])
     -- See `:help vim.lsp.*` for documentation on any of the below functions
-    buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    buf_set_keymap('n', 'gd', ':lua require"telescope.builtin".lsp_definitions()<CR>', opts)
-    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', 'gi', ':lua require"telescope.builtin".lsp_implementations()<CR>', opts)
-    buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-    buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-    buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-    buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    buf_set_keymap('n', '<C-x>d', ':lua require"telescope.builtin".diagnostics()<CR>', opts)
-    buf_set_keymap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', '<C-x>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-    buf_set_keymap('n', 'gr', ':lua require"telescope.builtin".lsp_references()<CR>', opts)
-    buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-    buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-    buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-    buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.set_loclist()<CR>', opts)
-    buf_set_keymap('n', '<space>f', ':Neoformat <CR>', opts)
+    buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts("Declaration"))
+    buf_set_keymap('n', 'gd', ':lua require"telescope.builtin".lsp_definitions()<CR>', opts("LSP definitions"))
+    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
+    buf_set_keymap('n', 'gi', ':lua require"telescope.builtin".lsp_implementations()<CR>', opts("Implementations"))
+    buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts("Signature help"))
+    buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts("Type defintion"))
+    buf_set_keymap('n', '<C-x>d', ':lua require"telescope.builtin".diagnostics()<CR>', opts("Diagnostics"))
+    buf_set_keymap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', opts("Rename"))
+    buf_set_keymap('n', '<C-x>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts("Code action"))
+    buf_set_keymap('n', 'gr', ':lua require"telescope.builtin".lsp_references()<CR>', opts("References"))
+    buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts("Open float"))
+    buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts("Go to next diagnostics"))
+    buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts("GO to next diagnostics"))
+    buf_set_keymap('n', '<space>f', ':Neoformat <CR>', opts("Neoformat"))
+    buf_set_keymap('n', '<C-x>t', '<cmd>TroubleToggle <CR>', opts("Toggle Trouble"))
 
 end
-
+nvim_lsp.sumneko_lua.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    flags = {
+        debounce_text_changes = 150,
+    },
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' }
+            }
+        }
+    }
+}
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
 local servers = { 'hls', 'pyright','clojure_lsp', 'tsserver', 'tailwindcss',
-'elmls', 'sumneko_lua'}
+'elmls'}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
@@ -82,6 +94,15 @@ local lspkind = require 'lspkind'
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 cmp.setup {
+    snippet = {
+        -- REQUIRED - you must specify a snippet engine
+        expand = function(args)
+            vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+            -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+            -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
+            -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
+        end,
+    },
   mapping = {
     ['<C-p>'] = cmp.mapping.select_prev_item(),
     ['<C-n>'] = cmp.mapping.select_next_item(),

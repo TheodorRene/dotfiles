@@ -1,14 +1,40 @@
-require('nvim-cursorline').setup {
-  cursorline = {
-    enable = true,
-    timeout = 1000,
-    number = false,
-  },
-  cursorword = {
-    enable = true,
-    min_length = 3,
-    hl = { underline = true },
-  }
+-- DELETE ME
+-- local augroup = vim.api.nvim_create_augroup("TablineBuffers", {})
+
+-- function ShowCurrentBuffers()
+--         local data = vim.t.tabline_data
+--         if data == nil then
+--                 require('tabline')._new_tab_data(vim.fn.tabpagenr())
+--                 data = vim.t.tabline_data
+--         end
+--         data.show_all_buffers = false
+--         vim.t.tabline_data = data
+--         vim.cmd([[redrawtabline]])
+-- end
+
+-- vim.api.nvim_create_autocmd({ "TabEnter" }, {
+--         group = augroup,
+--         callback = ShowCurrentBuffers,
+-- })
+-- DELETE ME
+--
+require('gitsigns').setup{
+  on_attach = function(bufnr)
+      TRC_GITSIGNS_MAPPINGS(bufnr)
+  end
+}
+require("nvim-tree").setup()
+require'lualine'.setup{
+    options = {
+        theme = 'tokyonight'
+    }
+}
+require'marks'.setup {
+  -- whether to map keybinds or not. default true
+  default_mappings = true,
+  -- which builtin marks to show. default {}
+  builtin_marks = { ".", "<", ">", "^" },
+  mappings = {}
 }
 
 require('neogit').setup {
@@ -20,6 +46,13 @@ require('neogit').setup {
 
 local fb_actions = require "telescope".extensions.file_browser.actions
 require("telescope").setup {
+pickers = {
+    git_files = {
+      theme = "dropdown",
+      previewer = false,
+    },
+},
+
   extensions = {
     file_browser = {
       theme = "ivy",
@@ -41,13 +74,16 @@ require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",
   highlight = {
     enable = true,
-    additional_vim_regex_highlighting = true,
   },
   rainbow = {
     enable = true,
     extended_mode = true,
     max_file_lines = nil,
   },
+  indent = {
+      enable = false
+  },
+  additional_vim_regex_highlighting = false,
 }
 
 -- Colorscheme
