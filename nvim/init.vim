@@ -1,6 +1,6 @@
 autocmd BufReadPost,FileReadPost * normal zR
 lua << EOF
- require'impatient'.enable_profile()
+ require'impatient'
  require'opts'
  require'plugins'
  require'plugin_conf'
