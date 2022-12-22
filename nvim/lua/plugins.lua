@@ -13,6 +13,13 @@ use 'lewis6991/impatient.nvim' -- Speed up startup time, maybe delete later
 use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
 use 'sbdchd/neoformat' -- Formatting
 use 'lewis6991/gitsigns.nvim'
+use{'karb94/neoscroll.nvim',
+    config = function()
+        require('neoscroll').setup({
+            mappings = {'<C-u>', '<C-d>', 'zt', 'zz', 'zb', '<C-e>', '<C-y>'}
+        })
+    end,
+}
 use {
   'nvim-tree/nvim-tree.lua',
   requires = {
@@ -34,11 +41,7 @@ use 'sindrets/diffview.nvim'
 use {
     "folke/which-key.nvim",
     config = function()
-        require("which-key").setup {
-            -- your configuration comes here
-            -- or leave it empty to use the default settings
-            -- refer to the configuration section below
-        }
+        require("which-key").setup {}
     end
 } -- Show key hints
 use {
@@ -49,17 +52,12 @@ use {
   'kdheepak/tabline.nvim',
   config = function()
     require'tabline'.setup {
-      -- Defaults configuration options
-      enable = true,
       options = {
-      -- If lualine is installed tabline will use separators configured in lualine by default.
-      -- These options can be used to override those settings.
         show_tabs_only = false, -- this shows only tabs instead of tabs + buffers
       }
     }
     vim.cmd[[
-      set guioptions-=e " Use showtabline in gui vim
-      set sessionoptions+=tabpages,globals " store tabpages and globals in session
+      set sessionoptions+=tabpages,globals " store tabpages and globals in session (todo move to lua)
     ]]
   end,
   requires = { { 'hoob3rt/lualine.nvim', opt=true }, {'kyazdani42/nvim-web-devicons', opt = true} }

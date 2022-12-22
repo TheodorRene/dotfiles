@@ -73,7 +73,6 @@ vmap("K", ":m '<-2<CR>gv=gv", "Move line up")
 nmap("J", "mzJ`z", "Move line under up, but keep cursor position")
 
 nmap("Q", "<nop>", "Disable Ex mode")
-
 imap("<C-c>", "<Esc>", "Ctrl-c to escape, and not kill anything")
 
 vim.cmd[[
@@ -85,8 +84,8 @@ nmap('<M-h>', '<C-w>h')
 nmap('<M-j>', '<C-w>j')
 nmap('<M-k>', '<C-w>k')
 nmap('<M-l>', '<C-w>l')
-nmap('<M-w>', ':lua require("harpoon.ui").nav_next() <CR>', "Harpoon: Next")
-nmap('<M-q>', ':lua require("harpoon.ui").nav_prev() <CR>', "Harpoon: Previous")
+nmap('<M-q>', '<Cmd>TablineBufferPrevious<CR>', "Previous buffer")
+nmap('<M-w>', '<Cmd>TablineBufferNext<CR>', "Next buffer")
 
 
 nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
@@ -97,12 +96,16 @@ nmap('<C-x>l', '<CMD> Telescope builtin  <CR>', "Search telescope pickers")
 nmap('<C-x>b', '<CMD> Telescope buffers <CR>')
 nmap('<C-p>', ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>', "Search git files")
 nmap('<leader>p', ':lua require"telescope.builtin".commands() <CR>', "Search commands")
+
+nmap('<leader>r', '<CMD> Telescope resume <CR>')
 -- nmap('<C-x>j', ':cnext <CR>') Dont use quicklist as much
 -- nmap('<C-x>k', ':cprev <CR>') 
 
 -- Harpoon
 nmap('<C-h>a', ':lua require("harpoon.mark").add_file() <CR>', "Harpoon: Add file")
 nmap('<C-h>m', ':lua require("harpoon.ui").toggle_quick_menu() <CR>', "Harpoon: Show menu")
+nmap('<C-h>n', ':lua require("harpoon.ui").nav_next() <CR>', "Harpoon: Next")
+nmap('<C-h>p', ':lua require("harpoon.ui").nav_prev() <CR>', "Harpoon: Previous")
 
 
 nmap('<C-f>', '<CMD> Telescope live_grep <CR>')
@@ -116,13 +119,13 @@ nmap('<F12>', '<Cmd> TroubleToggle <CR>', "Show Trouble window")
 nmap('<A-,>', ':tabnext <CR>')
 nmap('<A-.>', ':tabprev <CR>')
 -- Goto buffer in position...
-local function close_win()
+function TRC_close_win()
     if vim.bo.modifiable then
         vim.cmd('w')
     end
     vim.cmd('q')
 end
-nmap('<A-c>', '<CMD> lua close_win() <CR>')
+nmap('<A-c>', '<CMD> lua TRC_close_win() <CR>')
 -- function that closes the window and saves if it is modifiable
 
 tmap('<Esc>', [[<C-\><C-n>]])
@@ -139,8 +142,6 @@ nmap('<leader>h', ':nohls<CR>')
 nmap('<leader>c', ':! ')
 nmap('<C-u>', '<C-u>zz')
 nmap('<C-d>','<C-d>zz')
-nmap('<C-e>','zz<C-e>M')
-nmap('<C-y>', 'zz<C-y>M')
 nmap('n', 'nzz')
 
 nmap('ø', ':vertical resize +10<CR>')
