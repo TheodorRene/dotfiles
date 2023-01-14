@@ -40,4 +40,6 @@ vim.g.omni_sql_default_compl_type = 'syntax'
 -- vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 vim.o.foldenable = false
 vim.o.scrolloff = 8
+vim.o.cursorline = true
 vim.g.smoothie_no_default_mappings=true
+

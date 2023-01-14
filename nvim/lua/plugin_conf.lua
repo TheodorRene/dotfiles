@@ -1,46 +1,20 @@
--- DELETE ME
--- local augroup = vim.api.nvim_create_augroup("TablineBuffers", {})
-
--- function ShowCurrentBuffers()
---         local data = vim.t.tabline_data
---         if data == nil then
---                 require('tabline')._new_tab_data(vim.fn.tabpagenr())
---                 data = vim.t.tabline_data
---         end
---         data.show_all_buffers = false
---         vim.t.tabline_data = data
---         vim.cmd([[redrawtabline]])
--- end
-
--- vim.api.nvim_create_autocmd({ "TabEnter" }, {
---         group = augroup,
---         callback = ShowCurrentBuffers,
--- })
--- DELETE ME
---
 require('gitsigns').setup{
   on_attach = function(bufnr)
       TRC_GITSIGNS_MAPPINGS(bufnr)
   end
 }
+require('winshift').setup()
 require("nvim-tree").setup()
 require'lualine'.setup{
     options = {
         theme = 'tokyonight'
     }
 }
-require'marks'.setup {
-  -- whether to map keybinds or not. default true
-  default_mappings = true,
-  -- which builtin marks to show. default {}
-  builtin_marks = { ".", "<", ">", "^" },
-  mappings = {}
-}
 
 require('neogit').setup {
-   kind="vsplit",
+   -- kind="vsplit",
    integrations = {
-    diffview = false -- It crashes, but looks promising
+    diffview = true -- It crashes, but looks promising
   },
 }
 
@@ -48,6 +22,14 @@ local fb_actions = require "telescope".extensions.file_browser.actions
 require("telescope").setup {
 pickers = {
     git_files = {
+      theme = "dropdown",
+      previewer = false,
+    },
+    buffers = {
+      theme = "dropdown",
+      previewer = false,
+    },
+    find_files = {
       theme = "dropdown",
       previewer = false,
     },

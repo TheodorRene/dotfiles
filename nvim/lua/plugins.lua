@@ -13,6 +13,26 @@ use 'lewis6991/impatient.nvim' -- Speed up startup time, maybe delete later
 use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
 use 'sbdchd/neoformat' -- Formatting
 use 'lewis6991/gitsigns.nvim'
+use 'sindrets/winshift.nvim'
+use 'tpope/vim-surround'
+use {
+-- Lua
+  "folke/zen-mode.nvim",
+  config = function()
+    require("zen-mode").setup {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+    }
+  end
+}
+use({
+    "glepnir/lspsaga.nvim",
+    branch = "main",
+    config = function()
+        require('lspsaga').setup({})
+    end,
+})
 use{'karb94/neoscroll.nvim',
     config = function()
         require('neoscroll').setup({
@@ -33,7 +53,7 @@ use { 'TimUntersberger/neogit', -- Magit for neovim
     requires = 'nvim-lua/plenary.nvim'
 }
 use 'tpope/vim-fugitive'
-use 'chentoast/marks.nvim'
+-- use 'chentoast/marks.nvim'
 use 'hrsh7th/cmp-vsnip'
 use 'hrsh7th/vim-vsnip'
 use 'hrsh7th/vim-vsnip-integ'
@@ -108,7 +128,7 @@ use 'nvim-lualine/lualine.nvim' -- Line
 use{'Olical/conjure',
     ft = {'clojure'}
 } -- Clojure 
-use 'simrat39/rust-tools.nvim' -- Rust
+use {'simrat39/rust-tools.nvim', ft = {'rust'}} -- Rust
 use 'theprimeagen/harpoon' -- Jump between files
 
 end)

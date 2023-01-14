@@ -19,28 +19,36 @@ local on_attach = function(_, bufnr)
         return { noremap=true, silent=true, desc = desc }
     end
     --
-    vim.cmd([[
-    augroup fmt
-    autocmd!
-    au BufWritePre * try | undojoin | Neoformat | catch /E790/ | Neoformat | endtry
-    augroup END
-    ]])
+    -- vim.cmd([[
+    -- augroup fmt
+    -- autocmd! "delete existing autogroup
+    -- au BufWritePre * try | undojoin | Neoformat | catch /E790/ | Neoformat | endtry
+    -- augroup END
+    -- ]])
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts("Declaration"))
     buf_set_keymap('n', 'gd', ':lua require"telescope.builtin".lsp_definitions()<CR>', opts("LSP definitions"))
     buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
+   -- buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
     buf_set_keymap('n', 'gi', ':lua require"telescope.builtin".lsp_implementations()<CR>', opts("Implementations"))
     buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts("Signature help"))
     buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts("Type defintion"))
     buf_set_keymap('n', '<C-x>d', ':lua require"telescope.builtin".diagnostics()<CR>', opts("Diagnostics"))
-    buf_set_keymap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', opts("Rename"))
-    buf_set_keymap('n', '<C-x>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts("Code action"))
+    -- buf_set_keymap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', opts("Rename"))
+    buf_set_keymap('n', '<F2>', '<cmd> Lspsaga rename <CR>', opts("Rename"))
+    -- buf_set_keymap('n', '<C-x>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts("Code action"))
+    buf_set_keymap('n', '<C-x>c', '<cmd>Lspsaga code_action <cr>', opts("Code action"))
+    buf_set_keymap('n', '<C-x>r', '<cmd> LspRestart <CR>', opts("Restart LSP"))
     buf_set_keymap('n', 'gr', ':lua require"telescope.builtin".lsp_references()<CR>', opts("References"))
     buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts("Open float"))
+    buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>', opts("Open float"))
     buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts("Go to next diagnostics"))
     buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts("GO to next diagnostics"))
     buf_set_keymap('n', '<space>f', ':Neoformat <CR>', opts("Neoformat"))
-    buf_set_keymap('n', '<C-x>t', '<cmd>TroubleToggle <CR>', opts("Toggle Trouble"))
+    buf_set_keymap('v', '<space>fq', ':Neoformat! graphql<CR>', opts("Neoformat"))
+    buf_set_keymap('v', '<space>fq', ":'<,'>Neoformat! graphql<CR>", opts("Neoformat"))
+    buf_set_keymap('n', '<C-x>t', '<cmd>Lspsaga lsp_finder <CR>', opts("Symbols finder"))
+    buf_set_keymap('n', '<C-x>s', '<cmd>Lspsaga lsp_finder <CR>', opts("Symbols finder"))
 
 end
 nvim_lsp.sumneko_lua.setup {
@@ -60,7 +68,7 @@ nvim_lsp.sumneko_lua.setup {
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
 local servers = { 'hls', 'pyright','clojure_lsp', 'tsserver', 'tailwindcss',
-'elmls'}
+'elmls', 'jdtls'}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
@@ -71,11 +79,14 @@ for _, lsp in ipairs(servers) do
   }
 end
 
-require'rust-tools'.setup({
-    server = {
-        on_attach = on_attach
-        }
-    })
+if (vim.bo.filetype == 'rust') then
+    require'rust-tools'.setup({
+        server = {
+            on_attach = on_attach
+            }
+        })
+end
+
 
 
 
