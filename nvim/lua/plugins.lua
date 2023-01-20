@@ -10,11 +10,13 @@ return require('packer').startup(function(use)
     -- Infrastructure
 use 'wbthomason/packer.nvim'
 use 'lewis6991/impatient.nvim' -- Speed up startup time, maybe delete later
+use 'dstein64/vim-startuptime'
 use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
 use 'sbdchd/neoformat' -- Formatting
 use 'lewis6991/gitsigns.nvim'
 use 'sindrets/winshift.nvim'
 use 'tpope/vim-surround'
+use 'nvim-treesitter/playground'
 use {
 -- Lua
   "folke/zen-mode.nvim",
@@ -52,12 +54,13 @@ use({ "yioneko/nvim-yati", tag = "*", requires = "nvim-treesitter/nvim-treesitte
 use { 'TimUntersberger/neogit', -- Magit for neovim
     requires = 'nvim-lua/plenary.nvim'
 }
-use 'tpope/vim-fugitive'
+use 'tpope/vim-fugitive' -- Git wrapper for vim
 -- use 'chentoast/marks.nvim'
-use 'hrsh7th/cmp-vsnip'
-use 'hrsh7th/vim-vsnip'
-use 'hrsh7th/vim-vsnip-integ'
-use 'sindrets/diffview.nvim'
+use 'hrsh7th/cmp-vsnip' -- Snippets for completion
+use 'hrsh7th/vim-vsnip' -- Snippets for completion
+use 'hrsh7th/vim-vsnip-integ' -- Snippets for completion
+use 'sindrets/diffview.nvim' -- Git diffs
+-- use{'theodorrene/diffview.nvim', branch = 'warn-if-big-diff'}
 use {
     "folke/which-key.nvim",
     config = function()

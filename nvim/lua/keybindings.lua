@@ -50,9 +50,15 @@ function TRC_GITSIGNS_MAPPINGS(bufnr)
       return '<Ignore>'
     end, {expr=true, desc='previous hunk'})
 
+    --
     -- Actions
     map({'n', 'v'}, '<C-g>hs', ':Gitsigns stage_hunk<CR>', {desc='stage hunk'})
     map({'n', 'v'}, '<C-g>hr', ':Gitsigns reset_hunk<CR>', {desc='reset hunk'})
+    map({'n', 'v'}, 'ª', ':Gitsigns stage_hunk<CR>', {desc='stage hunk'})
+    map({'n', 'v'}, '®', ':Gitsigns reset_hunk<CR>', {desc='reset hunk'})
+    map({'n', 'v'}, '↓', ':Gitsigns undo_stage_hunk<CR>', {desc='undo stage hunk'})
+    map({'n', 'v'}, 'π', ':Gitsigns preview_hunk_inline<CR>', {desc='Preview hunk'})
+    map({'n', 'v'}, '”', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>', {desc='Preview hunk'})
     map('n', '<C-g>hu', gs.undo_stage_hunk, {desc='undo stage hunk'})
     map('n', '<C-g>td', gs.toggle_deleted, {desc='toggle deleted lines'})
     map('n', '<C-g>tl', gs.toggle_linehl, {desc='toggle line highlight'})
@@ -74,9 +80,6 @@ nmap('<C-g>dq', '<CMD> DiffviewClose <CR>', "GIT: Close diff")
 nmap('<C-g>g', ':Git ', "GIT")
 nmap('<C-g>dd', '<CMD> DiffviewOpen develop...HEAD <CR>', "GIT: Diff develop")
 nmap('<A-g>', '<CMD> Neogit <CR>', "Neogit")
-local function starts_with(str, start)
-   return string.find(str, start) == 1
-end
 
 nmap('<leader>t', 'A,<esc>o"<esc>pa":"<esc>pa"<esc>', "Add translation key")
 
@@ -84,9 +87,8 @@ vmap("J", ":m '>+1<CR>gv=gv", "Move line down")
 vmap("K", ":m '<-2<CR>gv=gv", "Move line up")
 nmap("<leader>ll", ":set number | set relativenumber <CR>", "Move line up")
 vmap("<leader>ll", ":set number | set relativenumber <CR>", "Move line up")
-nmap("<leader>ln", ":set nonumber | set norelativenumber <CR>", "Move line up")
+nmap("<leader>ln", ":set nonumber | set norelativenumber <CR>", "Move line up") 
 vmap("<leader>ln", ":set nonumber | set norelativenumber <CR>", "Move line up")
-
 
 nmap("J", "mzJ`z", "Move line under up, but keep cursor position")
 
@@ -137,8 +139,8 @@ nmap('<leader>s', '<CMD> Telescope lsp_document_symbols <CR>', "Search document 
 nmap('<F8>', '<Cmd>Lspsaga outline<CR>', "Show LSP Symbols as outline")
 nmap('<F12>', '<Cmd> TroubleToggle <CR>', "Show Trouble window")
 
-nmap("<A-d>", "<cmd>Lspsaga open_floaterm<CR>", "Open terminal")
-tmap("<A-d>", [[<C-\><C-n><cmd>Lspsaga close_floaterm<CR>]], "Open terminal")
+nmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
+tmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 -- Move to previous/next
 nmap('<A-,>', ':tabnext <CR>')
 nmap('<A-.>', ':tabprev <CR>')
