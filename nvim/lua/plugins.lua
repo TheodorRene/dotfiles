@@ -8,24 +8,23 @@ vim.cmd([[
 return require('packer').startup(function(use)
     -- Packer can manage itself
     -- Infrastructure
-use 'wbthomason/packer.nvim'
+use 'wbthomason/packer.nvim' -- Package manager
 use 'lewis6991/impatient.nvim' -- Speed up startup time, maybe delete later
-use 'dstein64/vim-startuptime'
+use 'dstein64/vim-startuptime' -- Show startup time
 use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
 use 'sbdchd/neoformat' -- Formatting
-use 'lewis6991/gitsigns.nvim'
-use 'sindrets/winshift.nvim'
-use 'tpope/vim-surround'
-use 'nvim-treesitter/playground'
+use 'lewis6991/gitsigns.nvim' -- Git signs
+use 'sindrets/winshift.nvim' -- Move windows around
+use 'tpope/vim-surround' -- Surround text with quotes, brackets, etc
+use 'nvim-treesitter/playground' -- Treesitter playground
+use 'nvim-treesitter/nvim-treesitter-textobjects' -- Treesitter text objects
+use "b0o/incline.nvim" -- Floating statusline
+use "nvim-pack/nvim-spectre" -- Search and replace
 use {
 -- Lua
   "folke/zen-mode.nvim",
   config = function()
-    require("zen-mode").setup {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-    }
+    require("zen-mode").setup()
   end
 }
 use({
@@ -45,11 +44,11 @@ use{'karb94/neoscroll.nvim',
 use {
   'nvim-tree/nvim-tree.lua',
   requires = {
-    'nvim-tree/nvim-web-devicons', -- optional, for file icons
+    'nvim-tree/nvim-web-devicons',
   },
-  tag = 'nightly' -- optional, updated every week. (see issue #1193)
+  tag = 'nightly'
 }
-use 'github/copilot.vim'
+use 'github/copilot.vim' -- Copilot
 use({ "yioneko/nvim-yati", tag = "*", requires = "nvim-treesitter/nvim-treesitter" }) -- Yet Another Treesitter indent plugin
 use { 'TimUntersberger/neogit', -- Magit for neovim
     requires = 'nvim-lua/plenary.nvim'
@@ -71,20 +70,6 @@ use {
     'nvim-telescope/telescope.nvim', branch = '0.1.x',
     requires = { {'nvim-lua/plenary.nvim'} }
     } -- Telescope
-use {
-  'kdheepak/tabline.nvim',
-  config = function()
-    require'tabline'.setup {
-      options = {
-        show_tabs_only = false, -- this shows only tabs instead of tabs + buffers
-      }
-    }
-    vim.cmd[[
-      set sessionoptions+=tabpages,globals " store tabpages and globals in session (todo move to lua)
-    ]]
-  end,
-  requires = { { 'hoob3rt/lualine.nvim', opt=true }, {'kyazdani42/nvim-web-devicons', opt = true} }
-}
 use {
     'nvim-telescope/telescope-file-browser.nvim',
     config = function()
@@ -108,6 +93,39 @@ use {
     } -- "Neovim's answer to the mouse" Jump using 's' and two chars
 
 use 'tpope/vim-commentary' -- Comment out blocks using "gc"
+use {
+    'akinsho/bufferline.nvim',
+    tag = "v3.*",
+    requires = 'nvim-tree/nvim-web-devicons',
+    after = "catppuccin",
+    config = function()
+        require("bufferline").setup {
+        highlights = require("catppuccin.groups.integrations.bufferline").get()
+        }
+    end
+    }
+
+use {
+    "nvim-neorg/neorg",
+    ft = "norg",
+    config = function()
+        require('neorg').setup {
+            load = {
+                ["core.defaults"] = {}, -- Loads default behaviour
+                ["core.norg.concealer"] = {}, -- Adds pretty icons to your documents
+                ["core.norg.dirman"] = { -- Manages Neorg workspaces
+                    config = {
+                        workspaces = {
+                            notes = "~/notes",
+                        },
+                    },
+                },
+            },
+        }
+    end,
+    run = ":Neorg sync-parsers",
+    requires = "nvim-lua/plenary.nvim",
+}
 
 -- LSP
 use 'neovim/nvim-lspconfig' -- LSP
@@ -123,9 +141,11 @@ use 'nvim-tree/nvim-web-devicons' -- Show cool icon
 
 -- Styling/Visuals
 use 'folke/tokyonight.nvim' -- Theme
+use { "catppuccin/nvim", as = "catppuccin" }
 use 'p00f/nvim-ts-rainbow' -- Rainbow matching brackets
 use "lukas-reineke/indent-blankline.nvim" -- Show indentline
-use 'nvim-lualine/lualine.nvim' -- Line
+use 'feline-nvim/feline.nvim' -- Line
+use 'j-hui/fidget.nvim'
 
 -- Language specific
 use{'Olical/conjure',

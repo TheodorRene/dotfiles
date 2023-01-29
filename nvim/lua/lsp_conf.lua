@@ -48,7 +48,6 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('v', '<space>fq', ':Neoformat! graphql<CR>', opts("Neoformat"))
     buf_set_keymap('v', '<space>fq', ":'<,'>Neoformat! graphql<CR>", opts("Neoformat"))
     buf_set_keymap('n', '<C-x>t', '<cmd>Lspsaga lsp_finder <CR>', opts("Symbols finder"))
-    buf_set_keymap('n', '<C-x>s', '<cmd>Lspsaga lsp_finder <CR>', opts("Symbols finder"))
 
 end
 nvim_lsp.sumneko_lua.setup {

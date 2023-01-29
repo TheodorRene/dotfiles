@@ -8,14 +8,15 @@ vim.o.colorcolumn = "120" -- Line length marker
 vim.o.tabstop=4 -- number of spaces that a <Tab> in the file counts for
 vim.o.expandtab = true -- converts tabs to spaces
 vim.o.shiftwidth=4 -- number of spaces to use for each step of (auto)indent
--- vim.o.laststatus=2 -- always display the status line (Default is 2?)
+vim.o.laststatus=3 -- always display the status line (Default is 2?)
 
 vim.o.showmode = false -- not sure what this is for
 
 vim.o.smartindent = true -- This might break some other indenting plugins (Treesitter)
 vim.o.wrap = false -- Display long lines as just one line
 vim.o.showmatch = true -- show matching brackets when text indicator is over them
-vim.o.ignorecase = true -- Ignore case when searching
+-- vim.o.ignorecase = true -- Ignore case when searching
+vim.o.smartcase = true -- Don't ignore case with capitals
 vim.o.autoread = true -- automatically reload files when they change on disk
 vim.o.clipboard = "unnamedplus" -- Copy paste between vim and everything else
 vim.g.loaded_netrw = 1 -- disable netrw

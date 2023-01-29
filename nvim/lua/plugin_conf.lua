@@ -3,14 +3,49 @@ require('gitsigns').setup{
       TRC_GITSIGNS_MAPPINGS(bufnr)
   end
 }
+local ctp_feline = require('catppuccin.groups.integrations.feline')
+require('feline').setup({
+    components = ctp_feline.get(),
+})
+require('incline').setup()
+require"fidget".setup{}
+-- require("bufferline").setup{}
 require('winshift').setup()
 require("nvim-tree").setup()
-require'lualine'.setup{
-    options = {
-        theme = 'tokyonight'
-    }
-}
+require("catppuccin").setup({
+    integrations = {
+        cmp = true,
+        gitgutter = false,
+        gitsigns = true,
+        harpoon = true,
+        leap = true,
+        lsp_saga = true,
+        lsp_trouble = true,
+        neogit = true,
+        nvimtree = true,
+        symbols_outline = true,
+        telescope = true,
+        treesitter = true,
+        ts_rainbow = true,
+        which_key = true,
 
+        native_lsp = {
+            enabled = true,
+            virtual_text = {
+                errors = { "italic" },
+                hints = { "italic" },
+                warnings = { "italic" },
+                information = { "italic" },
+            },
+            underlines = {
+                errors = { "underline" },
+                hints = { "underline" },
+                warnings = { "underline" },
+                information = { "underline" },
+            },
+        },
+    },
+})
 require('neogit').setup {
    -- kind="vsplit",
    integrations = {
@@ -21,6 +56,9 @@ require('neogit').setup {
 local fb_actions = require "telescope".extensions.file_browser.actions
 require("telescope").setup {
 pickers = {
+    defaults = {
+        file_ignore_patterns = { "node_modules", ".git" }
+        },
     git_files = {
       theme = "dropdown",
       previewer = false,
@@ -66,10 +104,73 @@ require'nvim-treesitter.configs'.setup {
       enable = false
   },
   additional_vim_regex_highlighting = false,
+  yati = {
+      enable = true,
+      -- Disable by languages, see `Supported languages`
+      disable = { "python" },
+
+      -- Whether to enable lazy mode (recommend to enable this if bad indent happens frequently)
+      default_lazy = true,
+
+      -- Determine the fallback method used when we cannot calculate indent by tree-sitter
+      --   "auto": fallback to vim auto indent
+      --   "asis": use current indent as-is
+      --   "cindent": see `:h cindent()`
+      -- Or a custom function return the final indent result.
+      default_fallback = "auto"
+  },
+  textobjects = {
+    select = {
+      enable = true,
+
+      -- Automatically jump forward to textobj, similar to targets.vim
+      lookahead = true,
+
+      keymaps = {
+        -- You can use the capture groups defined in textobjects.scm
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+ --       ["ac"] = "@class.outer",
+        -- You can optionally set descriptions to the mappings (used in the desc parameter of
+        -- nvim_buf_set_keymap) which plugins like which-key display
+--        ["ic"] = { query = "@class.inner", desc = "Select inner part of a class region" },
+      },
+      -- You can choose the select mode (default is charwise 'v')
+      --
+      -- Can also be a function which gets passed a table with the keys
+      -- * query_string: eg '@function.inner'
+      -- * method: eg 'v' or 'o'
+      -- and should return the mode ('v', 'V', or '<c-v>') or a table
+      -- mapping query_strings to modes.
+      selection_modes = {
+        ['@parameter.outer'] = 'v', -- charwise
+        ['@function.outer'] = 'V', -- linewise
+      },
+      -- If you set this to `true` (default is `false`) then any textobject is
+      -- extended to include preceding or succeeding whitespace. Succeeding
+      -- whitespace has priority in order to act similarly to eg the built-in
+      -- `ap`.
+      --
+      -- Can also be a function which gets passed a table with the keys
+      -- * query_string: eg '@function.inner'
+      -- * selection_mode: eg 'v'
+      -- and should return true of false
+      include_surrounding_whitespace = true,
+    },
+    swap = {
+      enable = true,
+      swap_next = {
+        ["<leader>a"] = "@parameter.inner",
+      },
+      swap_previous = {
+        ["<leader>A"] = "@parameter.inner",
+      },
+    },
+  },
 }
 
 -- Colorscheme
-vim.cmd[[colorscheme tokyonight]]
+vim.cmd[[colorscheme catppuccin-macchiato]]
 
 vim.cmd('autocmd TermOpen * setlocal nonumber')
 
@@ -84,7 +185,8 @@ if !exists('*Open_pdf')
 endif
 ]])
 
-
+require'nvim-treesitter.configs'.setup {
+}
 
 
 
