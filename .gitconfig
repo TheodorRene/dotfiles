@@ -8,24 +8,36 @@
 [core]
     quotepath = off
     autocrlf = input
+	excludesfile = /home/theodorc/.gitignore
 [alias]
+    alias = !git config --get-regexp ^alias
     co = checkout
     st = status
+    wt = worktree
     c = commit -a
     amend = commit --amend --no-edit
+    dft = difftool
     p = push
+    rid = rebase -i develop --autosquash
+    rbd = rebase develop 
+    rb = rebase
+    rbc = rebase --continue
+    rba = rebase --abort
     pl = pull
     pf = push --force-with-lease
     prfix = !git commit -a --amend --no-edit && git push --force-with-lease
     pb = !git push --set-upstream origin HEAD
     difflock = diff -- . ':(exclude)package-lock.json'
     view = !gh repo view --web
-    prview = !gh pr view --web
+    prview = !gh pr view --web 
     pr = !gh pr create
+    unstage = restore --staged
     prunebranches = remote prune origin
     suntracked = !git ls-files --others --exclude-standard | xargs bat
     fixup = !git log -n 50 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup
-    coz = !git branch | fzf | xargs git checkout 
+    coz = !git branch --sort=-committerdate | fzf | xargs git checkout 
+    b = branch --sort=-committerdate
+    recentb = "!r() { count=$1; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"origin/develop..${branch}\"); behind=$(git rev-list --count \"${branch}..origin/develop\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
 [filesystem "N/A|14.0.1|tmpfs"]
     timestampResolution = 9000 nanoseconds
     minRacyThreshold = 12860 microseconds
@@ -35,16 +47,24 @@
 [rebase]
     autoStash = true
     autosquash = true
+    stat = true
 [merge]
     conflictstyle = diff3
     tool = vscode
 [mergetool "vscode"]
         cmd = code --new-window --wait $MERGED
 [diff]
-    colorMoved = default
-    external = difft
+    tool = difft
+[difftool]
+    prompt = false
 
+[difftool "difft"]
+    cmd = difft "$LOCAL" "$REMOTE"
+[pager]
+        difftool = true
 [maintenance]
 	repo = /home/theodorc/dev/blank/folq_web
 [rerere]
 	enabled = true
+[remote "origin"]
+	prune = true
