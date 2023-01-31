@@ -13,16 +13,28 @@ end
 local function vmap(comb, cmd, desc)
 	vim.api.nvim_set_keymap('v', comb, cmd, {noremap = true, silent = true, desc = desc})
 end
+
+imap("''" ,"''<esc>i")
+imap("<C-c>", "<Esc>", "Ctrl-c to escape, and not kill anything")
+imap('""', '""<esc>i')
+imap('$$', '$$<esc>i')
+imap('((', '()<esc>i')
+imap('[[', '[]<esc>i')
 imap('jk', '<esc>')
-nmap('<C-W>m','<Cmd>WinShift<CR>')
-nmap('€', '<Cmd>WinShift<CR>')
+imap('{{','{}<esc>i')
 
+nmap("J", "mzJ`z", "Move line under up, but keep cursor position")
+nmap("Q", "<nop>", "Disable Ex mode")
+nmap('<C-d>','<C-d>zz')
+nmap('<C-u>', '<C-u>zz')
 nmap('<Leader>w',':w<CR>')
-nmap('<M-v>', ':split <CR>')
-nmap('<M-s>', ':vsplit <CR>')
-nmap('<F4>', ':let @+=expand("%:p")<CR>', "Copy file path to clipboard")
-nmap('<F5>', ':e <C-r>+ <CR>', "Copy file path to clipboard")
+nmap('<leader>h', ':nohls<CR>')
+nmap('n', 'nzz')
 
+tmap('<Esc>', [[<C-\><C-n>]])
+
+vmap("J", ":m '>+1<CR>gv=gv", "Move line down")
+vmap("K", ":m '<-2<CR>gv=gv", "Move line up")
 
 
 
@@ -68,62 +80,73 @@ function TRC_GITSIGNS_MAPPINGS(bufnr)
     map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>', {desc='select hunk object'})
 
 end
--- Git
+
+-- GIT
 nmap('<C-g>c', '<CMD> Telescope git_commits <CR>', "GIT: Commits")
 nmap('<C-g>f', '<CMD> Telescope git_bcommits <CR>', "GIT: Buffer Commits")
 nmap('<C-g>b', '<CMD> Telescope git_branches <CR>', "GIT: Branches")
 nmap('<C-g>s', '<CMD> Git status <CR>', "GIT: status")
-nmap('<C-g>w', ':vsplit term://git status <CR>', "GIT: status")
 nmap('<C-g>p', '<CMD> Git pull  <CR>', "GIT: Pull")
 nmap('<C-g>do', '<CMD> DiffviewOpen <CR>', "GIT: Show diff")
 nmap('<C-g>dq', '<CMD> DiffviewClose <CR>', "GIT: Close diff")
 nmap('<C-g>g', ':Git ', "GIT")
 nmap('<C-g>dd', '<CMD> DiffviewOpen develop...HEAD <CR>', "GIT: Diff develop")
 nmap('<A-g>', '<CMD> Neogit <CR>', "Neogit")
+--
 
-nmap('<leader>t', 'A,<esc>o"<esc>pa":"<esc>pa"<esc>', "Add translation key")
 
-vmap("J", ":m '>+1<CR>gv=gv", "Move line down")
-vmap("K", ":m '<-2<CR>gv=gv", "Move line up")
-nmap("<leader>ll", ":set number | set relativenumber <CR>", "Move line up")
-vmap("<leader>ll", ":set number | set relativenumber <CR>", "Move line up")
-nmap("<leader>ln", ":set nonumber | set norelativenumber <CR>", "Move line up") 
-vmap("<leader>ln", ":set nonumber | set norelativenumber <CR>", "Move line up")
+-- delete this
+nmap("<leader>ll", ":set number | set relativenumber <CR>", "Turn on relativenumber")
+nmap("<leader>ln", ":set nonumber | set norelativenumber <CR>", "Turn off relativenumber")
 
-nmap("J", "mzJ`z", "Move line under up, but keep cursor position")
-
-nmap("Q", "<nop>", "Disable Ex mode")
-imap("<C-c>", "<Esc>", "Ctrl-c to escape, and not kill anything")
 
 vim.cmd[[
         imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
         let g:copilot_no_tab_map = v:true
         ]]
 
-nmap('<M-h>', '<C-w>h')
-nmap('<M-j>', '<C-w>j')
-nmap('<M-k>', '<C-w>k')
-nmap('<M-l>', '<C-w>l')
+-- Window navigation
+function TRC_close_win()
+    if vim.bo.modifiable then
+        vim.cmd('w')
+    end
+    vim.cmd('q')
+end
+nmap('<A-c>', '<CMD> lua TRC_close_win() <CR>')
+-- function that closes the window and saves if it is modifiable
 nmap('<A-,>', '<Cmd>TablineBufferPrevious<CR>', "Previous buffer")
 nmap('<A-.>', '<Cmd>TablineBufferNext<CR>', "Next buffer")
-nmap('<M-q>', ':tabnext <CR>')
-nmap('<M-w>', ':tabprev <CR>')
-
+nmap('<A-h>', '<C-w>h')
+nmap('<A-j>', '<C-w>j')
+nmap('<A-k>', '<C-w>k')
+nmap('<A-l>', '<C-w>l')
+nmap('<A-q>', ':tabnext <CR>')
+nmap('<A-s>', ':vsplit <CR>')
+nmap('<A-v>', ':split <CR>')
+nmap('<A-w>', ':tabprev <CR>')
+nmap('<C-W>m','<Cmd>WinShift<CR>')
+nmap('ø', ':vertical resize +10<CR>')
+nmap('æ', ':vertical resize -10<CR>')
+nmap('å', ':resize -10<CR>')
+nmap('Å', ':resize +10<CR>')
+--
 
 nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
--- nmap('/', '<CMD> Telescope current_buffer_fuzzy_find <CR>')
+
+nmap('<C-x>b', '<CMD> Telescope buffers <CR>', "Search open buffers")
 nmap('<C-x>f', '<CMD> Telescope current_buffer_fuzzy_find <CR>', "Current buffer fuzzy find")
 nmap('<C-x>j', '<CMD> Telescope jumplist <CR>', "Show jumplist")
 nmap('<C-x>l', '<CMD> Telescope builtin  <CR>', "Search telescope pickers")
-nmap('<C-x>b', '<CMD> Telescope buffers <CR>', "Search open buffers")
-nmap('<C-x>z', ':ZenMode <CR>', "Open Zenmode")
+nmap('<C-x>p', ':lua require"telescope.builtin".git_files() <CR>', "Search git files from root")
 nmap('<C-x>s', "<cmd>lua require('spectre').open()<CR>", "Open Spectre")
+nmap('<C-x>z', ':ZenMode <CR>', "Open Zenmode")
+
 nmap('<C-p>', ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>', "Search git files")
 nmap('<leader>p', ':lua require"telescope.builtin".commands() <CR>', "Search commands")
 
+nmap('<leader>b', '<CMD> Telescope buffers <CR>')
 nmap('<leader>r', '<CMD> Telescope resume <CR>')
--- nmap('<C-x>j', ':cnext <CR>') Dont use quicklist as much
--- nmap('<C-x>k', ':cprev <CR>') 
+nmap('<leader>s', '<CMD> Telescope lsp_document_symbols <CR>', "Search document symbols")
 
 -- Harpoon
 nmap('<C-h>a', ':lua require("harpoon.mark").add_file() <CR>', "Harpoon: Add file")
@@ -133,54 +156,26 @@ nmap('<C-h>p', ':lua require("harpoon.ui").nav_prev() <CR>', "Harpoon: Previous"
 
 
 nmap('<C-f>', '<CMD> Telescope live_grep <CR>')
-nmap('<leader>b', '<CMD> Telescope buffers <CR>')
 nmap('<C-t>', '<CMD> Telescope lsp_dynamic_workspace_symbols <CR>')
-nmap('<leader>s', '<CMD> Telescope lsp_document_symbols <CR>', "Search document symbols")
--- nmap('<C-x>t', '<CMD> Telescope tags <CR>')
--- nmap('<F8>', '<Cmd>SymbolsOutline<CR>', "Show LSP Symbols as outline")
--- nmap('<F8>', '<Cmd>Vista!!<CR>', "Show LSP Symbols as outline")
+
+-- Function keys
+nmap('<F4>', ':let @+=expand("%:p")<CR>', "Copy file path to clipboard")
+nmap('<F5>', ':e <C-r>+ <CR>', "Copy file path to clipboard")
 nmap('<F8>', '<Cmd>Lspsaga outline<CR>', "Show LSP Symbols as outline")
+nmap('<F9>', ':w <CR> :! rocaf %<CR>')
+nmap('<F10>', '<cmd> NvimTreeToggle<CR>')
 nmap('<F12>', '<Cmd> TroubleToggle <CR>', "Show Trouble window")
 
 nmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 tmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 -- Goto buffer in position...
-function TRC_close_win()
-    if vim.bo.modifiable then
-        vim.cmd('w')
-    end
-    vim.cmd('q')
-end
-nmap('<A-c>', '<CMD> lua TRC_close_win() <CR>')
--- function that closes the window and saves if it is modifiable
-
-tmap('<Esc>', [[<C-\><C-n>]])
-
-imap('""', '""<esc>i')
-imap("''" ,"''<esc>i")
-imap('((', '()<esc>i')
-imap('[[', '[]<esc>i')
-imap('{{','{}<esc>i')
-imap('$$', '$$<esc>i')
 
 
-nmap('<leader>h', ':nohls<CR>')
-nmap('<leader>c', ':! ')
-nmap('<C-u>', '<C-u>zz')
-nmap('<C-d>','<C-d>zz')
-nmap('n', 'nzz')
-
-nmap('ø', ':vertical resize +10<CR>')
-nmap('æ', ':vertical resize -10<CR>')
-nmap('å', ':resize -10<CR>')
-nmap('Å', ':resize +10<CR>')
 
 -- TODO use after directory for filetype specific mappings
 if (vim.bo.filetype == 'json') then
     nmap('<leader>t', 'A,<esc>o"<esc>pa":"<esc>pa"<esc>', "Add translation key")
 end
 
-nmap('<F9>', ':w <CR> :! rocaf %<CR>')
-nmap('<F10>', '<cmd> NvimTreeToggle<CR>')
 
 
