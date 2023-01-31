@@ -7,11 +7,6 @@ local ctp_feline = require('catppuccin.groups.integrations.feline')
 require('feline').setup({
     components = ctp_feline.get(),
 })
-require('incline').setup()
-require"fidget".setup{}
--- require("bufferline").setup{}
-require('winshift').setup()
-require("nvim-tree").setup()
 require("catppuccin").setup({
     integrations = {
         cmp = true,
@@ -49,7 +44,7 @@ require("catppuccin").setup({
 require('neogit').setup {
    -- kind="vsplit",
    integrations = {
-    diffview = true -- It crashes, but looks promising
+    diffview = true
   },
 }
 
@@ -184,10 +179,6 @@ if !exists('*Open_pdf')
     endfunction
 endif
 ]])
-
-require'nvim-treesitter.configs'.setup {
-}
-
 
 
 

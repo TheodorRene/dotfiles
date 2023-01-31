@@ -14,11 +14,19 @@ use 'dstein64/vim-startuptime' -- Show startup time
 use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
 use 'sbdchd/neoformat' -- Formatting
 use 'lewis6991/gitsigns.nvim' -- Git signs
-use 'sindrets/winshift.nvim' -- Move windows around
+use {'sindrets/winshift.nvim',
+    config = function()
+        require('winshift').setup()
+    end
+} -- Move windows around
 use 'tpope/vim-surround' -- Surround text with quotes, brackets, etc
 use 'nvim-treesitter/playground' -- Treesitter playground
 use 'nvim-treesitter/nvim-treesitter-textobjects' -- Treesitter text objects
-use "b0o/incline.nvim" -- Floating statusline
+use {"b0o/incline.nvim",
+    config = function()
+        require("incline").setup()
+    end
+} -- Floating statusline
 use "nvim-pack/nvim-spectre" -- Search and replace
 use {
 -- Lua
@@ -43,6 +51,9 @@ use{'karb94/neoscroll.nvim',
 }
 use {
   'nvim-tree/nvim-tree.lua',
+  config =function()
+      require('nvim-tree').setup()
+  end,
   requires = {
     'nvim-tree/nvim-web-devicons',
   },
@@ -144,7 +155,11 @@ use { "catppuccin/nvim", as = "catppuccin" }
 use 'p00f/nvim-ts-rainbow' -- Rainbow matching brackets
 use "lukas-reineke/indent-blankline.nvim" -- Show indentline
 use 'feline-nvim/feline.nvim' -- Line
-use 'j-hui/fidget.nvim'
+use {'j-hui/fidget.nvim',
+    config = function()
+        require('fidget').setup()
+    end
+} -- Show LSP progress
 
 -- Language specific
 use{'Olical/conjure',
