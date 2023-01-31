@@ -49,7 +49,6 @@ use {
   tag = 'nightly'
 }
 use 'github/copilot.vim' -- Copilot
-use({ "yioneko/nvim-yati", tag = "*", requires = "nvim-treesitter/nvim-treesitter" }) -- Yet Another Treesitter indent plugin
 use { 'TimUntersberger/neogit', -- Magit for neovim
     requires = 'nvim-lua/plenary.nvim'
 }
