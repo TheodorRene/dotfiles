@@ -89,30 +89,21 @@ require'nvim-treesitter.configs'.setup {
   ensure_installed = "all",
   highlight = {
     enable = true,
+ -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
+    disable = function(_, buf)
+        local max_filesize = 100 * 1024 -- 100 KB
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
+    additional_vim_regex_highlighting = false,
   },
+
   rainbow = {
     enable = true,
     extended_mode = true,
     max_file_lines = nil,
-  },
-  indent = {
-      enable = false
-  },
-  additional_vim_regex_highlighting = false,
-  yati = {
-      enable = true,
-      -- Disable by languages, see `Supported languages`
-      disable = { "python" },
-
-      -- Whether to enable lazy mode (recommend to enable this if bad indent happens frequently)
-      default_lazy = true,
-
-      -- Determine the fallback method used when we cannot calculate indent by tree-sitter
-      --   "auto": fallback to vim auto indent
-      --   "asis": use current indent as-is
-      --   "cindent": see `:h cindent()`
-      -- Or a custom function return the final indent result.
-      default_fallback = "auto"
   },
   textobjects = {
     select = {
