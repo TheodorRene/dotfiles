@@ -27,8 +27,7 @@ for_window [class="^.*"] border pixel 4
 #Startup
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 exec --no-startup-id picom -f --backend glx --vsync
-exec setxkbmap -layout no
-exec setxkbmap -option ctrl:nocaps
+exec_always setxkbmap -layout no -variant nodeadkeys -option ctrl:nocaps
 
 
 
@@ -68,7 +67,7 @@ bindsym $mod+Return exec $terminal
 #start firefox
 bindsym $mod+o exec $browser
 #start screenshot
-bindsym --release $mod+s exec /home/theodorc/bin/screenshot
+bindsym --release Print exec /home/theodorc/bin/screenshot
 
 
 # kill focused window

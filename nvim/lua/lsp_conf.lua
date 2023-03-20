@@ -48,21 +48,30 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('v', '<space>fq', ':Neoformat! graphql<CR>', opts("Neoformat"))
     buf_set_keymap('v', '<space>fq', ":'<,'>Neoformat! graphql<CR>", opts("Neoformat"))
     buf_set_keymap('n', '<C-x>t', '<cmd>Lspsaga lsp_finder <CR>', opts("Symbols finder"))
-
+    buf_set_keymap('n', '<C-x>h', '<cmd>lua vim.lsp.codelens.get() <CR>', opts("Symbols finder"))
 end
-nvim_lsp.sumneko_lua.setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    flags = {
-        debounce_text_changes = 150,
+
+require'lspconfig'.lua_ls.setup {
+  settings = {
+    Lua = {
+      runtime = {
+        -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+        version = 'LuaJIT',
+      },
+      diagnostics = {
+        -- Get the language server to recognize the `vim` global
+        globals = {'vim'},
+      },
+      workspace = {
+        -- Make the server aware of Neovim runtime files
+        library = vim.api.nvim_get_runtime_file("", true),
+      },
+      -- Do not send telemetry data containing a randomized but unique identifier
+      telemetry = {
+        enable = false,
+      },
     },
-    settings = {
-        Lua = {
-            diagnostics = {
-                globals = { 'vim' }
-            }
-        }
-    }
+  },
 }
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
@@ -78,13 +87,13 @@ for _, lsp in ipairs(servers) do
   }
 end
 
-if (vim.bo.filetype == 'rust') then
-    require'rust-tools'.setup({
-        server = {
-            on_attach = on_attach
-            }
-        })
-end
+local rt = require("rust-tools")
+
+rt.setup({
+  server = {
+    on_attach = on_attach,
+  },
+})
 
 
 

@@ -8,6 +8,8 @@
     :command! BlameLine :Gitsigns blame_line
     :command! AddFile :Git add %
     :command! Hover :lua vim.lsp.buf.hover()
+    :command! ResetTS :write | edit | TSBufEnable highlight
+    :command! -nargs=* ChangeDir :chdir 
     ]])
 vim.api.nvim_create_user_command("Scrollbind", ":windo set scrollbind!", {})
 

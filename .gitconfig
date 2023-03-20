@@ -10,34 +10,40 @@
     autocrlf = input
 	excludesfile = /home/theodorc/.gitignore
 [alias]
+	trace = blame
     alias = !git config --get-regexp ^alias
-    co = checkout
-    st = status
-    wt = worktree
-    c = commit -a
     amend = commit --amend --no-edit
-    dft = difftool
-    p = push
-    rid = rebase -i develop --autosquash
-    rbd = rebase develop 
-    rb = rebase
-    rbc = rebase --continue
-    rba = rebase --abort
-    pl = pull
-    pf = push --force-with-lease
-    prfix = !git commit -a --amend --no-edit && git push --force-with-lease
-    pb = !git push --set-upstream origin HEAD
-    difflock = diff -- . ':(exclude)package-lock.json'
-    view = !gh repo view --web
-    prview = !gh pr view --web 
-    pr = !gh pr create
-    unstage = restore --staged
-    prunebranches = remote prune origin
-    suntracked = !git ls-files --others --exclude-standard | xargs bat
-    fixup = !git log -n 50 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup
-    coz = !git branch --sort=-committerdate | fzf | xargs git checkout 
     b = branch --sort=-committerdate
+    bc = switch -c
+    c = commit -a
+    co = checkout
+    coz = !git branch --sort=-committerdate | fzf | xargs git checkout 
+    dft = difftool
+    difflock = diff -- . ':(exclude)package-lock.json'
+    fixup = !git log -n 50 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup
+    p = push
+    pb = !git push --set-upstream origin HEAD
+    pf = push --force-with-lease
+    pl = pull
+    pr = !gh pr create
+    prfix = !git commit -a --amend --no-edit && git push --force-with-lease
+    prunebranches = remote prune origin
+    prview = !gh pr view --web 
+    rb = rebase
+    rba = rebase --abort
+    rbc = rebase --continue
+    rbd = rebase develop 
     recentb = "!r() { count=$1; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"origin/develop..${branch}\"); behind=$(git rev-list --count \"${branch}..origin/develop\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
+    rid = rebase -i develop --autosquash
+    st = status
+    suntracked = !git ls-files --others --exclude-standard | xargs bat
+    unstage = restore --staged
+    view = !gh repo view --web
+    wt = worktree
+    wt = worktree
+    wta = worktree add
+    wtd = worktree remove
+    wtr = worktree remove
 [filesystem "N/A|14.0.1|tmpfs"]
     timestampResolution = 9000 nanoseconds
     minRacyThreshold = 12860 microseconds
@@ -63,8 +69,8 @@
 [pager]
         difftool = true
 [maintenance]
-	repo = /home/theodorc/dev/blank/folq_web
+    repo = /home/theodorc/dev/blank/folq_web
 [rerere]
-	enabled = true
+    enabled = true
 [remote "origin"]
-	prune = true
+    prune = true

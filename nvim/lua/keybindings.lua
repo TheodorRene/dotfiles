@@ -23,10 +23,13 @@ imap('[[', '[]<esc>i')
 imap('jk', '<esc>')
 imap('{{','{}<esc>i')
 
+-- nmap("<C-e>", "5<C-e>", "Move faster")
+-- nmap("<C-y>", "5<C-y>", "Move faster")
+
 nmap("J", "mzJ`z", "Move line under up, but keep cursor position")
 nmap("Q", "<nop>", "Disable Ex mode")
-nmap('<C-d>','<C-d>zz')
-nmap('<C-u>', '<C-u>zz')
+-- nmap('<C-d>','<C-d>zz')
+-- nmap('<C-u>', '<C-u>zz')
 nmap('<Leader>w',':w<CR>')
 nmap('<leader>h', ':nohls<CR>')
 nmap('n', 'nzz')
@@ -64,6 +67,7 @@ function TRC_GITSIGNS_MAPPINGS(bufnr)
 
     --
     -- Actions
+    -- local gitsigns = require('gitsigns')
     map({'n', 'v'}, '<C-g>hs', ':Gitsigns stage_hunk<CR>', {desc='stage hunk'})
     map({'n', 'v'}, '<C-g>hr', ':Gitsigns reset_hunk<CR>', {desc='reset hunk'})
     map({'n', 'v'}, 'ª', ':Git add %<CR>', {desc='stage hunk'})
@@ -172,10 +176,7 @@ tmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 
 
 
--- TODO use after directory for filetype specific mappings
-if (vim.bo.filetype == 'json') then
-    nmap('<leader>t', 'A,<esc>o"<esc>pa":"<esc>pa"<esc>', "Add translation key")
-end
+nmap('<leader>t', 'A,<esc>o"<esc>pa":"<esc>pa"<esc>', "Add translation key")
 
 
 

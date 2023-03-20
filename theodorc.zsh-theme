@@ -11,7 +11,9 @@ local current_dir='%{$terminfo[bold]$fg[blue]%}%~ %{$reset_color%}'
 local git_branch='$(git_prompt_info)'
 local venv_prompt='$(virtualenv_prompt_info)'
 
-PROMPT="${venv_prompt}${current_dir}${git_branch}
+local vim_prompt='$(vim_prompt_info)'
+
+PROMPT="${venv_prompt}${current_dir}${git_branch}${vim_prompt}
 %B${user_symbol}%b "
 RPROMPT="%B[%*]%b"
 
