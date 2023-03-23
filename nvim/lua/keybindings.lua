@@ -145,6 +145,12 @@ nmap('<C-x>p', ':lua require"telescope.builtin".git_files() <CR>', "Search git f
 nmap('<C-x>s', "<cmd>lua require('spectre').open()<CR>", "Open Spectre")
 nmap('<C-x>z', ':ZenMode <CR>', "Open Zenmode")
 
+-- SQL
+nmap('<C-s>d', ':DBUIToggle <CR>', "Open DBUI")
+--nmap('<C-s>i', ':DB g:prod = postgres://folq@localhost<CR>', "Init DB")
+nmap('<C-s>r', ':DB ', "Open DB")
+nmap('<C-s>f', ':%DB <CR>', "Run file")
+
 nmap('<C-p>', ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>', "Search git files")
 nmap('<leader>p', ':lua require"telescope.builtin".commands() <CR>', "Search commands")
 
