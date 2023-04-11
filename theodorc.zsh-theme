@@ -1,6 +1,6 @@
 # Based on:
 # ZSH Theme - Preview: https://gyazo.com/8becc8a7ed5ab54a0262a470555c3eed.png
-local return_code="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
+local return_code="%(?..%{$fg[red]%}%?❗%{$reset_color%})"
 
 local user='%{$terminfo[bold]$fg[green]%}%n'
 local at='%{$terminfo[bold]$fg[yellow]%}@'
@@ -12,8 +12,9 @@ local git_branch='$(git_prompt_info)'
 local venv_prompt='$(virtualenv_prompt_info)'
 
 local vim_prompt='$(vim_prompt_info)'
+local vault_prompt='$(aws_vault_prompt)'
 
-PROMPT="${venv_prompt}${current_dir}${git_branch}${vim_prompt}
+PROMPT="${venv_prompt}${current_dir}${git_branch}${vim_prompt}${vault_prompt}${return_code}
 %B${user_symbol}%b "
 RPROMPT="%B[%*]%b"
 
