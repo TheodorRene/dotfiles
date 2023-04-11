@@ -44,6 +44,7 @@
     wta = worktree add
     wtd = worktree remove
     wtr = worktree remove
+    root = rev-parse --show-toplevel
 [filesystem "N/A|14.0.1|tmpfs"]
     timestampResolution = 9000 nanoseconds
     minRacyThreshold = 12860 microseconds
