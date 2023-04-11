@@ -3,6 +3,7 @@ export ZSH="$HOME/.oh-my-zsh"
 path+=$HOME/.local/bin
 path+=/var/lib/snapd/snap/bin
 path+=$HOME/.cargo/bin
+path+=$HOME/.luarocks/bin
 
 export MANPAGER='nvim +Man!'
 
@@ -32,12 +33,12 @@ source $ZSH/oh-my-zsh.sh
 ~/bin/run_tmux_if_vim
 
 alias bc="bc -lq"
-alias c="code . && exit"
-alias cal="cal -3"
+#alias c="code . && exit" So long and thanks for all the fish
+alias cal="ncal -3wb"
 alias cass="mosh cassarossa.samfundet.no"
 alias cat="bat"
 alias clip="xclip -selection c"
-alias clipboard2file='xclip -selection clipboard -t image/png -o > "$(date +%Y-%m-%d_%T).png"  # Use "Screenshot from $(date "+%Y-%m-%d %H-%M-%S").png" if you like GNOME filename format.'
+alias clipboard2file='xclip -selection clipboard -t image/png -o > "$(date +%Y-%m-%d_%T).png"'
 alias dir="ls -d */"
 alias dsize="du -h --max-depth=1 | sort -h"
 alias gs="git status" #So many misstyping and fk ghostscript
@@ -45,7 +46,6 @@ alias locate="plocate"
 alias lr="ls -ltrh"
 alias lsblk="lsblk -f"
 alias lzd="lazydocker"
-alias pn="pnpm"
 alias ports="sudo lsof -i -P -n | grep LISTEN"
 alias py="python"
 alias python="python3"
@@ -57,9 +57,9 @@ alias suvim="sudo -E vim"
 alias svenv="source venv/bin/activate"
 alias sys="systemctl"
 alias t="tmux new-session -A -s main"
-alias tn="trans -s nb -t en"
-alias te="trans -s en -t nb"
 alias takeover="tmux detach -a"
+alias te="trans -s en -t nb"
+alias tn="trans -s nb -t en"
 alias ukenr="date +%V"
 alias uuid="uuidgen | wl-copy; echo 'UUID copied'"
 alias vim="nvim"
@@ -161,6 +161,7 @@ tgrep(){
 pdfgrep(){
     command pdfgrep -i $1 *
 }
+
 
 # This doesnt work all the time
 wifi_pass(){
