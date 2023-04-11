@@ -68,15 +68,8 @@ alias wclip="wl-copy"
 
 # FOLQ
 alias blank="autorandr blank"
-alias cv="chromium http://localhost:3420/cv/debug &!"
-alias folq="autorandr folq"
-alias getenv="cp -i $HOME/dev/blank/folq_web/ts-frontend/.env . && echo 'Copied env file'"
-alias localdb="pgcli -h localhost -U folq"
 alias nrd="npm run dev"
 alias nrs="npm run storybook"
-alias nrt="npm run tsc"
-alias profil="chromium http://localhost:3420/debug &!"
-alias refolqdb="docker start folqdb && docker restart hasura-graphql-engine-1"
 
 
 
