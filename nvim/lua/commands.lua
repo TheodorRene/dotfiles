@@ -1,4 +1,4 @@
-    vim.cmd([[
+vim.cmd([[
     :command! Rocaf :!rocaf %
     :command! FindFiles :lua require"telescope.builtin".find_files()
     :command! StageHunk :Gitsigns stage_hunk

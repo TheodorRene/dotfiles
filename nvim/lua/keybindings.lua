@@ -1,27 +1,31 @@
 local function imap(comb, cmd, desc)
-	vim.api.nvim_set_keymap('i', comb, cmd, {noremap = true, silent = true, desc = desc})
+    vim.api.nvim_set_keymap('i', comb, cmd,
+                            {noremap = true, silent = true, desc = desc})
 end
 
 local function nmap(comb, cmd, desc)
-	vim.api.nvim_set_keymap('n', comb, cmd, {noremap = true, silent = true, desc = desc})
+    vim.api.nvim_set_keymap('n', comb, cmd,
+                            {noremap = true, silent = true, desc = desc})
 end
 
 local function tmap(comb, cmd, desc)
-	vim.api.nvim_set_keymap('t', comb, cmd, {noremap = true, silent = true, desc = desc})
+    vim.api.nvim_set_keymap('t', comb, cmd,
+                            {noremap = true, silent = true, desc = desc})
 end
 
 local function vmap(comb, cmd, desc)
-	vim.api.nvim_set_keymap('v', comb, cmd, {noremap = true, silent = true, desc = desc})
+    vim.api.nvim_set_keymap('v', comb, cmd,
+                            {noremap = true, silent = true, desc = desc})
 end
 
-imap("''" ,"''<esc>i")
+imap("''", "''<esc>i")
 imap("<C-c>", "<Esc>", "Ctrl-c to escape, and not kill anything")
 imap('""', '""<esc>i')
 imap('$$', '$$<esc>i')
 imap('((', '()<esc>i')
 imap('[[', '[]<esc>i')
 imap('jk', '<esc>')
-imap('{{','{}<esc>i')
+imap('{{', '{}<esc>i')
 
 -- nmap("<C-e>", "5<C-e>", "Move faster")
 -- nmap("<C-y>", "5<C-y>", "Move faster")
@@ -30,7 +34,7 @@ nmap("J", "mzJ`z", "Move line under up, but keep cursor position")
 nmap("Q", "<nop>", "Disable Ex mode")
 -- nmap('<C-d>','<C-d>zz')
 -- nmap('<C-u>', '<C-u>zz')
-nmap('<Leader>w',':w<CR>')
+nmap('<Leader>w', ':w<CR>')
 nmap('<leader>h', ':nohls<CR>')
 nmap('n', 'nzz')
 
@@ -39,49 +43,52 @@ tmap('<Esc>', [[<C-\><C-n>]])
 vmap("J", ":m '>+1<CR>gv=gv", "Move line down")
 vmap("K", ":m '<-2<CR>gv=gv", "Move line up")
 
-
-
 -- Used in gitsigns on_attach
 function TRC_GITSIGNS_MAPPINGS(bufnr)
     local gs = package.loaded.gitsigns
 
     local function map(mode, l, r, opts, desc)
-      opts = opts or {}
-      opts.buffer = bufnr
-      opts.desc = desc
-      vim.keymap.set(mode, l, r, opts)
+        opts = opts or {}
+        opts.buffer = bufnr
+        opts.desc = desc
+        vim.keymap.set(mode, l, r, opts)
     end
 
     -- Navigation between hunks
     map('n', ']c', function()
-      if vim.wo.diff then return ']c' end
-      vim.schedule(function() gs.next_hunk() end)
-      return '<Ignore>'
-    end, {expr=true, desc='next hunk'})
+        if vim.wo.diff then return ']c' end
+        vim.schedule(function() gs.next_hunk() end)
+        return '<Ignore>'
+    end, {expr = true, desc = 'next hunk'})
 
     map('n', '[c', function()
-      if vim.wo.diff then return '[c' end
-      vim.schedule(function() gs.prev_hunk() end)
-      return '<Ignore>'
-    end, {expr=true, desc='previous hunk'})
+        if vim.wo.diff then return '[c' end
+        vim.schedule(function() gs.prev_hunk() end)
+        return '<Ignore>'
+    end, {expr = true, desc = 'previous hunk'})
 
     --
     -- Actions
     -- local gitsigns = require('gitsigns')
-    map({'n', 'v'}, '<C-g>hs', ':Gitsigns stage_hunk<CR>', {desc='stage hunk'})
-    map({'n', 'v'}, '<C-g>hr', ':Gitsigns reset_hunk<CR>', {desc='reset hunk'})
-    map({'n', 'v'}, 'ª', ':Git add %<CR>', {desc='stage hunk'})
-    map({'n', 'v'}, 'ß', ':Gitsigns stage_hunk<CR>', {desc='stage hunk'})
-    map({'n', 'v'}, '®', ':Gitsigns reset_hunk<CR>', {desc='reset hunk'})
-    map({'n', 'v'}, '↓', ':Gitsigns undo_stage_hunk<CR>', {desc='undo stage hunk'})
-    map({'n', 'v'}, 'π', ':Gitsigns preview_hunk_inline<CR>', {desc='Preview hunk'})
-    map({'n', 'v'}, '”', '<cmd>lua require"gitsigns".blame_line{full=true}<CR>', {desc='Preview hunk'})
-    map('n', '<C-g>hu', gs.undo_stage_hunk, {desc='undo stage hunk'})
-    map('n', '<C-g>td', gs.toggle_deleted, {desc='toggle deleted lines'})
-    map('n', '<C-g>tl', gs.toggle_linehl, {desc='toggle line highlight'})
+    map({'n', 'v'}, '<C-g>hs', ':Gitsigns stage_hunk<CR>', {desc = 'stage hunk'})
+    map({'n', 'v'}, '<C-g>hr', ':Gitsigns reset_hunk<CR>', {desc = 'reset hunk'})
+    map({'n', 'v'}, 'ª', ':Git add %<CR>', {desc = 'stage hunk'})
+    map({'n', 'v'}, 'ß', ':Gitsigns stage_hunk<CR>', {desc = 'stage hunk'})
+    map({'n', 'v'}, '®', ':Gitsigns reset_hunk<CR>', {desc = 'reset hunk'})
+    map({'n', 'v'}, '↓', ':Gitsigns undo_stage_hunk<CR>',
+        {desc = 'undo stage hunk'})
+    map({'n', 'v'}, 'π', ':Gitsigns preview_hunk_inline<CR>',
+        {desc = 'Preview hunk'})
+    map({'n', 'v'}, '”',
+        '<cmd>lua require"gitsigns".blame_line{full=true}<CR>',
+        {desc = 'Preview hunk'})
+    map('n', '<C-g>hu', gs.undo_stage_hunk, {desc = 'undo stage hunk'})
+    map('n', '<C-g>td', gs.toggle_deleted, {desc = 'toggle deleted lines'})
+    map('n', '<C-g>tl', gs.toggle_linehl, {desc = 'toggle line highlight'})
 
     -- Text object
-    map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>', {desc='select hunk object'})
+    map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>',
+        {desc = 'select hunk object'})
 
 end
 
@@ -98,23 +105,21 @@ nmap('<C-g>dd', '<CMD> DiffviewOpen develop...HEAD <CR>', "GIT: Diff develop")
 nmap('<A-g>', '<CMD> Neogit <CR>', "Neogit")
 --
 
-
 -- delete this
-nmap("<leader>ll", ":set number | set relativenumber <CR>", "Turn on relativenumber")
-nmap("<leader>ln", ":set nonumber | set norelativenumber <CR>", "Turn off relativenumber")
+nmap("<leader>ll", ":set number | set relativenumber <CR>",
+     "Turn on relativenumber")
+nmap("<leader>ln", ":set nonumber | set norelativenumber <CR>",
+     "Turn off relativenumber")
 nmap('<space>f', ':Neoformat <CR>', "Neoformat")
 
-
-vim.cmd[[
+vim.cmd [[
         imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
         let g:copilot_no_tab_map = v:true
         ]]
 
 -- Window navigation
 function TRC_close_win()
-    if vim.bo.modifiable then
-        vim.cmd('w')
-    end
+    if vim.bo.modifiable then vim.cmd('w') end
     vim.cmd('q')
 end
 nmap('<A-c>', '<CMD> lua TRC_close_win() <CR>')
@@ -129,7 +134,7 @@ nmap('<A-q>', ':tabnext <CR>')
 nmap('<A-s>', ':vsplit <CR>')
 nmap('<A-v>', ':split <CR>')
 nmap('<A-w>', ':tabprev <CR>')
-nmap('<C-W>m','<Cmd>WinShift<CR>')
+nmap('<C-W>m', '<Cmd>WinShift<CR>')
 nmap('ø', ':vertical resize +10<CR>')
 nmap('æ', ':vertical resize -10<CR>')
 nmap('å', ':resize -10<CR>')
@@ -139,32 +144,39 @@ nmap('Å', ':resize +10<CR>')
 nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
 
 nmap('<C-x>b', '<CMD> Telescope buffers <CR>', "Search open buffers")
-nmap('<C-x>f', '<CMD> Telescope current_buffer_fuzzy_find <CR>', "Current buffer fuzzy find")
+nmap('<C-x>f', '<CMD> Telescope current_buffer_fuzzy_find <CR>',
+     "Current buffer fuzzy find")
 nmap('<C-x>j', '<CMD> Telescope jumplist <CR>', "Show jumplist")
 nmap('<C-x>l', '<CMD> Telescope builtin  <CR>', "Search telescope pickers")
-nmap('<C-x>p', ':lua require"telescope.builtin".git_files() <CR>', "Search git files from root")
+nmap('<C-x>p', ':lua require"telescope.builtin".git_files() <CR>',
+     "Search git files from root")
 nmap('<C-x>s', "<cmd>lua require('spectre').open()<CR>", "Open Spectre")
 nmap('<C-x>z', ':ZenMode <CR>', "Open Zenmode")
 
 -- SQL
 nmap('<C-s>d', ':DBUIToggle <CR>', "Open DBUI")
---nmap('<C-s>i', ':DB g:prod = postgres://folq@localhost<CR>', "Init DB")
+-- nmap('<C-s>i', ':DB g:prod = postgres://folq@localhost<CR>', "Init DB")
 nmap('<C-s>r', ':DB ', "Open DB")
 nmap('<C-s>f', ':%DB <CR>', "Run file")
 
-nmap('<C-p>', ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>', "Search git files")
-nmap('<leader>p', ':lua require"telescope.builtin".commands() <CR>', "Search commands")
+nmap('<C-p>',
+     ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>',
+     "Search git files")
+nmap('<leader>p', ':lua require"telescope.builtin".commands() <CR>',
+     "Search commands")
 
 nmap('<leader>b', '<CMD> Telescope buffers <CR>')
 nmap('<leader>r', '<CMD> Telescope resume <CR>')
-nmap('<leader>s', '<CMD> Telescope lsp_document_symbols <CR>', "Search document symbols")
+nmap('<leader>s', '<CMD> Telescope lsp_document_symbols <CR>',
+     "Search document symbols")
 
 -- Harpoon
-nmap('<C-h>a', ':lua require("harpoon.mark").add_file() <CR>', "Harpoon: Add file")
-nmap('<C-h>m', ':lua require("harpoon.ui").toggle_quick_menu() <CR>', "Harpoon: Show menu")
+nmap('<C-h>a', ':lua require("harpoon.mark").add_file() <CR>',
+     "Harpoon: Add file")
+nmap('<C-h>m', ':lua require("harpoon.ui").toggle_quick_menu() <CR>',
+     "Harpoon: Show menu")
 nmap('<C-h>n', ':lua require("harpoon.ui").nav_next() <CR>', "Harpoon: Next")
 nmap('<C-h>p', ':lua require("harpoon.ui").nav_prev() <CR>', "Harpoon: Previous")
-
 
 nmap('<C-f>', '<CMD> Telescope live_grep <CR>')
 nmap('<C-t>', '<CMD> Telescope lsp_dynamic_workspace_symbols <CR>')
@@ -181,9 +193,5 @@ nmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 tmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 -- Goto buffer in position...
 
-
-
 nmap('<leader>t', 'A,<esc>o"<esc>pa":"<esc>pa"<esc>', "Add translation key")
-
-
 

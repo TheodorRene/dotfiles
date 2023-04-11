@@ -6,10 +6,10 @@ opt.cmdheight = 1
 opt.updatetime = 50 -- update interval  (i used to use 750)
 opt.colorcolumn = "120" -- Line length marker
 
-opt.tabstop=4 -- number of spaces that a <Tab> in the file counts for
+opt.tabstop = 4 -- number of spaces that a <Tab> in the file counts for
 opt.expandtab = true -- converts tabs to spaces
-opt.shiftwidth=4 -- number of spaces to use for each step of (auto)indent
-opt.laststatus=3 -- always display the status line (Default is 2?)
+opt.shiftwidth = 4 -- number of spaces to use for each step of (auto)indent
+opt.laststatus = 3 -- always display the status line (Default is 2?)
 
 opt.showmode = false -- not sure what this is for
 
@@ -37,7 +37,7 @@ vim.g.maplocalleader = " "
 -- SQLComplete is apparently bundled with Vim (IMO it shouldn't these days)
 vim.g.sql_type_default = "postgresql"
 vim.g.omni_sql_default_compl_type = 'syntax'
-vim.opt.sessionoptions:append("localoptions")       -- Save localoptions to session file
+vim.opt.sessionoptions:append("localoptions") -- Save localoptions to session file
 -- I dont think I need these
 -- vim.o.foldmethod = "expr" 
 -- vim.o.foldexpr = "nvim_treesitter#foldexpr()"
@@ -46,5 +46,4 @@ opt.scrolloff = 8
 opt.cursorline = true -- Highlight the current line
 opt.listchars = "tab:▸ ,trail:·,nbsp:␣,extends:❯,precedes:❮"
 opt.list = true -- Show some invisible characters (tabs...)
-
 
