@@ -23,6 +23,7 @@ opt.clipboard = "unnamedplus" -- Copy paste between vim and everything else
 vim.g.loaded_netrw = 1 -- disable netrw
 vim.g.loaded_netrwPlugin = 1 -- disable netrw
 opt.termguicolors = true -- set term gui colors most terminals support this
+opt.cdh = true -- :cd and no args changes to the home directory
 
 -- From primeagen video
 opt.swapfile = false -- no swap file
@@ -36,7 +37,7 @@ vim.g.maplocalleader = " "
 -- SQLComplete is apparently bundled with Vim (IMO it shouldn't these days)
 vim.g.sql_type_default = "postgresql"
 vim.g.omni_sql_default_compl_type = 'syntax'
-
+vim.opt.sessionoptions:append("localoptions")       -- Save localoptions to session file
 -- I dont think I need these
 -- vim.o.foldmethod = "expr" 
 -- vim.o.foldexpr = "nvim_treesitter#foldexpr()"

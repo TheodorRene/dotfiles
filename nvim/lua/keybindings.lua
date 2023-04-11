@@ -102,6 +102,7 @@ nmap('<A-g>', '<CMD> Neogit <CR>', "Neogit")
 -- delete this
 nmap("<leader>ll", ":set number | set relativenumber <CR>", "Turn on relativenumber")
 nmap("<leader>ln", ":set nonumber | set norelativenumber <CR>", "Turn off relativenumber")
+nmap('<space>f', ':Neoformat <CR>', "Neoformat")
 
 
 vim.cmd[[

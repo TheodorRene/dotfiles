@@ -1,4 +1,5 @@
-autocmd BufReadPost,FileReadPost * normal zR
+" autocmd BufReadPost,FileReadPost * normal zR
+packadd cfilter
 lua << EOF
  require'impatient'
  require'opts'

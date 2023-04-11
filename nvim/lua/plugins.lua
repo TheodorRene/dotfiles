@@ -3,6 +3,16 @@ vim.cmd([[
     autocmd!
     autocmd BufWritePost plugins.lua source <afile> | PackerCompile
   augroup end
+"let g:db = 'postgres://folq@localhost:5432'
+let g:db = $DB_VAL
+"let g:dbs = {
+"\  'dev': 'postgres://folq@localhost:5432'
+"\ }
+let g:dbs = {
+\  'val': $DB_VAL,
+\ }
+let g:db_ui_use_nerd_fonts = 1
+let g:db_ui_auto_execute_table_helpers = 1
 ]])
 
 return require('packer').startup(function(use)
@@ -14,6 +24,20 @@ use 'dstein64/vim-startuptime' -- Show startup time
 use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
 use 'sbdchd/neoformat' -- Formatting
 use 'lewis6991/gitsigns.nvim' -- Git signs
+use 'tpope/vim-dadbod'
+use 'kristijanhusak/vim-dadbod-ui'
+use 'kristijanhusak/vim-dadbod-completion'
+use {
+  'pwntester/octo.nvim',
+  requires = {
+    'nvim-lua/plenary.nvim',
+    'nvim-telescope/telescope.nvim',
+    'kyazdani42/nvim-web-devicons',
+  },
+  config = function ()
+    require"octo".setup()
+  end
+}
 use {'kwakzalver/duckytype.nvim',
     config = function()
         require('duckytype').setup()
@@ -40,23 +64,23 @@ use({
         require('lspsaga').setup({})
     end,
 })
-use{'echasnovski/mini.nvim',
-    config = function()
-        require('mini.animate').setup({
-            cursor = {
-                -- Whether to enable this animation
-                enable = false,
-            },
+-- use{'echasnovski/mini.nvim',
+--     config = function()
+--         require('mini.animate').setup({
+--             cursor = {
+--                 -- Whether to enable this animation
+--                 enable = false,
+--             },
 
-            -- Vertical scroll
-            scroll = {
-                -- Whether to enable this animation
-                enable = false,
-            },
+--             -- Vertical scroll
+--             scroll = {
+--                 -- Whether to enable this animation
+--                 enable = false,
+--             },
 
-        })
-    end
-}
+--         })
+--     end
+-- }
 -- use 'MunifTanjim/nui.nvim'
 -- use 'rcarriga/nvim-notify'
 -- use({

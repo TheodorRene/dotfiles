@@ -42,10 +42,15 @@ require("catppuccin").setup({
     },
 })
 require('neogit').setup {
-   -- kind="vsplit",
-   integrations = {
-    diffview = true
-  },
+    -- kind="floating",
+    disable_commit_confirmation = true,
+    disable_hint = true,
+    integrations = {
+        diffview = true
+    },
+    sections = {
+        stashes = false
+    }
 }
 
 local fb_actions = require "telescope".extensions.file_browser.actions
@@ -91,7 +96,7 @@ require'nvim-treesitter.configs'.setup {
     enable = true,
  -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
     disable = function(_, buf)
-        local max_filesize = 100 * 1024 -- 100 KB
+        local max_filesize = 50 * 1024 -- 100 KB
         local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
         if ok and stats and stats.size > max_filesize then
             return true

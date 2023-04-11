@@ -44,7 +44,6 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>', opts("Open float"))
     buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts("Go to next diagnostics"))
     buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts("GO to next diagnostics"))
-    buf_set_keymap('n', '<space>f', ':Neoformat <CR>', opts("Neoformat"))
     buf_set_keymap('v', '<space>fq', ':Neoformat! graphql<CR>', opts("Neoformat"))
     buf_set_keymap('v', '<space>fq', ":'<,'>Neoformat! graphql<CR>", opts("Neoformat"))
     buf_set_keymap('n', '<C-x>t', '<cmd>Lspsaga lsp_finder <CR>', opts("Symbols finder"))
@@ -76,7 +75,7 @@ require'lspconfig'.lua_ls.setup {
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
 local servers = { 'hls', 'pyright','clojure_lsp', 'tsserver', 'tailwindcss',
-'elmls', 'jdtls'}
+'elmls', 'jdtls', 'eslint'}
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
@@ -151,6 +150,7 @@ cmp.setup {
   sources = {
     { name = 'nvim_lsp' },
     { name = 'buffer' },
+    { name = 'vim-dadbod-completion'}
   },
   formatting = {
     format = lspkind.cmp_format({
