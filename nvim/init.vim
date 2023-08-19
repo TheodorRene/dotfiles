@@ -1,5 +1,8 @@
 " autocmd BufReadPost,FileReadPost * normal zR
 packadd cfilter
+set timeoutlen=200
+set ttimeoutlen=50
+autocmd VimResized * wincmd =
 lua << EOF
  require'impatient'
  require'opts'
