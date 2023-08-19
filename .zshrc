@@ -1,14 +1,20 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 path+=$HOME/.local/bin
+path+=$HOME/.dotnet
 path+=/var/lib/snapd/snap/bin
 path+=$HOME/.cargo/bin
+path+=$HOME/.local/share/bob/nvim-bin
 path+=$HOME/.luarocks/bin
+alias mosh="export LC_ALL=\"en_US.UTF8\" && mosh"
+
+export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 
 export MANPAGER='nvim +Man!'
 
+# github copilot cli x
+eval "$(github-copilot-cli alias -- "$0")"
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME2="~/dotfiles/theodorc.zsh-theme"
 ZSH_THEME="theodorc"
 
 mango(){
@@ -32,6 +38,10 @@ DISABLE_MAGIC_FUNCTIONS=true
 source $ZSH/oh-my-zsh.sh
 ~/bin/run_tmux_if_vim
 
+fd(){
+  bfs -name "*$1*" 
+}
+
 alias bc="bc -lq"
 #alias c="code . && exit" So long and thanks for all the fish
 alias cal="ncal -3wb"
@@ -39,16 +49,21 @@ alias cass="mosh cassarossa.samfundet.no"
 alias cat="bat"
 alias clip="xclip -selection c"
 alias clipboard2file='xclip -selection clipboard -t image/png -o > "$(date +%Y-%m-%d_%T).png"'
+alias deadkeys='setxkbmap -layout no -variant nodeadkeys -option ctrl:nocaps'
 alias dir="ls -d */"
+alias dig="dig +noall +answer"
 alias dsize="du -h --max-depth=1 | sort -h"
 alias gs="git status" #So many misstyping and fk ghostscript
 alias locate="plocate"
-alias lr="ls -ltrh"
+alias lr="ls -ltrhF"
+alias lra="ls -ltrha"
 alias lsblk="lsblk -f"
 alias lzd="lazydocker"
+alias numdate="date +%s"
 alias ports="sudo lsof -i -P -n | grep LISTEN"
 alias py="python"
 alias python="python3"
+alias reminder="vim ~/dev/reminder_for_tomorrow.md"
 alias rg="rg -i"
 alias shut="shutdown now"
 alias start="tmuxinator start project ts-frontend"
@@ -61,7 +76,7 @@ alias takeover="tmux detach -a"
 alias te="trans -s en -t nb"
 alias tn="trans -s nb -t en"
 alias ukenr="date +%V"
-alias uuid="uuidgen | wl-copy; echo 'UUID copied'"
+alias uuid="uuidgen | clip; echo 'UUID copied'"
 alias vim="nvim"
 alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias wclip="wl-copy"
@@ -69,7 +84,8 @@ alias wclip="wl-copy"
 # FOLQ
 alias blank="autorandr blank"
 alias nrd="npm run dev"
-alias nrs="npm run storybook"
+alias nrt="npm run tsc"
+alias nrs="npm run start"
 
 
 
@@ -107,7 +123,7 @@ alias aptclean='echo ">sudo apt autoremove && sudo apt clean" && sudo apt autore
 alias aptinstall="sudo apt install"
 alias aptremove="sudo apt uninstall"
 alias aptsearch="apt search"
-alias aptupgrade="sudo apt update && sudo apt upgrade"
+alias aptupgrade="sudo apt update && apt list --upgradable && sudo apt upgrade"
 
 alias dc="cd"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
@@ -126,7 +142,14 @@ alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
 # if it does, then use it as the session file with nvim
 v(){
     if [ -f "Session.vim" ]; then
-        nvim -S Session.vim
+        if read -q "choice?Use Neovim session file? Y/y:"; then
+            nvim -S Session.vim
+        else
+            echo "\nMoving session file to desktop..."
+            sleep 1
+            mv Session.vim ~/Desktop/OldSession.vim
+            nvim
+        fi
     else
         nvim
     fi
@@ -138,8 +161,8 @@ v(){
 zstyle ':completion:*:*:pdf:*' file-patterns '*.pdf'
 zstyle ':completion:*:*:(nvim|vim):*' ignored-patterns '*.pdf'
 
-export EDITOR=/usr/bin/nvim
-export VISUAL=/usr/bin/nvim
+export EDITOR=$(which nvim)
+export VISUAL=$(which nvim)
 
 # Betterman tm
 man(){
@@ -194,4 +217,6 @@ export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_mod
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 eval "$(direnv hook zsh)"
+cat ~/dev/reminder_for_tomorrow.md
+cat /sys/firmware/acpi/platform_profile
 
