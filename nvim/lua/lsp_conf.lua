@@ -6,7 +6,8 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 vim.cmd [[au FocusGained,BufEnter * :checktime]]
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
+--    client.server_capabilities.semanticTokensProvider = nil
     local function buf_set_keymap(...)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
@@ -34,8 +35,8 @@ local on_attach = function(_, bufnr)
     buf_set_keymap('n', 'gd',
                    ':lua require"telescope.builtin".lsp_definitions()<CR>',
                    opts("LSP definitions"))
-    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
-    --  buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
+    --buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
+    buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
     buf_set_keymap('n', 'gi',
                    ':lua require"telescope.builtin".lsp_implementations()<CR>',
                    opts("Implementations"))
@@ -58,8 +59,8 @@ local on_attach = function(_, bufnr)
                    opts("References"))
     buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>',
                    opts("Open float"))
-    buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>',
-                   opts("Open float"))
+    -- buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>',
+    --                opts("Open float"))
     buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>',
                    opts("Go to next diagnostics"))
     buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>',
@@ -74,26 +75,26 @@ local on_attach = function(_, bufnr)
                    opts("Symbols finder"))
 end
 
-require'lspconfig'.lua_ls.setup {
-    settings = {
-        Lua = {
-            runtime = {
-                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
-                version = 'LuaJIT'
-            },
-            diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = {'vim'}
-            },
-            workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true)
-            },
-            -- Do not send telemetry data containing a randomized but unique identifier
-            telemetry = {enable = false}
-        }
-    }
-}
+-- require'lspconfig'.lua_ls.setup {
+--     settings = {
+--         Lua = {
+--             runtime = {
+--                 -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+--                 version = 'LuaJIT'
+--             },
+--             diagnostics = {
+--                 -- Get the language server to recognize the `vim` global
+--                 globals = {'vim'}
+--             },
+--             workspace = {
+--                 -- Make the server aware of Neovim runtime files
+--                 library = vim.api.nvim_get_runtime_file("", true)
+--             },
+--             -- Do not send telemetry data containing a randomized but unique identifier
+--             telemetry = {enable = false}
+--         }
+--     }
+-- }
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
 local servers = {
