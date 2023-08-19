@@ -4,29 +4,48 @@ vim.cmd([[
     autocmd BufWritePost plugins.lua source <afile> | PackerCompile
   augroup end
 "let g:db = 'postgres://folq@localhost:5432'
-let g:db = $DB_VAL
+let g:db = $DB_VAL_LOCAL
 "let g:dbs = {
 "\  'dev': 'postgres://folq@localhost:5432'
 "\ }
 let g:dbs = {
 \  'val': $DB_VAL,
+\  'val-local': $DB_VAL_LOCAL,
 \ }
 let g:db_ui_use_nerd_fonts = 1
 let g:db_ui_auto_execute_table_helpers = 1
+let g:vim_matchtag_enable_by_default = 1
+let g:vim_matchtag_files = '*.html,*.xml,*.js,*.jsx,*.vue,*.svelte,*.jsp,*.tsx'
+let g:vim_matchtag_highlight_cursor_on = 1
 ]])
 
 return require('packer').startup(function(use)
     -- Packer can manage itself
     -- Infrastructure
     use 'wbthomason/packer.nvim' -- Package manager
+    use 'xiyaowong/transparent.nvim'
     use 'lewis6991/impatient.nvim' -- Speed up startup time, maybe delete later
     use 'dstein64/vim-startuptime' -- Show startup time
     use 'nvim-lua/plenary.nvim' -- "All the lua functions I don't want to write twice" Needed for many plugins
     use 'sbdchd/neoformat' -- Formatting
     use 'lewis6991/gitsigns.nvim' -- Git signs
     use 'tpope/vim-dadbod'
+    use 'mbbill/undotree' -- Undo tree
+    use {'stevearc/oil.nvim', config = function() require('oil').setup() end}
     use 'kristijanhusak/vim-dadbod-ui'
     use 'kristijanhusak/vim-dadbod-completion'
+    use {
+        "lukas-reineke/indent-blankline.nvim",
+        config = function() require('indent_blankline').setup() end
+    }
+    use {
+        'natecraddock/workspaces.nvim',
+        config = function()
+            require('workspaces').setup({hooks = {open = {"Alpha"}}})
+        end
+    }
+    use 'leafOfTree/vim-matchtag'
+    use 'rhysd/clever-f.vim'
     use {
         'pwntester/octo.nvim',
         requires = {
@@ -35,6 +54,7 @@ return require('packer').startup(function(use)
         },
         config = function() require"octo".setup() end
     }
+    use 'Marskey/telescope-sg'
     use {
         'kwakzalver/duckytype.nvim',
         config = function() require('duckytype').setup() end
@@ -53,6 +73,10 @@ return require('packer').startup(function(use)
         branch = "main",
         config = function() require('lspsaga').setup({}) end
     })
+    -- use {
+    --     'tamton-aquib/zone.nvim',
+    --     config = function() require('zone').setup() end
+    -- }
     -- use{'echasnovski/mini.nvim',
     --     config = function()
     --         require('mini.animate').setup({
@@ -151,7 +175,9 @@ return require('packer').startup(function(use)
     use {
         'nvim-telescope/telescope-file-browser.nvim',
         config = function()
-            require("telescope").load_extension "file_browser"
+            local telescope = require("telescope")
+            telescope.load_extension "file_browser"
+            telescope.load_extension "workspaces"
         end
     } -- File browse for telescope
     use {
@@ -219,7 +245,7 @@ return require('packer').startup(function(use)
     -- use 'p00f/nvim-ts-rainbow' -- Rainbow matching brackets
     -- use "lukas-reineke/indent-blankline.nvim" -- Show indentline
     use 'feline-nvim/feline.nvim' -- Line
-    use {'j-hui/fidget.nvim', config = function() require('fidget').setup() end} -- Show LSP progress
+    use {'j-hui/fidget.nvim', tag="legacy", config = function() require('fidget').setup() end} -- Show LSP progress
 
     -- Language specific
     use {'Olical/conjure', ft = {'clojure'}} -- Clojure 
