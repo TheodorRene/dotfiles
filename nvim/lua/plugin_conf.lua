@@ -2,6 +2,9 @@ require('gitsigns').setup {
     on_attach = function(bufnr) TRC_GITSIGNS_MAPPINGS(bufnr) end
 }
 local ctp_feline = require('catppuccin.groups.integrations.feline')
+-- require("notify").setup({
+--   background_colour = "#000000",
+-- })
 require('feline').setup({components = ctp_feline.get()})
 require("catppuccin").setup({
     integrations = {
@@ -42,7 +45,7 @@ require('neogit').setup {
     disable_commit_confirmation = true,
     disable_hint = true,
     integrations = {diffview = true},
-    sections = {stashes = false}
+    sections = {stashes = {folded = true}}
 }
 
 local fb_actions = require"telescope".extensions.file_browser.actions
@@ -55,6 +58,14 @@ require("telescope").setup {
     },
 
     extensions = {
+        -- workspaces = {
+        --     keep_insert = "true",
+        -- },
+        ast_grep = {
+            command = {"ast-grep", "--json=stream"}, -- must have --json and -p
+            grep_open_files = false, -- search in opened files
+            lang = nil -- string value, specify language for ast-grep `nil` for default
+        },
         file_browser = {
             theme = "ivy",
             -- disables netrw and use telescope-file-browser in its place
