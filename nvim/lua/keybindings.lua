@@ -72,14 +72,14 @@ function TRC_GITSIGNS_MAPPINGS(bufnr)
     -- local gitsigns = require('gitsigns')
     map({'n', 'v'}, '<C-g>hs', ':Gitsigns stage_hunk<CR>', {desc = 'stage hunk'})
     map({'n', 'v'}, '<C-g>hr', ':Gitsigns reset_hunk<CR>', {desc = 'reset hunk'})
-    map({'n', 'v'}, 'ª', ':Git add %<CR>', {desc = 'stage hunk'})
-    map({'n', 'v'}, 'ß', ':Gitsigns stage_hunk<CR>', {desc = 'stage hunk'})
-    map({'n', 'v'}, '®', ':Gitsigns reset_hunk<CR>', {desc = 'reset hunk'})
+    map({'n', 'v'}, 'ª', ':Git add %<CR>', {desc = 'stage file AltGr+a'})
+    map({'n', 'v'}, 'ß', ':Gitsigns stage_hunk<CR>', {desc = 'stage hunk AltGr+s'})
+    map({'n', 'v'}, '®', ':Gitsigns reset_hunk<CR>', {desc = 'reset hunk AltGr+r'})
     map({'n', 'v'}, '↓', ':Gitsigns undo_stage_hunk<CR>',
-        {desc = 'undo stage hunk'})
+        {desc = 'undo stage hunk AltGr+u'})
     map({'n', 'v'}, 'π', ':Gitsigns preview_hunk_inline<CR>',
         {desc = 'Preview hunk'})
-    map({'n', 'v'}, '”',
+    map({'n', 'v'}, '“',
         '<cmd>lua require"gitsigns".blame_line{full=true}<CR>',
         {desc = 'Preview hunk'})
     map('n', '<C-g>hu', gs.undo_stage_hunk, {desc = 'undo stage hunk'})
@@ -104,16 +104,21 @@ nmap('<C-g>g', ':Git ', "GIT")
 nmap('<C-g>dd', '<CMD> DiffviewOpen develop...HEAD <CR>', "GIT: Diff develop")
 nmap('<A-g>', '<CMD> Neogit <CR>', "Neogit")
 --
+nmap('<C-m>l','bi[<Esc>ea]()<Esc>hp', "Insert link")
 
+nmap("<leader>m", "@", "Run macro")
 -- delete this
 nmap("<leader>ll", ":set number | set relativenumber <CR>",
      "Turn on relativenumber")
 nmap("<leader>ln", ":set nonumber | set norelativenumber <CR>",
      "Turn off relativenumber")
 nmap('<space>f', ':Neoformat <CR>', "Neoformat")
+vmap('<space>fs', ':Neoformat! sql<CR>', "Neoformat sql")
 
 vim.cmd [[
         imap <silent><script><expr> <C-J> copilot#Accept("\<CR>")
+        imap <silent><script><expr> <C-L> copilot#Next()
+        imap <silent><script><expr> <C-K> copilot#Previous()
         let g:copilot_no_tab_map = v:true
         ]]
 
@@ -141,7 +146,8 @@ nmap('å', ':resize -10<CR>')
 nmap('Å', ':resize +10<CR>')
 --
 
-nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
+-- nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
+nmap('<C-n>', ' <CMD> Oil --float .<CR>')
 
 nmap('<C-x>b', '<CMD> Telescope buffers <CR>', "Search open buffers")
 nmap('<C-x>f', '<CMD> Telescope current_buffer_fuzzy_find <CR>',
@@ -183,15 +189,16 @@ nmap('<C-t>', '<CMD> Telescope lsp_dynamic_workspace_symbols <CR>')
 
 -- Function keys
 nmap('<F4>', ':let @+=expand("%:p")<CR>', "Copy file path to clipboard")
-nmap('<F5>', ':e <C-r>+ <CR>', "Copy file path to clipboard")
+nmap('<F5>', ':e <C-r>+ <CR>', "Open file path from clipboard")
+nmap('<F6>', ':UndotreeToggle <CR>', "Show undo tree")
 nmap('<F8>', '<Cmd>Lspsaga outline<CR>', "Show LSP Symbols as outline")
 nmap('<F9>', ':w <CR> :! rocaf %<CR>')
-nmap('<F10>', '<cmd> NvimTreeToggle<CR>')
+nmap('<F10>', '<cmd> NvimTreeFindFileToggle<CR>')
 nmap('<F12>', '<Cmd> TroubleToggle <CR>', "Show Trouble window")
 
 nmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 tmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 -- Goto buffer in position...
 
-nmap('<leader>t', 'A,<esc>o"<esc>pa":"<esc>pa"<esc>', "Add translation key")
+-- nmap('<leader>t', 'A,<esc>o"<esc>pa":"<esc>pa"<esc>', "Add translation key")
 
