@@ -10,6 +10,10 @@ vim.cmd([[
     :command! Hover :lua vim.lsp.buf.hover()
     :command! ResetTS :write | edit | TSBufEnable highlight
     :command! -nargs=* ChangeDir :chdir 
+    :command! ValApp :chdir ~/dev/blank/valstuff/app
+    :command! Projects :Telescope workspaces
+    :command! Reminder :e ~/dev/reminder_for_tomorrow.md
+    :command! AstGrep :Telescope ast_grep
     ]])
 vim.api.nvim_create_user_command("Scrollbind", ":windo set scrollbind!", {})
 
