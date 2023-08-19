@@ -25,7 +25,7 @@ for_window [class="^.*"] border pixel 4
 #font pango:DejaVu Sans Mono 10
 
 #Startup
-exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
+exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/macos
 exec --no-startup-id picom -f --backend glx --vsync
 exec_always setxkbmap -layout no -variant nodeadkeys -option ctrl:nocaps
 
@@ -57,6 +57,7 @@ bindsym $mod+Tab workspace next
 bindsym $mod+Shift+Tab workspace prev
 bindsym $mod+w workspace next
 bindsym $mod+q workspace prev
+bindsym --whole-window button10 workspace back_and_forth
 
 # Use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -66,6 +67,13 @@ bindsym $mod+Return exec $terminal
 
 #start firefox
 bindsym $mod+o exec $browser
+
+#focus nvim in alacritty
+bindsym $mod+n [class="Alacritty" title="v"] focus
+#start nvim in alacritty
+bindsym $mod+Shift+n exec $terminal -t v -e nvim
+
+bindsym $mod+x [class="firefox"] focus
 #start screenshot
 bindsym --release Print exec /home/theodorc/bin/screenshot
 
@@ -75,6 +83,7 @@ bindsym $mod+Shift+q kill
 
 # start program launcher
 bindsym $mod+d exec rofi -show combi
+bindsym $mod+p exec rofi -show combi
 #bindsym $mod+d exec dmenu_run
 
 # change focus
@@ -106,11 +115,8 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 
-# split in horizontal orientation
-bindsym $mod+p split h
-
 # split in vertical orientation
-bindsym $mod+v split v
+bindsym $mod+v split toggle
 
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -137,26 +143,26 @@ bindsym $mod+minus scratchpad show
 bindsym $mod+1 workspace number 1
 bindsym $mod+2 workspace number 2
 bindsym $mod+3 workspace number 3
-bindsym $mod+4 workspace number 4
-bindsym $mod+5 workspace number 5
-bindsym $mod+6 workspace number 6
+bindsym $mod+4 workspace 4:www
+bindsym $mod+5 workspace 5:nvim
+bindsym $mod+6 workspace 6:dev
 bindsym $mod+7 workspace number 7
 bindsym $mod+8 workspace number 8
-bindsym $mod+9 workspace number 9
-bindsym $mod+0 workspace number 10
+bindsym $mod+9 workspace 9:slack
+bindsym $mod+0 workspace 10:itk
 
 
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number 1
 bindsym $mod+Shift+2 move container to workspace number 2
 bindsym $mod+Shift+3 move container to workspace number 3 
-bindsym $mod+Shift+4 move container to workspace number 4
-bindsym $mod+Shift+5 move container to workspace number 5
-bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+4 move container to workspace 4:www
+bindsym $mod+Shift+5 move container to workspace 5:nvim
+bindsym $mod+Shift+6 move container to workspace 6:dev
 bindsym $mod+Shift+7 move container to workspace number 7
 bindsym $mod+Shift+8 move container to workspace number 8
-bindsym $mod+Shift+9 move container to workspace number 9
-bindsym $mod+Shift+0 move container to workspace number 10
+bindsym $mod+Shift+9 move container to workspace 9:slack
+bindsym $mod+Shift+0 move container to workspace 10:itk
 
 # reload the configuration file
 bindsym $mod+Shift+c reload
@@ -207,15 +213,20 @@ mode "gaps" {
 }
 bindsym $mod+g mode "gaps"
 
+bindsym --whole-window $mod+button7 exec pamixer --increase 5
+bindsym --whole-window $mod+button6 exec pamixer --decrease 5
+bindsym --whole-window $mod+button8 exec playerctl next
+bindsym --whole-window $mod+button9 exec playerctl previous
+bindsym --whole-window $mod+button10 exec playerctl play-pause
 mode "media" {
     #Audiocontrols
-    bindsym space exec playerctl play-pause
-    bindsym p exec playerctl play-pause
+    bindsym  space exec playerctl play-pause
+    bindsym  p exec playerctl play-pause
     bindsym  l exec playerctl next
     bindsym  h exec playerctl previous
-    bindsym  k exec pulseaudio-ctl up
-    bindsym  j exec pulseaudio-ctl down
-    bindsym  m exec pulseaudio-ctl mute
+    bindsym  k exec pamixer --increase 5
+    bindsym  j exec pamixer --decrease 5
+    bindsym  m exec pamixer --toggle-mute
 
     bindsym Return mode "default"
     bindsym Escape mode "default"
@@ -230,14 +241,16 @@ bindsym $mod+t exec i3-input -F 'rename workspace to %s' -P 'New name: '
 # Start i3bar to display a workspace bar (plus the system information i3status
 # finds out, if available)
 bar {
+        i3bar_command i3bar -t
         status_command i3status
+        workspace_min_width 100
         colors {
-        separator #444444
-        background #222222
-        statusline #FFFFFF
-        focused_workspace #CECECE #CECECE #5F8700
-        active_workspace #333333 #333333 #888888
-        inactive_workspace #CECECE #333333 #9E9E9E
-        urgent_workspace #eb709b #eb709b #ffffff
+            separator #444444
+            background #22222299
+            statusline #FFFFFFFF
+            focused_workspace #CECECE #CECECE #5F8700
+            active_workspace #333333 #333333 #888888
+            inactive_workspace #CECECE #33333300 #9E9E9E
+            urgent_workspace #eb709b #eb709b #ffffff
         }
 }
