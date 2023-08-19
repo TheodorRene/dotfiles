@@ -58,6 +58,8 @@
 [merge]
     conflictstyle = diff3
     tool = vscode
+[push]
+    followTags = true
 [mergetool "vscode"]
         cmd = code --new-window --wait $MERGED
 [diff]
