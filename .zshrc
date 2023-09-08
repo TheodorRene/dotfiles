@@ -104,6 +104,7 @@ nuke_images() {docker rmi $(docker images -aq) && echo "Images nuked"}
 nuke_volumes() {docker volume rm $(docker volume ls -q)}
 # start shell
 shell() {docker exec -it $1 bash}
+run() { docker run --rm -it $1 /bin/sh }
 
 # run single command
 cmd() {docker exec -it $1 ${@:2}}
