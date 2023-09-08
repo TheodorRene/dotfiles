@@ -6,8 +6,8 @@ capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 vim.cmd [[au FocusGained,BufEnter * :checktime]]
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
---    client.server_capabilities.semanticTokensProvider = nil
+local on_attach = function(_, bufnr)
+    --    client.server_capabilities.semanticTokensProvider = nil
     local function buf_set_keymap(...)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
@@ -35,7 +35,7 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'gd',
                    ':lua require"telescope.builtin".lsp_definitions()<CR>',
                    opts("LSP definitions"))
-    --buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
+    -- buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
     buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
     buf_set_keymap('n', 'gi',
                    ':lua require"telescope.builtin".lsp_implementations()<CR>',
@@ -99,7 +99,7 @@ end
 -- map buffer local keybindings when the language server attaches
 local servers = {
     'hls', 'pyright', 'clojure_lsp', 'tsserver', 'tailwindcss', 'elmls',
-    'jdtls', 'eslint'
+    'jdtls', 'eslint', "emmet_language_server"
 }
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {

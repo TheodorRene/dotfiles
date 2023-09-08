@@ -3,7 +3,7 @@ vim.cmd([[
   "  autocmd!
     "autocmd BufWritePost plugins.lua source <afile> | PackerCompile
   "augroup end
-"let g:db = 'postgres://folq@localhost:5432'
+"let g:db = 'postgres://folq@localhoste5432'
 let g:db = $DB_VAL_LOCAL
 "let g:dbs = {
 "\  'dev': 'postgres://folq@localhost:5432'
@@ -21,11 +21,8 @@ let g:vim_matchtag_highlight_cursor_on = 1
 
 require('lazy').setup({
 
-    -- Packer can manage itself
     -- Infrastructure
-    'xiyaowong/transparent.nvim', 'lewis6991/impatient.nvim', -- Speed up startup time, maybe delete later
-    'dstein64/vim-startuptime', -- Show startup time
-    'nvim-lua/plenary.nvim', -- "All the lua functions I don't want to write twice" Needed for many plugins
+    'xiyaowong/transparent.nvim', 'nvim-lua/plenary.nvim', -- "All the lua functions I don't want to write twice" Needed for many plugins
     'sbdchd/neoformat', -- Formatting
     'lewis6991/gitsigns.nvim', -- Git signs
     'tpope/vim-dadbod', 'mbbill/undotree', -- Undo tree
@@ -39,25 +36,22 @@ require('lazy').setup({
             require('workspaces').setup({hooks = {open = {"Alpha"}}})
         end
     }, -- 'leafOfTree/vim-matchtag',
-    'rhysd/clever-f.vim', {
-        'pwntester/octo.nvim',
-        dependencies = {
-            'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim',
-            'nvim-tree/nvim-web-devicons'
-        },
-        init = function() require"octo".setup() end
-    }, 'Marskey/telescope-sg', {
-        'kwakzalver/duckytype.nvim',
-        init = function() require('duckytype').setup() end
-    },
+    'rhysd/clever-f.vim', -- {
+    --     'pwntester/octo.nvim',
+    --     dependencies = {
+    --         'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim',
+    --         'nvim-tree/nvim-web-devicons'
+    --     },
+    --     init = function() require"octo".setup() end
+    -- },
     {
         'sindrets/winshift.nvim',
         init = function() require('winshift').setup() end
     }, -- Move windows around
     'tpope/vim-surround', -- Surround text with quotes, brackets, etc
-    'nvim-treesitter/playground', -- Treesitter playground,
-    'nvim-treesitter/nvim-treesitter-textobjects', -- Treesitter text objects
-    {"b0o/incline.nvim", init = function() require("incline").setup() end}, -- Floating statusline
+    --    'nvim-treesitter/playground', -- Treesitter playground,
+    -- 'nvim-treesitter/nvim-treesitter-textobjects', -- Treesitter text objects
+    { "b0o/incline.nvim", init = function() require("incline").setup() end}, -- Floating statusline
     "nvim-pack/nvim-spectre", -- Search and replace
     {
         "glepnir/lspsaga.nvim",
@@ -73,17 +67,20 @@ require('lazy').setup({
                 performance_mode = true -- Disable "Performance Mode" on all buffers.
             })
         end
-    }, {
+    }, 
+    {
         'nvim-tree/nvim-tree.lua',
         init = function() require('nvim-tree').setup() end,
         dependencies = {'nvim-tree/nvim-web-devicons'},
         tag = 'nightly'
-    }, 'github/copilot.vim', -- Copilot
+    },
+    'github/copilot.vim', -- Copilot
     {
         'TimUntersberger/neogit', -- Magit for neovim
         dependencies = 'nvim-lua/plenary.nvim'
     }, 'tpope/vim-fugitive', -- Git wrapper for vim
-    'chentoast/marks.nvim', 'hrsh7th/cmp-vsnip', -- Snippets for completion
+    --   'chentoast/marks.nvim', -- Marks
+    'hrsh7th/cmp-vsnip', -- Snippets for completion
     'hrsh7th/vim-vsnip', -- Snippets for completion
     'hrsh7th/vim-vsnip-integ', -- Snippets for completion
     'sindrets/diffview.nvim', -- Git diffs
@@ -133,8 +130,8 @@ require('lazy').setup({
     {"folke/trouble.nvim", dependencies = "nvim-tree/nvim-web-devicons"}, -- Show diagnotics in quicklist
     'TheodorRene/skriveleif', 'nvim-tree/nvim-web-devicons', -- Show cool icon tyling/Visuals
     'folke/tokyonight.nvim', -- Theme
-    {"catppuccin/nvim", name = "catppuccin"}, 'p00f/nvim-ts-rainbow', -- Rainbow matching brackets
-    "lukas-reineke/indent-blankline.nvim", -- Show indentline
+    {"catppuccin/nvim", name = "catppuccin"}, 
+   -- 'p00f/nvim-ts-rainbow', -- Rainbow matching brackets
     'feline-nvim/feline.nvim', -- Line
     {
         'j-hui/fidget.nvim',

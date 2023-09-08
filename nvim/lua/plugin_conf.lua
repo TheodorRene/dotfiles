@@ -11,7 +11,6 @@ require("catppuccin").setup({
         cmp = true,
         gitgutter = false,
         gitsigns = true,
-        harpoon = true,
         leap = true,
         lsp_saga = true,
         lsp_trouble = true,
@@ -61,11 +60,6 @@ require("telescope").setup {
         -- workspaces = {
         --     keep_insert = "true",
         -- },
-        ast_grep = {
-            command = {"ast-grep", "--json=stream"}, -- must have --json and -p
-            grep_open_files = false, -- search in opened files
-            lang = nil -- string value, specify language for ast-grep `nil` for default
-        },
         file_browser = {
             theme = "ivy",
             -- disables netrw and use telescope-file-browser in its place
@@ -83,7 +77,9 @@ require("telescope").setup {
 require("telescope").load_extension "file_browser"
 -- Treesitter
 require'nvim-treesitter.configs'.setup {
-    ensure_installed = "all",
+    ensure_installed = {"bash", "c", "cpp", "css", "dockerfile", "go", "html",
+                        "java", "javascript", "json", "lua", "python", "regex",
+                        "rust", "toml", "typescript", "yaml"},
     highlight = {
         enable = true,
         -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
@@ -137,11 +133,6 @@ require'nvim-treesitter.configs'.setup {
             -- and should return true of false
             include_surrounding_whitespace = true
         },
-        swap = {
-            enable = true,
-            swap_next = {["<leader>a"] = "@parameter.inner"},
-            swap_previous = {["<leader>A"] = "@parameter.inner"}
-        }
     }
 }
 

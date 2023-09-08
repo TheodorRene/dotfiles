@@ -2,6 +2,7 @@
 packadd cfilter
 set timeoutlen=200
 set ttimeoutlen=50
+let g:loaded_matchparen = 1
 autocmd VimResized * wincmd =
 lua << EOF
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -16,7 +17,6 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
- require'impatient'
  require'opts'
  require'plugins'
  require'plugin_conf'
