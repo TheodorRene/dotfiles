@@ -16,6 +16,7 @@
     b = branch --sort=-committerdate
     bc = switch -c
     c = commit -a
+    cm = commit -m
     co = checkout
     coz = !git branch --sort=-committerdate | fzf | xargs git checkout 
     dft = difftool
@@ -40,7 +41,6 @@
     unstage = restore --staged
     view = !gh repo view --web
     wt = worktree
-    wt = worktree
     wta = worktree add
     wtd = worktree remove
     wtr = worktree remove
@@ -57,11 +57,14 @@
     stat = true
 [merge]
     conflictstyle = diff3
-    tool = vscode
+    ; tool = meld
 [push]
     followTags = true
+	autoSetupRemote = true
 [mergetool "vscode"]
         cmd = code --new-window --wait $MERGED
+[mergetool "meld"]
+        cmd = meld
 [diff]
     tool = difft
 [difftool]
