@@ -19,7 +19,7 @@
     cm = commit -m
     co = checkout
     coz = !git branch --sort=-committerdate | fzf | xargs git checkout 
-    dft = difftool
+    dft = difftool -d
     difflock = diff -- . ':(exclude)package-lock.json'
     fixup = !git log -n 50 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup
     p = push
