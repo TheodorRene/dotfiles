@@ -18,6 +18,9 @@ local function vmap(comb, cmd, desc)
                             {noremap = true, silent = true, desc = desc})
 end
 
+nmap('<Right>', ':bn <CR>', "Next buffer")
+nmap('<Left>', ':bp <CR>', "Previous buffer")
+
 imap("''", "''<esc>i")
 imap("<C-c>", "<Esc>", "Ctrl-c to escape, and not kill anything")
 imap('""', '""<esc>i')
@@ -103,8 +106,9 @@ nmap('<C-g>dq', '<CMD> DiffviewClose <CR>', "GIT: Close diff")
 nmap('<C-g>g', ':Git ', "GIT")
 nmap('<C-g>dd', '<CMD> DiffviewOpen develop...HEAD <CR>', "GIT: Diff develop")
 nmap('<A-g>', '<CMD> Neogit <CR>', "Neogit")
+
 --
-nmap('<C-m>l','bi[<Esc>ea]()<Esc>hp', "Insert link")
+nmap('<C-x>m','bi[<Esc>ea]()<Esc>hp', "Insert link")
 
 nmap("<leader>m", "@", "Run macro")
 -- delete this
@@ -135,10 +139,10 @@ nmap('<A-h>', '<C-w>h')
 nmap('<A-j>', '<C-w>j')
 nmap('<A-k>', '<C-w>k')
 nmap('<A-l>', '<C-w>l')
-nmap('<A-q>', ':tabnext <CR>')
+nmap('<A-q>', ':tabprev <CR>')
+nmap('<A-w>', ':tabnext <CR>')
 nmap('<A-s>', ':vsplit <CR>')
 nmap('<A-v>', ':split <CR>')
-nmap('<A-w>', ':tabprev <CR>')
 nmap('<C-W>m', '<Cmd>WinShift<CR>')
 nmap('ø', ':vertical resize +10<CR>')
 nmap('æ', ':vertical resize -10<CR>')
@@ -176,18 +180,19 @@ nmap('<leader>r', '<CMD> Telescope resume <CR>')
 nmap('<leader>s', '<CMD> Telescope lsp_document_symbols <CR>',
      "Search document symbols")
 
--- Harpoon
-nmap('<C-h>a', ':lua require("harpoon.mark").add_file() <CR>',
-     "Harpoon: Add file")
-nmap('<C-h>m', ':lua require("harpoon.ui").toggle_quick_menu() <CR>',
-     "Harpoon: Show menu")
-nmap('<C-h>n', ':lua require("harpoon.ui").nav_next() <CR>', "Harpoon: Next")
-nmap('<C-h>p', ':lua require("harpoon.ui").nav_prev() <CR>', "Harpoon: Previous")
+-- -- Harpoon
+-- nmap('<C-h>a', ':lua require("harpoon.mark").add_file() <CR>',
+--      "Harpoon: Add file")
+-- nmap('<C-h>m', ':lua require("harpoon.ui").toggle_quick_menu() <CR>',
+--      "Harpoon: Show menu")
+-- nmap('<C-h>n', ':lua require("harpoon.ui").nav_next() <CR>', "Harpoon: Next")
+-- nmap('<C-h>p', ':lua require("harpoon.ui").nav_prev() <CR>', "Harpoon: Previous")
 
 nmap('<C-f>', '<CMD> Telescope live_grep <CR>')
 nmap('<C-t>', '<CMD> Telescope lsp_dynamic_workspace_symbols <CR>')
 
 -- Function keys
+nmap('<F3>', ':JestFile <CR>', "Run Jest on file")
 nmap('<F4>', ':let @+=expand("%:p")<CR>', "Copy file path to clipboard")
 nmap('<F5>', ':e <C-r>+ <CR>', "Open file path from clipboard")
 nmap('<F6>', ':UndotreeToggle <CR>', "Show undo tree")

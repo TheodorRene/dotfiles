@@ -61,6 +61,8 @@ local on_attach = function(_, bufnr)
                    opts("Open float"))
     -- buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>',
     --                opts("Open float"))
+    buf_set_keymap('n', '<C-x>q', "]d<C-x>c",
+                   {noremap = false, silent = true, desc = "Autofix"})
     buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>',
                    opts("Go to next diagnostics"))
     buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>',
@@ -99,7 +101,7 @@ end
 -- map buffer local keybindings when the language server attaches
 local servers = {
     'hls', 'pyright', 'clojure_lsp', 'tsserver', 'tailwindcss', 'elmls',
-    'jdtls', 'eslint', "emmet_language_server"
+    'jdtls', 'eslint', "marksman"
 }
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {

@@ -4,7 +4,39 @@ require('gitsigns').setup {
 local ctp_feline = require('catppuccin.groups.integrations.feline')
 -- require("notify").setup({
 --   background_colour = "#000000",
+--
 -- })
+--
+
+-- This module contains a number of default definitions
+local rainbow_delimiters = require 'rainbow-delimiters'
+
+vim.g.rainbow_delimiters = {
+    strategy = {
+        [''] = rainbow_delimiters.strategy['global'],
+        vim = rainbow_delimiters.strategy['local'],
+    },
+    query = {
+        [''] = 'rainbow-delimiters',
+        lua = 'rainbow-blocks',
+    },
+    highlight = {
+        'RainbowDelimiterRed',
+        'RainbowDelimiterYellow',
+        'RainbowDelimiterBlue',
+        'RainbowDelimiterOrange',
+        'RainbowDelimiterGreen',
+        'RainbowDelimiterViolet',
+        'RainbowDelimiterCyan',
+    },
+}
+
+local highlight = {"CursorColumn", "Whitespace"}
+require("ibl").setup {
+    indent = {highlight = highlight, char = ""},
+    whitespace = {highlight = highlight, remove_blankline_trail = false},
+    scope = {enabled = false}
+}
 require('feline').setup({components = ctp_feline.get()})
 require("catppuccin").setup({
     integrations = {
@@ -77,9 +109,11 @@ require("telescope").setup {
 require("telescope").load_extension "file_browser"
 -- Treesitter
 require'nvim-treesitter.configs'.setup {
-    ensure_installed = {"bash", "c", "cpp", "css", "dockerfile", "go", "html",
-                        "java", "javascript", "json", "lua", "python", "regex",
-                        "rust", "toml", "typescript", "yaml"},
+    ensure_installed = {
+        "bash", "c", "cpp", "css", "dockerfile", "go", "html", "java",
+        "javascript", "json", "lua", "python", "regex", "rust", "toml",
+        "typescript", "yaml"
+    },
     highlight = {
         enable = true,
         -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
@@ -132,7 +166,7 @@ require'nvim-treesitter.configs'.setup {
             -- * selection_mode: eg 'v'
             -- and should return true of false
             include_surrounding_whitespace = true
-        },
+        }
     }
 }
 
