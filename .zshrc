@@ -1,5 +1,6 @@
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
+
 path+=$HOME/.local/bin
 path+=$HOME/.dotnet
 path+=/var/lib/snapd/snap/bin
@@ -9,6 +10,7 @@ path+=$HOME/.luarocks/bin
 path+=$HOME/.npm-packages/bin
 
 NPM_PACKAGES="${HOME}/.npm-packages"
+export XDG_CONFIG_HOME=$HOME/.config
 
 # Preserve MANPATH if you already defined it somewhere in your config.
 # Otherwise, fall back to `manpath` so we can inherit from `/etc/manpath`.
@@ -73,6 +75,7 @@ alias py="python"
 alias python="python3"
 alias reminder="vim ~/dev/reminder_for_tomorrow.md"
 alias rg="rg -i"
+alias setbackground="feh --bg-scale"
 alias shut="shutdown now"
 alias start="tmuxinator start project ts-frontend"
 alias sugit="sudo -E git"
@@ -81,15 +84,15 @@ alias svenv="source venv/bin/activate"
 alias sys="systemctl"
 alias t="tmux new-session -A -s main"
 alias takeover="tmux detach -a"
-alias te="trans -s en -t nb"
-alias tn="trans -s nb -t en"
+alias english2norsk="trans -s en -t nb"
+alias norsk2english="trans -s nb -t en"
+alias norsk2dansk="trans -s nb -t da"
 alias ukenr="date +%V"
 alias uuid="uuidgen | clip; echo 'UUID copied'"
 alias vim="nvim"
 alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias wclip="wl-copy"
 
-# FOLQ
 alias blank="autorandr blank"
 alias nrd="npm run dev"
 alias nrt="npm run tsc"
@@ -120,7 +123,6 @@ b64d(){
 b64e(){
     echo $1 | base64 
 }
-
 
 # Pacman specific
 alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
