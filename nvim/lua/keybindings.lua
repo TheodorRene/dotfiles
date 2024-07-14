@@ -78,11 +78,11 @@ function TRC_GITSIGNS_MAPPINGS(bufnr)
     map({'n', 'v'}, 'ª', ':Git add %<CR>', {desc = 'stage file AltGr+a'})
     map({'n', 'v'}, 'ß', ':Gitsigns stage_hunk<CR>', {desc = 'stage hunk AltGr+s'})
     map({'n', 'v'}, '®', ':Gitsigns reset_hunk<CR>', {desc = 'reset hunk AltGr+r'})
-    map({'n', 'v'}, '↓', ':Gitsigns undo_stage_hunk<CR>',
+    map({'n', 'v'}, 'ü', ':Gitsigns undo_stage_hunk<CR>',
         {desc = 'undo stage hunk AltGr+u'})
     map({'n', 'v'}, 'π', ':Gitsigns preview_hunk_inline<CR>',
         {desc = 'Preview hunk'})
-    map({'n', 'v'}, '“',
+    map({'n', 'v'}, '∫',
         '<cmd>lua require"gitsigns".blame_line{full=true}<CR>',
         {desc = 'Preview hunk'})
     map('n', '<C-g>hu', gs.undo_stage_hunk, {desc = 'undo stage hunk'})
@@ -94,6 +94,9 @@ function TRC_GITSIGNS_MAPPINGS(bufnr)
         {desc = 'select hunk object'})
 
 end
+
+nmap('<leader>t', ':terminal ', "Run terminal commands")
+nmap('<leader>c', ':! ', "Run terminal commands")
 
 -- GIT
 nmap('<C-g>c', '<CMD> Telescope git_commits <CR>', "GIT: Commits")
@@ -153,7 +156,7 @@ nmap('Å', ':resize +10<CR>')
 -- nmap('<C-n>', '<CMD> Telescope file_browser <CR>')
 nmap('<C-n>', ' <CMD> Oil --float .<CR>')
 
-nmap('<C-x>b', '<CMD> Telescope buffers <CR>', "Search open buffers")
+-- nmap('<C-x>b', '<CMD> Telescope buffers <CR>', "Search open buffers")
 nmap('<C-x>f', '<CMD> Telescope current_buffer_fuzzy_find <CR>',
      "Current buffer fuzzy find")
 nmap('<C-x>j', '<CMD> Telescope jumplist <CR>', "Show jumplist")
@@ -190,6 +193,9 @@ nmap('<leader>s', '<CMD> Telescope lsp_document_symbols <CR>',
 
 nmap('<C-f>', '<CMD> Telescope live_grep <CR>')
 nmap('<C-t>', '<CMD> Telescope lsp_dynamic_workspace_symbols <CR>')
+
+-- Yank whole file 
+nmap('yf', 'ggVGy<C-o>', "Yank whole file")
 
 -- Function keys
 nmap('<F3>', ':JestFile <CR>', "Run Jest on file")

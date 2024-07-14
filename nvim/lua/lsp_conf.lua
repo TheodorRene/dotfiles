@@ -1,3 +1,5 @@
+require("mason").setup()
+require("mason-lspconfig").setup()
 local nvim_lsp = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
@@ -37,6 +39,7 @@ local on_attach = function(_, bufnr)
                    opts("LSP definitions"))
     -- buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
     buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
+    buf_set_keymap("n", "gh", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
     buf_set_keymap('n', 'gi',
                    ':lua require"telescope.builtin".lsp_implementations()<CR>',
                    opts("Implementations"))
@@ -59,8 +62,12 @@ local on_attach = function(_, bufnr)
                    opts("References"))
     buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>',
                    opts("Open float"))
+    -- buf_set_keymap('n', '<C-x>e', '<cmd>Lspsaga show_cursor_diagnostics <CR>',
+    --                opts("Open cursor diagnostics"))
     -- buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>',
     --                opts("Open float"))
+    buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>',
+                   opts("Open line diagnostics"))
     buf_set_keymap('n', '<C-x>q', "]d<C-x>c",
                    {noremap = false, silent = true, desc = "Autofix"})
     buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>',
@@ -100,9 +107,11 @@ end
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
 local servers = {
-    'hls', 'pyright', 'clojure_lsp', 'tsserver', 'tailwindcss', 'elmls',
-    'jdtls', 'eslint', "marksman"
+    'hls', 'pyright', 'clojure_lsp', 'tsserver', 'elmls',
+    'jdtls', 'eslint', 'lua_ls', 'lemminx', "jsonls", "html"
 }
+-- Marksman for markdown is nice but I dont want it to be spawned when hovering in typescript
+-- Maybe fix that some time. If in typescript dont spawn marksman
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup {
         on_attach = on_attach,

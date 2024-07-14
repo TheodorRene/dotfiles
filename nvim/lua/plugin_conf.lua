@@ -1,13 +1,15 @@
 require('gitsigns').setup {
     on_attach = function(bufnr) TRC_GITSIGNS_MAPPINGS(bufnr) end
 }
-local ctp_feline = require('catppuccin.groups.integrations.feline')
+-- local ctp_feline = require('catppuccin.groups.integrations.feline')
 -- require("notify").setup({
 --   background_colour = "#000000",
 --
 -- })
 --
 
+
+vim.g.neoformat_try_node_exe = 1
 -- This module contains a number of default definitions
 local rainbow_delimiters = require 'rainbow-delimiters'
 
@@ -37,7 +39,7 @@ require("ibl").setup {
     whitespace = {highlight = highlight, remove_blankline_trail = false},
     scope = {enabled = false}
 }
-require('feline').setup({components = ctp_feline.get()})
+--require('feline').setup({components = ctp_feline.get()})
 require("catppuccin").setup({
     integrations = {
         cmp = true,
@@ -79,7 +81,7 @@ require('neogit').setup {
     sections = {stashes = {folded = true}}
 }
 
-local fb_actions = require"telescope".extensions.file_browser.actions
+-- local fb_actions = require"telescope".extensions.file_browser.actions
 require("telescope").setup {
     pickers = {
         defaults = {file_ignore_patterns = {"node_modules", ".git"}},
@@ -92,21 +94,21 @@ require("telescope").setup {
         -- workspaces = {
         --     keep_insert = "true",
         -- },
-        file_browser = {
-            theme = "ivy",
-            -- disables netrw and use telescope-file-browser in its place
-            hijack_netrw = true,
-            mappings = {
-                ["i"] = {
-                    ["<C-e>"] = fb_actions.create,
-                    ["<C-r>"] = fb_actions.rename
-                }
-            }
-        }
+        -- file_browser = {
+        --     theme = "ivy",
+        --     -- disables netrw and use telescope-file-browser in its place
+        --     hijack_netrw = true,
+        --     mappings = {
+        --         ["i"] = {
+        --             ["<C-e>"] = fb_actions.create,
+        --             ["<C-r>"] = fb_actions.rename
+        --         }
+        --     }
+        -- }
     }
 }
 
-require("telescope").load_extension "file_browser"
+-- require("telescope").load_extension "file_browser"
 -- Treesitter
 require'nvim-treesitter.configs'.setup {
     ensure_installed = {

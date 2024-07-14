@@ -1,8 +1,4 @@
 vim.cmd([[
-  "augroup packer_user_config
-  "  autocmd!
-    "autocmd BufWritePost plugins.lua source <afile> | PackerCompile
-  "augroup end
 "let g:db = 'postgres://folq@localhoste5432'
 let g:db = $DB_VAL_LOCAL
 "let g:dbs = {
@@ -21,8 +17,13 @@ let g:vim_matchtag_highlight_cursor_on = 1
 
 require('lazy').setup({
 
+    -- Mason
+    "williamboman/mason.nvim",
+    "williamboman/mason-lspconfig.nvim",
     -- Infrastructure
     'xiyaowong/transparent.nvim', 'nvim-lua/plenary.nvim', -- "All the lua functions I don't want to write twice" Needed for many plugins
+
+    { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
     'sbdchd/neoformat', -- Formatting
     'lewis6991/gitsigns.nvim', -- Git signs
     -- Lua
@@ -33,24 +34,8 @@ require('lazy').setup({
             -- or leave it empty to use the default settings
             -- refer to the configuration section below
         }
-    }, {
-        "smoka7/multicursors.nvim",
-        event = "VeryLazy",
-        dependencies = {'smoka7/hydra.nvim'},
-        opts = {},
-        cmd = {
-            'MCstart', 'MCvisual', 'MCclear', 'MCpattern', 'MCvisualPattern',
-            'MCunderCursor'
-        },
-        keys = {
-            {
-                mode = {'v', 'n'},
-                '<Leader>m',
-                '<cmd>MCstart<cr>',
-                desc = 'Create a selection for selected text or word under the cursor'
-            }
-        }
-    }, 'tpope/vim-dadbod', 'mbbill/undotree', -- Undo tree
+    } ,
+    'mbbill/undotree', -- Undo tree
     'mattkubej/jest.nvim', 'HiPhish/rainbow-delimiters.nvim', {
         "folke/flash.nvim",
         event = "VeryLazy",
@@ -68,25 +53,13 @@ require('lazy').setup({
                 mode = {"n", "x", "o"},
                 function() require("flash").treesitter() end,
                 desc = "Flash Treesitter"
-            }, {
-                "r",
-                mode = "o",
-                function() require("flash").remote() end,
-                desc = "Remote Flash"
-            }, {
-                "R",
-                mode = {"o", "x"},
-                function() require("flash").treesitter_search() end,
-                desc = "Treesitter Search"
-            }, {
-                "<c-s>",
-                mode = {"c"},
-                function() require("flash").toggle() end,
-                desc = "Toggle Flash Search"
             }
         }
     }, {'stevearc/oil.nvim', init = function() require('oil').setup() end},
-    'kristijanhusak/vim-dadbod-ui', 'kristijanhusak/vim-dadbod-completion', {
+   -- 'tpope/vim-dadbod', 
+   -- 'kristijanhusak/vim-dadbod-ui', 
+   -- 'kristijanhusak/vim-dadbod-completion', 
+   {
         "monkoose/matchparen.nvim",
         init = function() require('matchparen').setup() end
     }, {"lukas-reineke/indent-blankline.nvim"}, {
@@ -95,7 +68,18 @@ require('lazy').setup({
             require('workspaces').setup({hooks = {open = {"Alpha"}}})
         end
     }, -- 'leafOfTree/vim-matchtag',
-    -- 'rhysd/clever-f.vim', -- {
+  {
+  'pwntester/octo.nvim',
+  dependencies = {
+    'nvim-lua/plenary.nvim',
+    'nvim-telescope/telescope.nvim',
+    -- OR 'ibhagwan/fzf-lua',
+    'nvim-tree/nvim-web-devicons',
+  },
+  init = function ()
+    require"octo".setup()
+  end
+},   -- 'rhysd/clever-f.vim', -- {
     --     'pwntester/octo.nvim',
     --     dependencies = {
     --         'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim',
@@ -110,12 +94,15 @@ require('lazy').setup({
     'tpope/vim-surround', -- Surround text with quotes, brackets, etc
     --    'nvim-treesitter/playground', -- Treesitter playground,
     -- 'nvim-treesitter/nvim-treesitter-textobjects', -- Treesitter text objects
+    { 'brenoprata10/nvim-highlight-colors', init = function() require('nvim-highlight-colors').setup() end }, -- Highlight colors
     {"b0o/incline.nvim", init = function() require("incline").setup() end}, -- Floating statusline
     "nvim-pack/nvim-spectre", -- Search and replace
     {
         "glepnir/lspsaga.nvim",
         branch = "main",
-        init = function() require('lspsaga').setup({}) end
+        init = function() require('lspsaga').setup({
+            lightbulb = {sign = false},
+        }) end
     }, {
         'karb94/neoscroll.nvim',
         init = function()
@@ -126,12 +113,8 @@ require('lazy').setup({
                 performance_mode = true -- Disable "Performance Mode" on all buffers.
             })
         end
-    }, {
-        'nvim-tree/nvim-tree.lua',
-        init = function() require('nvim-tree').setup() end,
-        dependencies = {'nvim-tree/nvim-web-devicons'},
-        tag = 'nightly'
-    }, 'github/copilot.vim', -- Copilot
+    },
+    'github/copilot.vim', -- Copilot
     {
         'TimUntersberger/neogit', -- Magit for neovim
         dependencies = 'nvim-lua/plenary.nvim'
@@ -148,16 +131,8 @@ require('lazy').setup({
     {
         'nvim-telescope/telescope.nvim',
         version = '0.1.x',
-        dependencies = {{'nvim-lua/plenary.nvim'}}
+        dependencies = 'nvim-lua/plenary.nvim'
     }, -- Telescope
-    {
-        'nvim-telescope/telescope-file-browser.nvim',
-        init = function()
-            local telescope = require("telescope")
-            telescope.load_extension "file_browser"
-            telescope.load_extension "workspaces"
-        end
-    }, -- File browse for telescope
     {
         'goolord/alpha-nvim',
         init = function()
@@ -169,10 +144,10 @@ require('lazy').setup({
     --     'ggandor/leap.nvim',
     --     init = function() require('leap').set_default_keymaps() end
     -- }, -- "Neovim's answer to the mouse" Jump using 's' and two chars
-    'tpope/vim-commentary', -- Comment out blocks using "gc"
+    -- 'tpope/vim-commentary', -- Comment out blocks using "gc"
     {
         'akinsho/bufferline.nvim',
-        version = "v3.*",
+        version = "v4.*",
         dependencies = 'nvim-tree/nvim-web-devicons',
         init = function()
             require("bufferline").setup {
@@ -187,12 +162,27 @@ require('lazy').setup({
     {"folke/trouble.nvim", dependencies = "nvim-tree/nvim-web-devicons"}, -- Show diagnotics in quicklist
     'TheodorRene/skriveleif', 'nvim-tree/nvim-web-devicons', -- Show cool icon tyling/Visuals
     'folke/tokyonight.nvim', -- Theme
+    {
+      "nvim-tree/nvim-tree.lua",
+      version = "*",
+      lazy = false,
+      dependencies = {
+        "nvim-tree/nvim-web-devicons",
+      },
+      config = function()
+        require("nvim-tree").setup {}
+      end,
+    },
     {"catppuccin/nvim", name = "catppuccin"},
     -- 'p00f/nvim-ts-rainbow', -- Rainbow matching brackets
-    'feline-nvim/feline.nvim', -- Line // DEPRECATED
+    -- 'freddiehaddad/feline.nvim', -- Line // DEPRECATED
+    {
+        'nvim-lualine/lualine.nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        init = function() require('lualine').setup() end
+    },
     {
         'j-hui/fidget.nvim',
-        tag = "legacy",
         init = function() require('fidget').setup() end
     }, -- Show LSP progress anguage specific
     {'Olical/conjure', ft = {'clojure'}}, -- Clojure 
