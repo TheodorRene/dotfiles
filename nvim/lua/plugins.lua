@@ -27,15 +27,9 @@ require('lazy').setup({
     'sbdchd/neoformat', -- Formatting
     'lewis6991/gitsigns.nvim', -- Git signs
     -- Lua
-    {
-        "folke/zen-mode.nvim",
-        opts = {
-            -- your configuration comes here
-            -- or leave it empty to use the default settings
-            -- refer to the configuration section below
-        }
-    } ,
     'mbbill/undotree', -- Undo tree
+    'sbdchd/neoformat', -- Formatting
+    { 'yorickpeterse/nvim-pqf', init = function() require('pqf').setup() end }, -- Prettier quickfix
     'mattkubej/jest.nvim', 'HiPhish/rainbow-delimiters.nvim', {
         "folke/flash.nvim",
         event = "VeryLazy",
@@ -68,30 +62,54 @@ require('lazy').setup({
             require('workspaces').setup({hooks = {open = {"Alpha"}}})
         end
     }, -- 'leafOfTree/vim-matchtag',
-  {
-  'pwntester/octo.nvim',
-  dependencies = {
-    'nvim-lua/plenary.nvim',
-    'nvim-telescope/telescope.nvim',
-    -- OR 'ibhagwan/fzf-lua',
-    'nvim-tree/nvim-web-devicons',
+ {
+  "yetone/avante.nvim",
+  event = "VeryLazy",
+  lazy = false,
+  opts = {
+    -- add any opts here
   },
-  init = function ()
-    require"octo".setup()
-  end
-},   -- 'rhysd/clever-f.vim', -- {
-    --     'pwntester/octo.nvim',
-    --     dependencies = {
-    --         'nvim-lua/plenary.nvim', 'nvim-telescope/telescope.nvim',
-    --         'nvim-tree/nvim-web-devicons'
-    --     },
-    --     init = function() require"octo".setup() end
-    -- },
+  keys = {
+    { "<leader>aa", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
+    { "<leader>ar", function() require("avante.api").refresh() end, desc = "avante: refresh" },
+    { "<leader>ae", function() require("avante.api").edit() end, desc = "avante: edit", mode = "v" },
+  },
+  dependencies = {
+    "stevearc/dressing.nvim",
+    "nvim-lua/plenary.nvim",
+    "MunifTanjim/nui.nvim",
+    --- The below dependencies are optional,
+    "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
     {
+      -- support for image pasting
+      "HakonHarnes/img-clip.nvim",
+      event = "VeryLazy",
+      opts = {
+        -- recommended settings
+        default = {
+          embed_image_as_base64 = false,
+          prompt_for_file_name = false,
+          drag_and_drop = {
+            insert_mode = true,
+          },
+          -- required for Windows users
+          use_absolute_path = true,
+        },
+      },
+    },
+    {
+      -- Make sure to setup it properly if you have lazy=true
+      'MeanderingProgrammer/render-markdown.nvim',
+      opts = {
+        file_types = { "markdown", "Avante" },
+      },
+      ft = { "markdown", "Avante" },
+    },
+  },
+}, {
         'sindrets/winshift.nvim',
         init = function() require('winshift').setup() end
     }, -- Move windows around
-    'tpope/vim-surround', -- Surround text with quotes, brackets, etc
     --    'nvim-treesitter/playground', -- Treesitter playground,
     -- 'nvim-treesitter/nvim-treesitter-textobjects', -- Treesitter text objects
     { 'brenoprata10/nvim-highlight-colors', init = function() require('nvim-highlight-colors').setup() end }, -- Highlight colors
@@ -119,7 +137,6 @@ require('lazy').setup({
         'TimUntersberger/neogit', -- Magit for neovim
         dependencies = 'nvim-lua/plenary.nvim'
     }, 'tpope/vim-fugitive', -- Git wrapper for vim
-    --   'chentoast/marks.nvim', -- Marks
     'hrsh7th/cmp-vsnip', -- Snippets for completion
     'hrsh7th/vim-vsnip', -- Snippets for completion
     'hrsh7th/vim-vsnip-integ', -- Snippets for completion
