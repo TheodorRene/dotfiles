@@ -8,6 +8,14 @@ path+=$HOME/.cargo/bin
 path+=$HOME/.local/share/bob/nvim-bin
 path+=$HOME/.luarocks/bin
 path+=$HOME/.npm-packages/bin
+path+=./node_modules/.bin
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/emulator
+export JAVA_HOME="/Users/thca/.openjdk/jdk-17/Contents/Home"
+export PATH="$JAVA_HOME/bin:$PATH"
 
 NPM_PACKAGES="${HOME}/.npm-packages"
 export XDG_CONFIG_HOME=$HOME/.config
@@ -23,7 +31,7 @@ export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 export MANPAGER='nvim +Man!'
 
 # github copilot cli x
-eval "$(github-copilot-cli alias -- "$0")"
+# eval "$(github-copilot-cli alias -- "$0")"
 # See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
 ZSH_THEME="theodorc"
 
@@ -34,15 +42,13 @@ mango(){
 
 #Plugins
 plugins=(
-    autojump
     docker
     extract
     fzf
     git
     last-working-dir
     sudo
-    zsh-aws-vault
-    kubectl
+    autojump
 )
 DISABLE_MAGIC_FUNCTIONS=true
 source $ZSH/oh-my-zsh.sh
@@ -52,12 +58,13 @@ fd(){
   bfs -name "*$1*" 
 }
 
+alias ls="eza"
 alias bc="bc -lq"
 #alias c="code . && exit" So long and thanks for all the fish
 alias cal="ncal -3wb"
 alias cass="mosh cassarossa.samfundet.no"
 alias cat="bat"
-alias clip="xclip -selection c"
+alias clip="pbcopy"
 alias clipboard2file='xclip -selection clipboard -t image/png -o > "$(date +%Y-%m-%d_%T).png"'
 alias deadkeys='setxkbmap -layout no -variant nodeadkeys -option ctrl:nocaps'
 alias dir="ls -d */"
@@ -65,7 +72,8 @@ alias dig="dig +noall +answer"
 alias dsize="du -h --max-depth=1 | sort -h"
 alias gs="git status" #So many misstyping and fk ghostscript
 alias locate="plocate"
-alias lr="ls -ltrhF"
+alias lr="eza -lrhF -snew" 
+#alias lr="ls -lrthF"
 alias lra="ls -ltrha"
 alias lsblk="lsblk -f"
 alias lzd="lazydocker"
@@ -75,6 +83,7 @@ alias py="python"
 alias python="python3"
 alias reminder="vim ~/dev/reminder_for_tomorrow.md"
 alias rg="rg -i"
+alias ag="rg -i"
 alias setbackground="feh --bg-scale"
 alias shut="shutdown now"
 alias start="tmuxinator start project ts-frontend"
@@ -95,11 +104,23 @@ alias wclip="wl-copy"
 
 alias blank="autorandr blank"
 alias nrd="npm run dev"
-alias nrt="npm run tsc"
+alias nrt="npm run test"
 alias nrs="npm run start"
+alias nrp="npm run start:prod"
 
 
 
+# ANDROID
+alias shake="adb shell input keyevent 82"
+alias logcat="adb logcat"
+alias run_android="/Users/thca/Library/Android/sdk/emulator/emulator -avd Pixel_7_API_34"
+alias run_tablet="/Users/thca/Library/Android/sdk/emulator/emulator -avd Pixel_Tablet_API_34"
+alias run_android_ipad="/Users/thca/Library/Android/sdk/emulator/emulator -avd Ipad_10th_Generation_API_34"
+
+#iPad (10th generation) (E5AD111D-2FF1-4D56-9FE1-FE5904D9194C)
+alias run_ipad="xcrun simctl boot 'iPad (10th generation)'"
+#iPhone 15 (7B2D6F3D-168B-463A-AF5D-AE6D2735572D)
+alias run_iphone="xcrun simctl boot 'iPhone 15'"
 
 nuke_containers() {docker rm -f $(docker ps -a -q)}
 nuke_everything() {nuke_containers && nuke_images && nuke_volumes && echo "Nuked everything"}
@@ -112,8 +133,11 @@ run() { docker run --rm -it $1 /bin/sh }
 # run single command
 cmd() {docker exec -it $1 ${@:2}}
 
+# copy the command to clipboard
+copy() { echo "$@"| pbcopy }
+
 minpdf() {
-ls -hl $1 && command gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=minified_$1 $1 && echo "zipped pdf" && ls -hl minified_$1
+    ls -hl $1 && command gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -sOutputFile=minified_$1 $1 && echo "zipped pdf" && ls -hl minified_$1
 }
 
 b64d(){
@@ -123,6 +147,11 @@ b64d(){
 b64e(){
     echo $1 | base64 
 }
+
+
+alias universallink="xcrun simctl openurl booted"
+alias applink="adb shell am start -W -a android.intent.action.VIEW -d"
+# open links in iphone or android
 
 # Pacman specific
 alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
@@ -180,6 +209,19 @@ man(){
     command man $1 || $_ --help
 }
 
+# if no arguments are given, show usage
+# if first argument is equal "devices" run 'xcrun xctrace list devices'
+ios(){
+    if [ $# -eq 0 ]; then
+        echo "Usage: ios devices"
+    elif [ $1 = "devices" ]; then
+        xcrun xctrace list devices
+    else
+        echo "Usage: ios devices"
+        exit 1
+    fi
+} 
+
 #make grep work like rg and ag
 tgrep(){
     command grep -RIin --color=auto --exclude-dir={.git,venv,node_modules} $1 *
@@ -228,6 +270,8 @@ export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_mod
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 eval "$(direnv hook zsh)"
-cat ~/dev/reminder_for_tomorrow.md
-cat /sys/firmware/acpi/platform_profile
 
+#defaults write -g NSWindowShouldDragOnGesture YES
+
+# flashlight
+export PATH="/Users/thca/.flashlight/bin:$PATH"
