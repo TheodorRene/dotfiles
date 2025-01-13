@@ -1,9 +1,11 @@
 # Path to your oh-my-zsh installation.
+zmodload zsh/zprof
 export ZSH="$HOME/.oh-my-zsh"
+zstyle ':completion:*' rehash true
+
 
 path+=$HOME/.local/bin
 path+=$HOME/.dotnet
-path+=/var/lib/snapd/snap/bin
 path+=$HOME/.cargo/bin
 path+=$HOME/.local/share/bob/nvim-bin
 path+=$HOME/.luarocks/bin
@@ -17,6 +19,10 @@ export PATH=$PATH:$ANDROID_HOME/emulator
 export JAVA_HOME="/Users/thca/.openjdk/jdk-17/Contents/Home"
 export PATH="$JAVA_HOME/bin:$PATH"
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
 NPM_PACKAGES="${HOME}/.npm-packages"
 export XDG_CONFIG_HOME=$HOME/.config
 
@@ -25,8 +31,6 @@ export XDG_CONFIG_HOME=$HOME/.config
 export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
 
 alias mosh="export LC_ALL=\"en_US.UTF8\" && mosh"
-
-export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 
 export MANPAGER='nvim +Man!'
 
@@ -42,7 +46,6 @@ mango(){
 
 #Plugins
 plugins=(
-    docker
     extract
     fzf
     git
@@ -261,7 +264,6 @@ export LESS="-RFX"
 
 export PATH="$HOME/.yarn/bin:$HOME/.local/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH:$HOME/.gem/ruby/2.6.0/bin:$HOME/bin"
 
-[ -f "/home/theodorc/.ghcup/env" ] && source "/home/theodorc/.ghcup/env" # ghcup-env
 
 # bun completions
 [ -s "/home/theodorc/.bun/_bun" ] && source "/home/theodorc/.bun/_bun"
@@ -275,3 +277,8 @@ eval "$(direnv hook zsh)"
 
 # flashlight
 export PATH="/Users/thca/.flashlight/bin:$PATH"
+. "/Users/thca/.deno/env"
+eval "$(gh copilot alias -- zsh)"
+zprof
+
+[ -f "/Users/thca/.ghcup/env" ] && . "/Users/thca/.ghcup/env" # ghcup-env
