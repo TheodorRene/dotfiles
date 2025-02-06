@@ -30,6 +30,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 # Otherwise, fall back to `manpath` so we can inherit from `/etc/manpath`.
 export MANPATH="${MANPATH-$(manpath)}:$NPM_PACKAGES/share/man"
 
+export ZSH_COMPDUMP=$ZSH/cache/.zcompdump-$HOST
 alias mosh="export LC_ALL=\"en_US.UTF8\" && mosh"
 
 export MANPAGER='nvim +Man!'
@@ -50,12 +51,10 @@ plugins=(
     fzf
     git
     last-working-dir
-    sudo
     autojump
+    sudo
 )
-DISABLE_MAGIC_FUNCTIONS=true
 source $ZSH/oh-my-zsh.sh
-~/bin/run_tmux_if_vim
 
 fd(){
   bfs -name "*$1*" 
@@ -110,6 +109,7 @@ alias nrd="npm run dev"
 alias nrt="npm run test"
 alias nrs="npm run start"
 alias nrp="npm run start:prod"
+alias ni="npm install"
 
 
 
