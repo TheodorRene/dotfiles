@@ -90,7 +90,7 @@
   "editor.hideCursorInOverviewRuler": true,
   "editor.scrollbar.horizontal": "hidden",
   "editor.scrollbar.vertical": "hidden",
-  "vim.easymotion": false,
+  "vim.easymotion": true,
   "vim.sneak": true,
   "vim.leader": "<space>",
   "vim.handleKeys": {
@@ -100,7 +100,6 @@
     "<C-b>": false
   },
   "vim.useSystemClipboard": true,
-  "workbench.colorTheme": "Gruvbox Dark Hard",
   "redhat.telemetry.enabled": false,
   "editor.renderWhitespace": "all",
   "editor.inlineSuggest.enabled": true,
@@ -108,12 +107,13 @@
   "editor.tabSize": 2,
   "github.copilot.enable": {
     "*": true,
-    "yaml": false,
     "plaintext": true,
-    "markdown": false
+    "markdown": false,
+    "scminput": false,
+    "yaml": false
   },
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": "explicit"
   },
   "explorer.confirmDragAndDrop": false,
   "typescript.updateImportsOnFileMove.enabled": "always",
@@ -123,5 +123,11 @@
   "codesnap.showWindowControls": false,
   "codesnap.shutterAction": "copy",
   "window.zoomLevel": -1,
-  "git.openRepositoryInParentFolders": "never"
+  "git.openRepositoryInParentFolders": "never",
+  "workbench.colorTheme": "Gruvbox Dark Soft",
+  "editor.smoothScrolling": true,
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "git.autofetch": true
 }
