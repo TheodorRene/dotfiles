@@ -3,7 +3,7 @@ opt.mouse = "a"
 opt.splitbelow = true
 opt.splitright = true
 opt.cmdheight = 1
-opt.updatetime = 50 -- update interval  (i used to use 750)
+opt.updatetime = 250 -- update interval  (i used to use 750)
 opt.colorcolumn = "120" -- Line length marker
 
 opt.tabstop = 4 -- number of spaces that a <Tab> in the file counts for
@@ -19,7 +19,10 @@ opt.showmatch = true -- show matching brackets when text indicator is over them
 opt.ignorecase = true -- Ignore case when searching
 opt.smartcase = true -- Don't ignore case with capitals
 opt.autoread = true -- automatically reload files when they change on disk
-opt.clipboard = "unnamedplus" -- Copy paste between vim and everything else
+opt.breakindent = true -- This is nice for markdown files
+vim.schedule(function()
+  vim.opt.clipboard = 'unnamedplus' -- Copy paste between vim and everything else
+end)
 vim.g.loaded_netrw = 1 -- disable netrw
 vim.g.loaded_netrwPlugin = 1 -- disable netrw
 opt.termguicolors = true -- set term gui colors most terminals support this

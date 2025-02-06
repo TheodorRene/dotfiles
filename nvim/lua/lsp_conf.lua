@@ -56,11 +56,17 @@ local on_attach = function(_, bufnr)
     -- buf_set_keymap('n', '<C-x>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts("Code action"))
     buf_set_keymap('n', '<C-x>c', '<cmd>Lspsaga code_action <cr>',
                    opts("Code action"))
+    buf_set_keymap('n', '<C-.>', '<cmd>Lspsaga code_action <cr>',
+                   opts("Code action"))
+    buf_set_keymap('n', '<A-.>', '<cmd>Lspsaga code_action <cr>',
+                   opts("Code action"))
     buf_set_keymap('n', '<C-x>r', '<cmd> LspRestart <CR>', opts("Restart LSP"))
     buf_set_keymap('n', 'gr',
                    ':lua require"telescope.builtin".lsp_references()<CR>',
                    opts("References"))
     buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>',
+                   opts("Open float"))
+    buf_set_keymap('n', '<A-e>', '<cmd>lua vim.diagnostic.open_float()<CR>',
                    opts("Open float"))
     -- buf_set_keymap('n', '<C-x>e', '<cmd>Lspsaga show_cursor_diagnostics <CR>',
     --                opts("Open cursor diagnostics"))
@@ -119,6 +125,13 @@ for _, lsp in ipairs(servers) do
         flags = {debounce_text_changes = 150}
     }
 end
+
+-- nvim_lsp['hls'].setup {
+--     on_attach = on_attach,
+--     capabilities = capabilities,
+--     flags = {debounce_text_changes = 150},
+--     filetypes = { 'haskell', 'lhaskell', 'cabal' },
+-- }
 
 local rt = require("rust-tools")
 

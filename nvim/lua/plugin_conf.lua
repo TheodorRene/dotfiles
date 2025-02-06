@@ -33,12 +33,6 @@ vim.g.rainbow_delimiters = {
     },
 }
 
-local highlight = {"CursorColumn", "Whitespace"}
-require("ibl").setup {
-    indent = {highlight = highlight, char = ""},
-    whitespace = {highlight = highlight, remove_blankline_trail = false},
-    scope = {enabled = false}
-}
 --require('feline').setup({components = ctp_feline.get()})
 require("catppuccin").setup({
     integrations = {
@@ -84,10 +78,15 @@ require('neogit').setup {
 -- local fb_actions = require"telescope".extensions.file_browser.actions
 require("telescope").setup {
     pickers = {
-        defaults = {file_ignore_patterns = {"node_modules", ".git"}},
+        defaults = {file_ignore_patterns = {"node_modules", ".git", ".*%.test%.tsx", ".*%.test%.ts"},
+        preview = {
+            -- Default previewe
+            treesitter = true,
+        },
+    },
         git_files = {theme = "dropdown", previewer = false},
         buffers = {theme = "dropdown", previewer = false},
-        find_files = {theme = "dropdown", previewer = false}
+        find_files = {theme = "dropdown", previewer = false},
     },
 
     extensions = {
@@ -109,12 +108,13 @@ require("telescope").setup {
 }
 
 -- require("telescope").load_extension "file_browser"
--- Treesitter
+require("telescope").load_extension "fzf"
+-- Treestter
 require'nvim-treesitter.configs'.setup {
     ensure_installed = {
         "bash", "c", "cpp", "css", "dockerfile", "go", "html", "java",
         "javascript", "json", "lua", "python", "regex", "rust", "toml",
-        "typescript", "yaml"
+        "typescript", "yaml", "haskell", "query", "tsx", "vue", "svelte",
     },
     highlight = {
         enable = true,

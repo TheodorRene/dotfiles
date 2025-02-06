@@ -20,6 +20,11 @@ require('lazy').setup({
     -- Mason
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
+{
+  'mrcjkb/haskell-tools.nvim',
+  version = '^4', -- Recommended
+  lazy = false, -- This plugin is already lazy
+},
     -- Infrastructure
     'xiyaowong/transparent.nvim', 'nvim-lua/plenary.nvim', -- "All the lua functions I don't want to write twice" Needed for many plugins
 
@@ -53,10 +58,49 @@ require('lazy').setup({
    -- 'tpope/vim-dadbod', 
    -- 'kristijanhusak/vim-dadbod-ui', 
    -- 'kristijanhusak/vim-dadbod-completion', 
+-- {
+--     "lukas-reineke/indent-blankline.nvim",
+--     main = "ibl",
+--     ---@module "ibl"
+--     ---@type ibl.config
+--     opts = {},
+-- }
+--
+  {
+  "epwalsh/obsidian.nvim",
+  version = "*",  -- recommended, use latest release instead of latest commit
+  lazy = true,
+  ft = "markdown",
+  -- Replace the above line with this if you only want to load obsidian.nvim for markdown files in your vault:
+  -- event = {
+  --   -- If you want to use the home shortcut '~' here you need to call 'vim.fn.expand'.
+  --   -- E.g. "BufReadPre " .. vim.fn.expand "~" .. "/my-vault/*.md"
+  --   -- refer to `:h file-pattern` for more examples
+  --   "BufReadPre path/to/my-vault/*.md",
+  --   "BufNewFile path/to/my-vault/*.md",
+  -- },
+  dependencies = {
+    -- Required.
+    "nvim-lua/plenary.nvim",
+
+    -- see below for full list of optional dependencies 👇
+  },
+  opts = {
+    workspaces = {
+      {
+        name = "personal",
+        path = "~/Documents/inner-sanctum-main",
+      }
+    },
+
+    -- see below for full list of options 👇
+  },
+    },
    {
         "monkoose/matchparen.nvim",
         init = function() require('matchparen').setup() end
-    }, {"lukas-reineke/indent-blankline.nvim"}, {
+    },
+    {
         'natecraddock/workspaces.nvim',
         init = function()
             require('workspaces').setup({hooks = {open = {"Alpha"}}})
@@ -66,6 +110,7 @@ require('lazy').setup({
   "yetone/avante.nvim",
   event = "VeryLazy",
   lazy = false,
+  enabled = false,
   opts = {
     -- add any opts here
   },
@@ -141,6 +186,7 @@ require('lazy').setup({
     'hrsh7th/vim-vsnip', -- Snippets for completion
     'hrsh7th/vim-vsnip-integ', -- Snippets for completion
     'sindrets/diffview.nvim', -- Git diffs
+    { 'nvim-focus/focus.nvim', version = false, init = function() require('focus').setup() end }, -- Focus mode
     {
         "folke/which-key.nvim",
         init = function() require("which-key").setup {} end
@@ -176,13 +222,13 @@ require('lazy').setup({
     'hrsh7th/cmp-nvim-lsp', -- LSP source for cmp
     'hrsh7th/cmp-buffer', -- Buffer source for cmp
     'onsails/lspkind-nvim', -- Nice icons for autocopmlete like VSCode
-    {"folke/trouble.nvim", dependencies = "nvim-tree/nvim-web-devicons"}, -- Show diagnotics in quicklist
+    {"folke/trouble.nvim",opts={}, cmd="Trouble", dependencies = "nvim-tree/nvim-web-devicons"}, -- Show diagnotics in quicklist
     'TheodorRene/skriveleif', 'nvim-tree/nvim-web-devicons', -- Show cool icon tyling/Visuals
     'folke/tokyonight.nvim', -- Theme
     {
       "nvim-tree/nvim-tree.lua",
       version = "*",
-      lazy = false,
+      lazy = true,
       dependencies = {
         "nvim-tree/nvim-web-devicons",
       },

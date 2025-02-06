@@ -108,7 +108,7 @@ nmap('<C-g>do', '<CMD> DiffviewOpen <CR>', "GIT: Show diff")
 nmap('<C-g>dq', '<CMD> DiffviewClose <CR>', "GIT: Close diff")
 nmap('<C-g>g', ':Git ', "GIT")
 nmap('<C-g>dd', '<CMD> DiffviewOpen develop...HEAD <CR>', "GIT: Diff develop")
-nmap('<A-g>', '<CMD> Neogit <CR>', "Neogit")
+nmap('<A-g>', '<CMD> Neogit kind=tab<CR>', "Neogit")
 
 --
 nmap('<C-x>m','bi[<Esc>ea]()<Esc>hp', "Insert link")
@@ -179,6 +179,7 @@ nmap('<leader>p', ':lua require"telescope.builtin".commands() <CR>',
      "Search commands")
 
 nmap('<leader>b', '<CMD> Telescope buffers <CR>')
+nmap('<leader><leader>', '<CMD> Telescope buffers <CR>')
 nmap('<leader>r', '<CMD> Telescope resume <CR>')
 nmap('<leader>s', '<CMD> Telescope lsp_document_symbols <CR>',
      "Search document symbols")
@@ -206,6 +207,8 @@ nmap('<F8>', '<Cmd>Lspsaga outline<CR>', "Show LSP Symbols as outline")
 nmap('<F9>', ':w <CR> :! rocaf %<CR>')
 nmap('<F10>', '<cmd> NvimTreeFindFileToggle<CR>')
 nmap('<F12>', '<Cmd> TroubleToggle <CR>', "Show Trouble window")
+
+nmap('<A-r>', ':make run <CR>', "Run make run")
 
 nmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")
 tmap("<A-d>", "<cmd>Lspsaga term_toggle<CR>", "Open terminal")

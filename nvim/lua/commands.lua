@@ -18,6 +18,8 @@ vim.cmd([[
     :command! AstGrep :Telescope ast_grep
     :command! PeekDefinition :Lspsaga peek_definition
     :command! Finder :Lspsaga finder
+    :command! Rename :Lspsaga rename
+    :command! DiffLastCommit :Neogit commit diff HEAD^
     ]])
 vim.api.nvim_create_user_command("Scrollbind", ":windo set scrollbind!", {})
 
