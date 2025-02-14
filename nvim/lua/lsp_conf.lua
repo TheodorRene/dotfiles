@@ -113,8 +113,8 @@ end
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
 local servers = {
-    'hls', 'pyright', 'clojure_lsp', 'ts_ls', 'elmls',
-    'jdtls', 'eslint', 'lua_ls', 'lemminx', "jsonls", "html"
+    'hls', 'pyright', 'clojure_lsp', 'ts_ls', 'elmls', 'jdtls', 'eslint',
+    'lua_ls', 'lemminx', "jsonls", "html"
 }
 -- Marksman for markdown is nice but I dont want it to be spawned when hovering in typescript
 -- Maybe fix that some time. If in typescript dont spawn marksman

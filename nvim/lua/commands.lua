@@ -20,6 +20,7 @@ vim.cmd([[
     :command! Finder :Lspsaga finder
     :command! Rename :Lspsaga rename
     :command! DiffLastCommit :Neogit commit diff HEAD^
+    :command! CopyFilename :let @+ = expand('%:p')
     ]])
 vim.api.nvim_create_user_command("Scrollbind", ":windo set scrollbind!", {})
 

@@ -8,7 +8,6 @@ require('gitsigns').setup {
 -- })
 --
 
-
 vim.g.neoformat_try_node_exe = 1
 -- This module contains a number of default definitions
 local rainbow_delimiters = require 'rainbow-delimiters'
@@ -16,24 +15,17 @@ local rainbow_delimiters = require 'rainbow-delimiters'
 vim.g.rainbow_delimiters = {
     strategy = {
         [''] = rainbow_delimiters.strategy['global'],
-        vim = rainbow_delimiters.strategy['local'],
+        vim = rainbow_delimiters.strategy['local']
     },
-    query = {
-        [''] = 'rainbow-delimiters',
-        lua = 'rainbow-blocks',
-    },
+    query = {[''] = 'rainbow-delimiters', lua = 'rainbow-blocks'},
     highlight = {
-        'RainbowDelimiterRed',
-        'RainbowDelimiterYellow',
-        'RainbowDelimiterBlue',
-        'RainbowDelimiterOrange',
-        'RainbowDelimiterGreen',
-        'RainbowDelimiterViolet',
-        'RainbowDelimiterCyan',
-    },
+        'RainbowDelimiterRed', 'RainbowDelimiterYellow', 'RainbowDelimiterBlue',
+        'RainbowDelimiterOrange', 'RainbowDelimiterGreen',
+        'RainbowDelimiterViolet', 'RainbowDelimiterCyan'
+    }
 }
 
---require('feline').setup({components = ctp_feline.get()})
+-- require('feline').setup({components = ctp_feline.get()})
 require("catppuccin").setup({
     integrations = {
         cmp = true,
@@ -78,15 +70,18 @@ require('neogit').setup {
 -- local fb_actions = require"telescope".extensions.file_browser.actions
 require("telescope").setup {
     pickers = {
-        defaults = {file_ignore_patterns = {"node_modules", ".git", ".*%.test%.tsx", ".*%.test%.ts"},
-        preview = {
-            -- Default previewe
-            treesitter = true,
+        defaults = {
+            file_ignore_patterns = {
+                "node_modules", ".git", ".*%.test%.tsx", ".*%.test%.ts"
+            },
+            preview = {
+                -- Default previewe
+                treesitter = true
+            }
         },
-    },
         git_files = {theme = "dropdown", previewer = false},
         buffers = {theme = "dropdown", previewer = false},
-        find_files = {theme = "dropdown", previewer = false},
+        find_files = {theme = "dropdown", previewer = false}
     },
 
     extensions = {
@@ -114,7 +109,7 @@ require'nvim-treesitter.configs'.setup {
     ensure_installed = {
         "bash", "c", "cpp", "css", "dockerfile", "go", "html", "java",
         "javascript", "json", "lua", "python", "regex", "rust", "toml",
-        "typescript", "yaml", "haskell", "query", "tsx", "vue", "svelte",
+        "typescript", "yaml", "haskell", "query", "tsx", "vue", "svelte"
     },
     highlight = {
         enable = true,

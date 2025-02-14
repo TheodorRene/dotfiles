@@ -76,8 +76,10 @@ function TRC_GITSIGNS_MAPPINGS(bufnr)
     map({'n', 'v'}, '<C-g>hs', ':Gitsigns stage_hunk<CR>', {desc = 'stage hunk'})
     map({'n', 'v'}, '<C-g>hr', ':Gitsigns reset_hunk<CR>', {desc = 'reset hunk'})
     map({'n', 'v'}, 'ª', ':Git add %<CR>', {desc = 'stage file AltGr+a'})
-    map({'n', 'v'}, 'ß', ':Gitsigns stage_hunk<CR>', {desc = 'stage hunk AltGr+s'})
-    map({'n', 'v'}, '®', ':Gitsigns reset_hunk<CR>', {desc = 'reset hunk AltGr+r'})
+    map({'n', 'v'}, 'ß', ':Gitsigns stage_hunk<CR>',
+        {desc = 'stage hunk AltGr+s'})
+    map({'n', 'v'}, '®', ':Gitsigns reset_hunk<CR>',
+        {desc = 'reset hunk AltGr+r'})
     map({'n', 'v'}, 'ü', ':Gitsigns undo_stage_hunk<CR>',
         {desc = 'undo stage hunk AltGr+u'})
     map({'n', 'v'}, 'π', ':Gitsigns preview_hunk_inline<CR>',
@@ -111,7 +113,7 @@ nmap('<C-g>dd', '<CMD> DiffviewOpen develop...HEAD <CR>', "GIT: Diff develop")
 nmap('<A-g>', '<CMD> Neogit kind=tab<CR>', "Neogit")
 
 --
-nmap('<C-x>m','bi[<Esc>ea]()<Esc>hp', "Insert link")
+nmap('<C-x>m', 'bi[<Esc>ea]()<Esc>hp', "Insert link")
 
 nmap("<leader>m", "@", "Run macro")
 -- delete this
