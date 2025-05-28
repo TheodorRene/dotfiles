@@ -23,11 +23,10 @@ require('lazy').setup({
         version = '^4', -- Recommended
         lazy = false -- This plugin is already lazy
     }, -- Infrastructure
-    'xiyaowong/transparent.nvim', 'nvim-lua/plenary.nvim', -- "All the lua functions I don't want to write twice" Needed for many plugins
+    'nvim-lua/plenary.nvim', -- "All the lua functions I don't want to write twice" Needed for many plugins
 
     {'nvim-telescope/telescope-fzf-native.nvim', build = 'make'},
-    'sbdchd/neoformat', -- Formatting
-    'lewis6991/gitsigns.nvim', -- Git signs
+    "marilari88/twoslash-queries.nvim", 'lewis6991/gitsigns.nvim', -- Git signs
     -- Lua
     'mbbill/undotree', -- Undo tree
     'sbdchd/neoformat', -- Formatting
@@ -51,19 +50,7 @@ require('lazy').setup({
                 desc = "Flash Treesitter"
             }
         }
-    }, {'stevearc/oil.nvim', init = function() require('oil').setup() end},
-    -- 'tpope/vim-dadbod', 
-    -- 'kristijanhusak/vim-dadbod-ui', 
-    -- 'kristijanhusak/vim-dadbod-completion', 
-    -- {
-    --     "lukas-reineke/indent-blankline.nvim",
-    --     main = "ibl",
-    --     ---@module "ibl"
-    --     ---@type ibl.config
-    --     opts = {},
-    -- }
-    --
-    {
+    }, {'stevearc/oil.nvim', init = function() require('oil').setup() end}, {
         "epwalsh/obsidian.nvim",
         version = "*", -- recommended, use latest release instead of latest commit
         lazy = true,
@@ -92,79 +79,17 @@ require('lazy').setup({
     }, {
         "monkoose/matchparen.nvim",
         init = function() require('matchparen').setup() end
-    }, {
-        'natecraddock/workspaces.nvim',
-        init = function()
-            require('workspaces').setup({hooks = {open = {"Alpha"}}})
-        end
-    }, -- 'leafOfTree/vim-matchtag',
-    {
-        "soulis-1256/eagle.nvim",
-        opts = {
-            -- override the default values found in config.lua
-        }
-    }, {
-        "yetone/avante.nvim",
-        event = "VeryLazy",
-        lazy = false,
-        enabled = false,
-        opts = {
-            -- add any opts here
-        },
-        keys = {
-            {
-                "<leader>aa",
-                function() require("avante.api").ask() end,
-                desc = "avante: ask",
-                mode = {"n", "v"}
-            }, {
-                "<leader>ar",
-                function() require("avante.api").refresh() end,
-                desc = "avante: refresh"
-            }, {
-                "<leader>ae",
-                function() require("avante.api").edit() end,
-                desc = "avante: edit",
-                mode = "v"
-            }
-        },
-        dependencies = {
-            "stevearc/dressing.nvim", "nvim-lua/plenary.nvim",
-            "MunifTanjim/nui.nvim", --- The below dependencies are optional,
-            "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
-            {
-                -- support for image pasting
-                "HakonHarnes/img-clip.nvim",
-                event = "VeryLazy",
-                opts = {
-                    -- recommended settings
-                    default = {
-                        embed_image_as_base64 = false,
-                        prompt_for_file_name = false,
-                        drag_and_drop = {insert_mode = true},
-                        -- required for Windows users
-                        use_absolute_path = true
-                    }
-                }
-            }, {
-                -- Make sure to setup it properly if you have lazy=true
-                'MeanderingProgrammer/render-markdown.nvim',
-                opts = {file_types = {"markdown", "Avante"}},
-                ft = {"markdown", "Avante"}
-            }
-        }
-    },
-    {
-        'sindrets/winshift.nvim',
-        init = function() require('winshift').setup() end
-    }, -- Move windows around
-    --    'nvim-treesitter/playground', -- Treesitter playground,
+    }, --    'nvim-treesitter/playground', -- Treesitter playground,
     -- 'nvim-treesitter/nvim-treesitter-textobjects', -- Treesitter text objects
     {
         'brenoprata10/nvim-highlight-colors',
         init = function() require('nvim-highlight-colors').setup() end
     }, -- Highlight colors
-    {"b0o/incline.nvim", init = function() require("incline").setup() end}, -- Floating statusline
+    {
+        "b0o/incline.nvim",
+        init = function() require("incline").setup() end,
+        enabled = false
+    }, -- Floating statusline
     "nvim-pack/nvim-spectre", -- Search and replace
     {
         "glepnir/lspsaga.nvim",
@@ -205,18 +130,7 @@ require('lazy').setup({
         version = '0.1.x',
         dependencies = 'nvim-lua/plenary.nvim'
     }, -- Telescope
-    {
-        'goolord/alpha-nvim',
-        init = function()
-            require'alpha'.setup(require'alpha.themes.startify'.config)
-        end
-    }, -- Better dashboard when opening neovim
     {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'}, -- Syntax and so much more
-    -- {
-    --     'ggandor/leap.nvim',
-    --     init = function() require('leap').set_default_keymaps() end
-    -- }, -- "Neovim's answer to the mouse" Jump using 's' and two chars
-    -- 'tpope/vim-commentary', -- Comment out blocks using "gc"
     {
         'akinsho/bufferline.nvim',
         version = "v4.*",
@@ -243,6 +157,7 @@ require('lazy').setup({
         "nvim-tree/nvim-tree.lua",
         version = "*",
         lazy = true,
+        enabled = false,
         dependencies = {"nvim-tree/nvim-web-devicons"},
         config = function() require("nvim-tree").setup {} end
     }, {"catppuccin/nvim", name = "catppuccin"},
@@ -253,8 +168,8 @@ require('lazy').setup({
         dependencies = {'nvim-tree/nvim-web-devicons'},
         init = function() require('lualine').setup() end
     }, {'j-hui/fidget.nvim', init = function() require('fidget').setup() end}, -- Show LSP progress anguage specific
-    {'Olical/conjure', ft = {'clojure'}}, -- Clojure 
-    'simrat39/rust-tools.nvim', {
+    {'Olical/conjure', ft = {'clojure'}, branch = "main"}, -- Clojure 
+    {'simrat39/rust-tools.nvim', enabled = false}, {
         'gelguy/wilder.nvim',
         init = function()
             require('wilder').setup {modes = {':', '/', '?'}}

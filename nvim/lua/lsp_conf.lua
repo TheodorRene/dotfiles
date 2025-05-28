@@ -4,11 +4,18 @@ local nvim_lsp = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 --
+vim.diagnostic.config({ virtual_lines = { current_line = true } })
 
 vim.cmd [[au FocusGained,BufEnter * :checktime]]
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
-local on_attach = function(_, bufnr)
+local on_attach = function(client, bufnr)
+    --- run vim command 
+    --- nnoremap <nowait> gr gr
+    vim.cmd [[
+        nnoremap <nowait> gr gr
+    ]]
+
     --    client.server_capabilities.semanticTokensProvider = nil
     local function buf_set_keymap(...)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
@@ -16,6 +23,11 @@ local on_attach = function(_, bufnr)
     local function buf_set_option(...)
         vim.api.nvim_buf_set_option(bufnr, ...)
     end
+
+    -- -- if ts_ls
+    -- if client.name == "ts_ls" then
+    --     require("twoslash-queries").attach(client, bufnr)
+    -- end
 
     -- Enable completion triggered by <c-x><c-o>
     buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -25,20 +37,15 @@ local on_attach = function(_, bufnr)
         return {noremap = true, silent = true, desc = desc}
     end
     --
-    -- vim.cmd([[
-    -- augroup fmt
-    -- autocmd! "delete existing autogroup
-    -- au BufWritePre * try | undojoin | Neoformat | catch /E790/ | Neoformat | endtry
-    -- augroup END
-    -- ]])
-    -- See `:help vim.lsp.*` for documentation on any of the below functions
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>',
                    opts("Declaration"))
     buf_set_keymap('n', 'gd',
-                   ':lua require"telescope.builtin".lsp_definitions()<CR>',
+                   '<cmd> Lspsaga goto_definition <CR>',
                    opts("LSP definitions"))
     -- buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
-    buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
+    -- buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
+    buf_set_keymap("n", 'K', ':lua vim.lsp.buf.hover({border = "rounded"})<CR>',
+                   opts('Hover'))
     buf_set_keymap("n", "gh", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
     buf_set_keymap('n', 'gi',
                    ':lua require"telescope.builtin".lsp_implementations()<CR>',
@@ -52,9 +59,11 @@ local on_attach = function(_, bufnr)
                    ':lua require"telescope.builtin".diagnostics()<CR>',
                    opts("Diagnostics"))
     -- buf_set_keymap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', opts("Rename"))
-    buf_set_keymap('n', '<F2>', '<cmd> Lspsaga rename <CR>', opts("Rename"))
+    buf_set_keymap('n', '<C-a>r', '<cmd> Lspsaga rename <CR>', opts("Rename"))
     -- buf_set_keymap('n', '<C-x>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts("Code action"))
     buf_set_keymap('n', '<C-x>c', '<cmd>Lspsaga code_action <cr>',
+                   opts("Code action"))
+    buf_set_keymap('n', '<C-a>a', '<cmd>Lspsaga code_action <cr>',
                    opts("Code action"))
     buf_set_keymap('n', '<C-.>', '<cmd>Lspsaga code_action <cr>',
                    opts("Code action"))
@@ -80,6 +89,10 @@ local on_attach = function(_, bufnr)
                    opts("Go to next diagnostics"))
     buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>',
                    opts("GO to next diagnostics"))
+    buf_set_keymap('n', '<C-a>d', '<cmd>lua vim.diagnostic.goto_next()<CR>',
+                   opts("GO to next diagnostics"))
+    buf_set_keymap('n', '<C-a>D', '<cmd>lua vim.diagnostic.goto_prev()<CR>',
+                   opts("GO to prev diagnostics"))
     buf_set_keymap('v', '<space>fq', ':Neoformat! graphql<CR>',
                    opts("Neoformat"))
     buf_set_keymap('v', '<space>fq', ":'<,'>Neoformat! graphql<CR>",
@@ -113,8 +126,8 @@ end
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
 local servers = {
-    'hls', 'pyright', 'clojure_lsp', 'ts_ls', 'elmls', 'jdtls', 'eslint',
-    'lua_ls', 'lemminx', "jsonls", "html"
+    'hls', 'pyright', 'clojure_lsp', 'elmls', 'jdtls', 'eslint',
+    'lua_ls', 'lemminx', "jsonls", "html", "gopls", "ts_ls"
 }
 -- Marksman for markdown is nice but I dont want it to be spawned when hovering in typescript
 -- Maybe fix that some time. If in typescript dont spawn marksman
@@ -133,9 +146,9 @@ end
 --     filetypes = { 'haskell', 'lhaskell', 'cabal' },
 -- }
 
-local rt = require("rust-tools")
+-- local rt = require("rust-tools")
 
-rt.setup({server = {on_attach = on_attach}})
+-- rt.setup({server = {on_attach = on_attach}})
 
 nvim_lsp.clangd.setup {
     -- cmd = { 'clangd-12' };
@@ -154,9 +167,6 @@ cmp.setup {
         -- REQUIRED - you must specify a snippet engine
         expand = function(args)
             vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-            -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
-            -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
-            -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
         end
     },
     mapping = {

@@ -21,6 +21,9 @@ vim.cmd([[
     :command! Rename :Lspsaga rename
     :command! DiffLastCommit :Neogit commit diff HEAD^
     :command! CopyFilename :let @+ = expand('%:p')
+    :command! Fold execute "normal zA"
+    :command! GitResetCurrentLine :exec '.!git checkout -- '.shellescape(expand('%')).':'.line('.')
+    :command! ResetCurrentLine :lua require('gitsigns').reset_hunk({vim.fn.line('.'), vim.fn.line('.')})
     ]])
 vim.api.nvim_create_user_command("Scrollbind", ":windo set scrollbind!", {})
 

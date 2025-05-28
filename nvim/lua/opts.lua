@@ -21,7 +21,7 @@ opt.smartcase = true -- Don't ignore case with capitals
 opt.autoread = true -- automatically reload files when they change on disk
 opt.breakindent = true -- This is nice for markdown files
 vim.schedule(function()
-  vim.opt.clipboard = 'unnamedplus' -- Copy paste between vim and everything else
+    vim.opt.clipboard = 'unnamedplus' -- Copy paste between vim and everything else
 end)
 vim.g.loaded_netrw = 1 -- disable netrw
 vim.g.loaded_netrwPlugin = 1 -- disable netrw
@@ -43,6 +43,8 @@ vim.g.omni_sql_default_compl_type = 'syntax'
 vim.opt.sessionoptions:append("localoptions") -- Save localoptions to session file
 -- I dont think I need these
 -- vim.o.foldmethod = "expr" 
+opt.foldmethod = "expr"
+opt.foldexpr = "nvim_treesitter#foldexpr()"
 -- vim.o.foldexpr = "nvim_treesitter#foldexpr()"
 -- opt.foldenable = false -- disable folding
 opt.scrolloff = 8

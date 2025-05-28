@@ -21,6 +21,10 @@ end
 nmap('<Right>', ':bn <CR>', "Next buffer")
 nmap('<Left>', ':bp <CR>', "Previous buffer")
 
+-- leader+a open all folds
+nmap('<leader>a', 'zA', "Open all folds")
+
+
 imap("''", "''<esc>i")
 imap("<C-c>", "<Esc>", "Ctrl-c to escape, and not kill anything")
 imap('""', '""<esc>i')
@@ -40,6 +44,7 @@ nmap("Q", "<nop>", "Disable Ex mode")
 nmap('<Leader>w', ':w<CR>')
 nmap('<leader>h', ':nohls<CR>')
 nmap('n', 'nzz')
+nmap('<leader>;', ':! rocaf %<CR>')
 
 tmap('<Esc>', [[<C-\><C-n>]])
 
@@ -90,6 +95,11 @@ function TRC_GITSIGNS_MAPPINGS(bufnr)
     map('n', '<C-g>hu', gs.undo_stage_hunk, {desc = 'undo stage hunk'})
     map('n', '<C-g>td', gs.toggle_deleted, {desc = 'toggle deleted lines'})
     map('n', '<C-g>tl', gs.toggle_linehl, {desc = 'toggle line highlight'})
+    -- toggle both deleted and linehl
+    map('n', '<C-g>ta', function()
+        gs.toggle_deleted()
+        gs.toggle_linehl()
+    end, {desc = 'toggle deleted and line highlight'})
 
     -- Text object
     map({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>',
