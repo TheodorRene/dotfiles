@@ -49,12 +49,23 @@ alias nrs="npm run start"
 alias nrp="npm run start:prod"
 alias ni="npm install"
 
+#alias llm="ollama use mistral"
 
+alias llm="ollama run exaone3.5:2.4b"
+
+
+alias gst="git status"
+alias glog="git log --oneline --graph --decorate --all"
+alias gp="git push"
+alias gl="git pull"
+alias gb="osascript -e 'tell application \"GitButler\" to activate'"
+alias g="git"
 
 # ANDROID
 alias shake="adb shell input keyevent 82"
 alias logcat="adb logcat"
-alias run_android="/Users/thca/Library/Android/sdk/emulator/emulator -avd Pixel_7_API_34"
+alias run_android2="/Users/thca/Library/Android/sdk/emulator/emulator -avd GURBA_API_36 -no-snapshot"
+alias run_android="/Users/thca/Library/Android/sdk/emulator/emulator -avd theopixel -no-snapshot"
 alias run_tablet="/Users/thca/Library/Android/sdk/emulator/emulator -avd Pixel_Tablet_API_34"
 alias run_android_ipad="/Users/thca/Library/Android/sdk/emulator/emulator -avd Ipad_10th_Generation_API_34"
 
@@ -66,6 +77,7 @@ alias run_iphone="xcrun simctl boot 'iPhone 15'"
 
 alias universallink="xcrun simctl openurl booted"
 alias applink="adb shell am start -W -a android.intent.action.VIEW -d"
+alias adbfix="adb reverse tcp:8081 tcp:8081"
 # open links in iphone or android
 
 # Pacman specific
@@ -84,9 +96,10 @@ alias dc="cd"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
 alias ipp="curl -s ip.xxd.no"
 alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
-alias server="python -m http.server 8000"
+alias server="python -m http.server 2040"
 alias ssh_insecure="ssh -oKexAlgorithms=+diffie-hellman-group1-sha1"
 alias vpn="sudo openconnect -bq --user=$USER vpn.ntnu.no"
+alias ai="gh copilot suggest -t shell"
 
 # alias work="sleep $((60*20)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
 # alias break="sleep $((60*5)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"

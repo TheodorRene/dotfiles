@@ -18,7 +18,7 @@ let g:vim_matchtag_highlight_cursor_on = 1
 require('lazy').setup({
 
     -- Mason
-    "williamboman/mason.nvim", "williamboman/mason-lspconfig.nvim", {
+    "williamboman/mason.nvim", {
         'mrcjkb/haskell-tools.nvim',
         version = '^4', -- Recommended
         lazy = false -- This plugin is already lazy
@@ -115,8 +115,22 @@ require('lazy').setup({
     'hrsh7th/cmp-vsnip', -- Snippets for completion
     'hrsh7th/vim-vsnip', -- Snippets for completion
     'hrsh7th/vim-vsnip-integ', -- Snippets for completion
-    'sindrets/diffview.nvim', -- Git diffs
     {
+        "CopilotC-Nvim/CopilotChat.nvim",
+        dependencies = {{"nvim-lua/plenary.nvim", branch = "master"}},
+        build = "make tiktoken",
+        opts = {
+            -- See Configuration section for options
+        }
+    }, 'sindrets/diffview.nvim', -- Git diffs
+    {
+        "ibhagwan/fzf-lua",
+        -- optional for icon support
+        dependencies = {"nvim-tree/nvim-web-devicons"},
+        -- or if using mini.icons/mini.nvim
+        -- dependencies = { "echasnovski/mini.icons" },
+        opts = {}
+    }, {
         'nvim-focus/focus.nvim',
         version = false,
         init = function() require('focus').setup() end
@@ -126,6 +140,12 @@ require('lazy').setup({
         init = function() require("which-key").setup {} end
     }, -- Show key hints
     {
+        "olimorris/codecompanion.nvim",
+        opts = {},
+        dependencies = {
+            "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter"
+        }
+    }, {
         'nvim-telescope/telescope.nvim',
         version = '0.1.x',
         dependencies = 'nvim-lua/plenary.nvim'
@@ -133,13 +153,8 @@ require('lazy').setup({
     {'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'}, -- Syntax and so much more
     {
         'akinsho/bufferline.nvim',
-        version = "v4.*",
+        version = "*",
         dependencies = 'nvim-tree/nvim-web-devicons',
-        init = function()
-            require("bufferline").setup {
-                highlights = require("catppuccin.groups.integrations.bufferline").get()
-            }
-        end
     }, 'neovim/nvim-lspconfig', -- LSP
     'hrsh7th/nvim-cmp', -- Completion plugin
     'hrsh7th/cmp-nvim-lsp', -- LSP source for cmp

@@ -47,6 +47,7 @@
     st = status
     staash = stash --all
     suntracked = !git ls-files --others --exclude-standard | xargs bat
+    sync = pull origin develop
     unstage = restore --staged
     view = !gh repo view --web
     wt = worktree
@@ -60,22 +61,26 @@
 [pull]
     rebase = true
     autoStash = true
+[tag]
+    sort = version:refname
 [rebase]
     autoStash = true
     autosquash = true
     stat = true
 [merge]
     conflictstyle = diff3
-    ; tool = meld
 [push]
+    default = simple 
     followTags = true
 	autoSetupRemote = true
+[help]
+    autocorrect = prompt
 [mergetool "vscode"]
         cmd = code --new-window --wait $MERGED
-[mergetool "meld"]
-        cmd = meld
 [diff]
     tool = difft
+    algorithm = histogram
+    colorMoved = plain
 [difftool]
     prompt = false
 
@@ -94,3 +99,6 @@
 	sort = -committerdate
 [column]
 	ui = auto
+[merge "conflictStyle.custom"]
+	ours = current
+	theirs = incoming

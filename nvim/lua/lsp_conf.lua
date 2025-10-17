@@ -1,20 +1,14 @@
 require("mason").setup()
-require("mason-lspconfig").setup()
 local nvim_lsp = require('lspconfig')
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 --
-vim.diagnostic.config({ virtual_lines = { current_line = true } })
+vim.diagnostic.config({virtual_lines = {current_line = true}})
 
 vim.cmd [[au FocusGained,BufEnter * :checktime]]
 -- Use an on_attach function to only map the following keys
 -- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
-    --- run vim command 
-    --- nnoremap <nowait> gr gr
-    vim.cmd [[
-        nnoremap <nowait> gr gr
-    ]]
 
     --    client.server_capabilities.semanticTokensProvider = nil
     local function buf_set_keymap(...)
@@ -40,7 +34,7 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>',
                    opts("Declaration"))
     buf_set_keymap('n', 'gd',
-                   '<cmd> Lspsaga goto_definition <CR>',
+                   ':lua require"telescope.builtin".lsp_definitions()<CR>',
                    opts("LSP definitions"))
     -- buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
     -- buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
@@ -70,8 +64,8 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', '<A-.>', '<cmd>Lspsaga code_action <cr>',
                    opts("Code action"))
     buf_set_keymap('n', '<C-x>r', '<cmd> LspRestart <CR>', opts("Restart LSP"))
-    buf_set_keymap('n', 'gr',
-                   ':lua require"telescope.builtin".lsp_references()<CR>',
+    buf_set_keymap('n', 'grr',
+                   ':lua FzfLua.lsp_references({ jump_type = "vsplit" })<CR>',
                    opts("References"))
     buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>',
                    opts("Open float"))
@@ -126,8 +120,8 @@ end
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
 local servers = {
-    'hls', 'pyright', 'clojure_lsp', 'elmls', 'jdtls', 'eslint',
-    'lua_ls', 'lemminx', "jsonls", "html", "gopls", "ts_ls"
+    'hls', 'pyright', 'clojure_lsp', 'elmls', 'jdtls', 'eslint', 'lua_ls',
+    'lemminx', "jsonls", "html", "gopls", "ts_ls"
 }
 -- Marksman for markdown is nice but I dont want it to be spawned when hovering in typescript
 -- Maybe fix that some time. If in typescript dont spawn marksman

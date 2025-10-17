@@ -1,15 +1,24 @@
-zstyle ':completion:*' rehash true
-
 MY_CUSTOM_ZSH=$HOME/dotfiles/zsh
+DISABLE_AUTO_UPDATE="true"
+DISABLE_MAGIC_FUNCTIONS="true"
+DISABLE_COMPFIX="true"
+bindkey -e
 
+autoload -Uz compinit
+if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
+    compinit
+else
+    compinit -C
+fi
+source $MY_CUSTOM_ZSH/lazy-load-nvm.zsh
 source $MY_CUSTOM_ZSH/path.zsh
 source $MY_CUSTOM_ZSH/exports.zsh
 source $MY_CUSTOM_ZSH/alias.zsh
 source $MY_CUSTOM_ZSH/functions.zsh
 
 
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+PROMPT="%F{blue}%~%f
+> "
 
 
 # github copilot cli x
@@ -19,18 +28,16 @@ ZSH_THEME="theodorc"
 
 
 
-#Plugins
 plugins=(
     extract
     fzf
     git
-    last-working-dir
     autojump
     sudo
 )
-source $ZSH/oh-my-zsh.sh
+#source $ZSH/oh-my-zsh.sh
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source <(fzf --zsh)
 
 # Add completion to custom pdf command
 zstyle ':completion:*:*:pdf:*' file-patterns '*.pdf'

@@ -129,5 +129,7 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "git.autofetch": true
+  "git.autofetch": true,
+  "security.promptForLocalFileProtocolHandling": false,
+  "github.copilot.nextEditSuggestions.enabled": true
 }

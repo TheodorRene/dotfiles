@@ -24,6 +24,7 @@ vim.cmd([[
     :command! Fold execute "normal zA"
     :command! GitResetCurrentLine :exec '.!git checkout -- '.shellescape(expand('%')).':'.line('.')
     :command! ResetCurrentLine :lua require('gitsigns').reset_hunk({vim.fn.line('.'), vim.fn.line('.')})
+    :command! Dotfiles :lua require('telescope.builtin').find_files({cwd = '~/dotfiles'})
     ]])
 vim.api.nvim_create_user_command("Scrollbind", ":windo set scrollbind!", {})
 
