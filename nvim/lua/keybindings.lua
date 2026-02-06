@@ -109,6 +109,7 @@ end
 
 nmap('<leader>t', ':terminal ', "Run terminal commands")
 nmap('<leader>c', ':! ', "Run terminal commands")
+nmap('<leader>z', ':ZenMode <CR>', "Zen mode")
 
 -- GIT
 nmap('<C-g>c', '<CMD> Telescope git_commits <CR>', "GIT: Commits")

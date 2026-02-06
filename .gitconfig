@@ -54,6 +54,7 @@
     wta = worktree add
     wtd = worktree remove
     wtr = worktree remove
+    wip = commit -am 'WIP' --no-verify
     root = rev-parse --show-toplevel
 [filesystem "N/A|14.0.1|tmpfs"]
     timestampResolution = 9000 nanoseconds

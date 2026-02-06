@@ -154,7 +154,7 @@ require('lazy').setup({
     {
         'akinsho/bufferline.nvim',
         version = "*",
-        dependencies = 'nvim-tree/nvim-web-devicons',
+        dependencies = 'nvim-tree/nvim-web-devicons'
     }, 'neovim/nvim-lspconfig', -- LSP
     'hrsh7th/nvim-cmp', -- Completion plugin
     'hrsh7th/cmp-nvim-lsp', -- LSP source for cmp
@@ -184,11 +184,18 @@ require('lazy').setup({
         init = function() require('lualine').setup() end
     }, {'j-hui/fidget.nvim', init = function() require('fidget').setup() end}, -- Show LSP progress anguage specific
     {'Olical/conjure', ft = {'clojure'}, branch = "main"}, -- Clojure 
-    {'simrat39/rust-tools.nvim', enabled = false}, {
+    {
+        'mrcjkb/rustaceanvim',
+        version = '^6', -- Recommended
+        lazy = false -- This plugin is already lazy
+    }, {
         'gelguy/wilder.nvim',
         init = function()
             require('wilder').setup {modes = {':', '/', '?'}}
         end
-    } -- Better command line completion
+    }, -- Better command line completion
+    {
+        "folke/zen-mode.nvim",
+    }
 })
 

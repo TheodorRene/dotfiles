@@ -140,15 +140,16 @@ end
 --     filetypes = { 'haskell', 'lhaskell', 'cabal' },
 -- }
 
--- local rt = require("rust-tools")
-
--- rt.setup({server = {on_attach = on_attach}})
-
 nvim_lsp.clangd.setup {
     -- cmd = { 'clangd-12' };
     on_attach = on_attach,
     capabilities = capabilities,
     flags = {debounce_text_changes = 150}
+}
+vim.g.rustaceanvim = {
+  server = {
+    on_attach = on_attach,
+  },
 }
 
 local cmp = require 'cmp'

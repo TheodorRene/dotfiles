@@ -9,7 +9,8 @@ alias clipboard2file='xclip -selection clipboard -t image/png -o > "$(date +%Y-%
 alias deadkeys='setxkbmap -layout no -variant nodeadkeys -option ctrl:nocaps'
 alias dir="ls -d */"
 alias dig="dig +noall +answer"
-alias dsize="du -h --max-depth=1 | sort -h"
+#alias dsize="du -h --max-depth=1 | sort -h"
+alias dsize="du -xhd 1 | sort -h"
 alias gs="git status" #So many misstyping and fk ghostscript
 alias locate="plocate"
 alias lr="eza -lrhF -snew" 
@@ -93,6 +94,8 @@ alias aptsearch="apt search"
 alias aptupgrade="sudo apt update && apt list --upgradable && sudo apt upgrade"
 
 alias dc="cd"
+alias dr="cd ~/Documents/inner-sanctum-main/DR"
+alias news="cd ~/dev/dr/nyhedsapp"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
 alias ipp="curl -s ip.xxd.no"
 alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
@@ -104,3 +107,4 @@ alias ai="gh copilot suggest -t shell"
 # alias work="sleep $((60*20)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
 # alias break="sleep $((60*5)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
 #alias v="vim"
+alias gd="git diff"
