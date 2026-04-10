@@ -1,0 +1,41 @@
+FUNCTION  copilot#OnBufUnload()
+    Defined: ~/.local/share/nvim/lazy/copilot.vim/autoload/copilot.vim:469
+Called 1 time
+Total time:   0.000000
+ Self time:   0.000000
+
+count  total (s)   self (s)
+
+FUNCTION  <SNR>47_Event()
+    Defined: ~/.local/share/nvim/lazy/copilot.vim/plugin/copilot.vim:45
+Called 2 times
+Total time:   0.000017
+ Self time:   0.000017
+
+count  total (s)   self (s)
+    2              0.000002   try
+    2   0.000010   0.000010     call call('copilot#On' . a:type, [])
+                              catch
+                                call copilot#logger#Exception('autocmd.' . a:type)
+    2              0.000001   endtry
+
+FUNCTION  copilot#OnVimLeavePre()
+    Defined: ~/.local/share/nvim/lazy/copilot.vim/autoload/copilot.vim:472
+Called 1 time
+Total time:   0.000000
+ Self time:   0.000000
+
+count  total (s)   self (s)
+
+FUNCTIONS SORTED ON TOTAL TIME
+count  total (s)   self (s)  function
+    2   0.000017   0.000017  <SNR>47_Event()
+    1   0.000000             copilot#OnBufUnload()
+    1   0.000000             copilot#OnVimLeavePre()
+
+FUNCTIONS SORTED ON SELF TIME
+count  total (s)   self (s)  function
+    2   0.000017   0.000017  <SNR>47_Event()
+    1              0.000000  copilot#OnBufUnload()
+    1              0.000000  copilot#OnVimLeavePre()
+

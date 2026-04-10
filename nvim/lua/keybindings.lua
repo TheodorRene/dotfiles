@@ -18,6 +18,10 @@ local function vmap(comb, cmd, desc)
                             {noremap = true, silent = true, desc = desc})
 end
 
+function TRC_LOAD_FZF()
+    require("lazy").load({plugins = {"fzf-lua"}})
+end
+
 nmap('<Right>', ':bn <CR>', "Next buffer")
 nmap('<Left>', ':bp <CR>', "Previous buffer")
 
@@ -173,9 +177,9 @@ nmap('<C-n>', '<CMD> Oil --float .<CR>')
 nmap('<C-x>f', '<CMD> Telescope current_buffer_fuzzy_find <CR>',
      "Current buffer fuzzy find")
 --nmap('<C-x>j', '<CMD> Telescope jumplist <CR>', "Show jumplist")
-nmap('<C-x>j', ':lua FzfLua.jumps() <CR>', "Show jumplist")
+nmap('<C-x>j', ':lua TRC_LOAD_FZF(); FzfLua.jumps() <CR>', "Show jumplist")
 -- nmap('<C-x>l', '<CMD> Telescope builtin  <CR>', "Search telescope pickers")
-nmap('<C-x>l', ':lua FzfLua.builtin() <CR>', "Search FzfLua pickers")
+nmap('<C-x>l', ':lua TRC_LOAD_FZF(); FzfLua.builtin() <CR>', "Search FzfLua pickers")
 nmap('<C-x>p', ':lua require"telescope.builtin".git_files() <CR>',
      "Search git files from root")
 nmap('<C-x>s', "<cmd>lua require('spectre').open()<CR>", "Open Spectre")
@@ -190,16 +194,16 @@ nmap('<C-s>f', ':%DB <CR>', "Run file")
 -- nmap('<C-p>',
 --      ':lua require"telescope.builtin".git_files{use_git_root=false} <CR>',
 --      "Search git files")
-nmap('<C-p>', ':lua FzfLua.git_files({previewer=false}) <CR>', "Search git files")
+nmap('<C-p>', ':lua TRC_LOAD_FZF(); FzfLua.git_files({previewer=false}) <CR>', "Search git files")
 -- nmap('<leader>p', ':lua require"telescope.builtin".commands() <CR>',
 --      "Search commands")
-nmap('<leader>p', ':lua FzfLua.commands() <CR>', "Search commands")
+nmap('<leader>p', ':lua TRC_LOAD_FZF(); FzfLua.commands() <CR>', "Search commands")
 
-nmap('<leader>b', ':lua FzfLua.buffers() <CR>', "Search open buffers")
-nmap('<leader><leader>', ':lua FzfLua.buffers() <CR>', "Search open buffers")
+nmap('<leader>b', ':lua TRC_LOAD_FZF(); FzfLua.buffers() <CR>', "Search open buffers")
+nmap('<leader><leader>', ':lua TRC_LOAD_FZF(); FzfLua.buffers() <CR>', "Search open buffers")
 --nmap('<leader>r', '<CMD> Telescope resume <CR>')
-nmap('<leader>r', ':lua FzfLua.resume() <CR>', "Resume last FzfLua search")
-nmap('<leader>s', ':lua FzfLua.lsp_document_symbols() <CR>',
+nmap('<leader>r', ':lua TRC_LOAD_FZF(); FzfLua.resume() <CR>', "Resume last FzfLua search")
+nmap('<leader>s', ':lua TRC_LOAD_FZF(); FzfLua.lsp_document_symbols() <CR>',
      "Search document symbols")
 
 -- -- Harpoon
@@ -211,9 +215,9 @@ nmap('<leader>s', ':lua FzfLua.lsp_document_symbols() <CR>',
 -- nmap('<C-h>p', ':lua require("harpoon.ui").nav_prev() <CR>', "Harpoon: Previous")
 
 --map('<C-f>', '<CMD> Telescope live_grep <CR>')
-nmap('<C-f>', ':lua FzfLua.live_grep() <CR>', "Live grep")
+nmap('<C-f>', ':lua TRC_LOAD_FZF(); FzfLua.live_grep() <CR>', "Live grep")
 -- nmap('<C-t>', '<CMD> Telescope lsp_dynamic_workspace_symbols <CR>')
-nmap('<C-t>', ':lua FzfLua.lsp_live_workspace_symbols() <CR>', "Search workspace symbols")
+nmap('<C-t>', ':lua TRC_LOAD_FZF(); FzfLua.lsp_live_workspace_symbols() <CR>', "Search workspace symbols")
 
 -- Yank whole file 
 nmap('yf', 'ggVGy<C-o>', "Yank whole file")

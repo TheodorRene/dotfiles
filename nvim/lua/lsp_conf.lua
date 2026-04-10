@@ -34,15 +34,15 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>',
                    opts("Declaration"))
     buf_set_keymap('n', 'gd',
-                   ':lua require"telescope.builtin".lsp_definitions()<CR>',
+                   ':lua require("lazy").load({plugins = {"telescope.nvim"}}); require"telescope.builtin".lsp_definitions()<CR>',
                    opts("LSP definitions"))
     -- buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts("Hover"))
     -- buf_set_keymap("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
     buf_set_keymap("n", 'K', ':lua vim.lsp.buf.hover({border = "rounded"})<CR>',
                    opts('Hover'))
-    buf_set_keymap("n", "gh", "<cmd>Lspsaga hover_doc<CR>", opts("Hover"))
+    buf_set_keymap("n", "gh", "<cmd>lua require(\"lazy\").load({plugins = {\"lspsaga.nvim\"}}); vim.cmd(\"Lspsaga hover_doc\")<CR>", opts("Hover"))
     buf_set_keymap('n', 'gi',
-                   ':lua require"telescope.builtin".lsp_implementations()<CR>',
+                   ':lua require("lazy").load({plugins = {"telescope.nvim"}}); require"telescope.builtin".lsp_implementations()<CR>',
                    opts("Implementations"))
     buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>',
                    opts("Signature help"))
@@ -50,22 +50,22 @@ local on_attach = function(client, bufnr)
                    '<cmd>lua vim.lsp.buf.type_definition()<CR>',
                    opts("Type defintion"))
     buf_set_keymap('n', '<C-x>d',
-                   ':lua require"telescope.builtin".diagnostics()<CR>',
+                   ':lua require("lazy").load({plugins = {"telescope.nvim"}}); require"telescope.builtin".diagnostics()<CR>',
                    opts("Diagnostics"))
     -- buf_set_keymap('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<CR>', opts("Rename"))
-    buf_set_keymap('n', '<C-a>r', '<cmd> Lspsaga rename <CR>', opts("Rename"))
+    buf_set_keymap('n', '<C-a>r', '<cmd>lua require("lazy").load({plugins = {"lspsaga.nvim"}}); vim.cmd("Lspsaga rename")<CR>', opts("Rename"))
     -- buf_set_keymap('n', '<C-x>c', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts("Code action"))
-    buf_set_keymap('n', '<C-x>c', '<cmd>Lspsaga code_action <cr>',
+    buf_set_keymap('n', '<C-x>c', '<cmd>lua require("lazy").load({plugins = {"lspsaga.nvim"}}); vim.cmd("Lspsaga code_action")<cr>',
                    opts("Code action"))
-    buf_set_keymap('n', '<C-a>a', '<cmd>Lspsaga code_action <cr>',
+    buf_set_keymap('n', '<C-a>a', '<cmd>lua require("lazy").load({plugins = {"lspsaga.nvim"}}); vim.cmd("Lspsaga code_action")<cr>',
                    opts("Code action"))
-    buf_set_keymap('n', '<C-.>', '<cmd>Lspsaga code_action <cr>',
+    buf_set_keymap('n', '<C-.>', '<cmd>lua require("lazy").load({plugins = {"lspsaga.nvim"}}); vim.cmd("Lspsaga code_action")<cr>',
                    opts("Code action"))
-    buf_set_keymap('n', '<A-.>', '<cmd>Lspsaga code_action <cr>',
+    buf_set_keymap('n', '<A-.>', '<cmd>lua require("lazy").load({plugins = {"lspsaga.nvim"}}); vim.cmd("Lspsaga code_action")<cr>',
                    opts("Code action"))
     buf_set_keymap('n', '<C-x>r', '<cmd> LspRestart <CR>', opts("Restart LSP"))
     buf_set_keymap('n', 'grr',
-                   ':lua FzfLua.lsp_references({ jump_type = "vsplit" })<CR>',
+                   ':lua require("lazy").load({plugins = {"fzf-lua"}}); FzfLua.lsp_references({ jump_type = "vsplit" })<CR>',
                    opts("References"))
     buf_set_keymap('n', '<C-x>e', '<cmd>lua vim.diagnostic.open_float()<CR>',
                    opts("Open float"))
@@ -75,7 +75,7 @@ local on_attach = function(client, bufnr)
     --                opts("Open cursor diagnostics"))
     -- buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>',
     --                opts("Open float"))
-    buf_set_keymap('n', '<leader>e', '<cmd> Lspsaga show_line_diagnostics <CR>',
+    buf_set_keymap('n', '<leader>e', '<cmd>lua require("lazy").load({plugins = {"lspsaga.nvim"}}); vim.cmd("Lspsaga show_line_diagnostics")<CR>',
                    opts("Open line diagnostics"))
     buf_set_keymap('n', '<C-x>q', "]d<C-x>c",
                    {noremap = false, silent = true, desc = "Autofix"})
@@ -91,7 +91,7 @@ local on_attach = function(client, bufnr)
                    opts("Neoformat"))
     buf_set_keymap('v', '<space>fq', ":'<,'>Neoformat! graphql<CR>",
                    opts("Neoformat"))
-    buf_set_keymap('n', '<C-x>t', '<cmd>Lspsaga lsp_finder <CR>',
+    buf_set_keymap('n', '<C-x>t', '<cmd>lua require("lazy").load({plugins = {"lspsaga.nvim"}}); vim.cmd("Lspsaga lsp_finder")<CR>',
                    opts("Symbols finder"))
     buf_set_keymap('n', '<C-x>h', '<cmd>lua vim.lsp.codelens.get() <CR>',
                    opts("Symbols finder"))
@@ -152,52 +152,7 @@ vim.g.rustaceanvim = {
   },
 }
 
-local cmp = require 'cmp'
-local lspkind = require 'lspkind'
-
--- Set completeopt to have a better completion experience
-vim.o.completeopt = 'menuone,noselect'
-cmp.setup {
-    snippet = {
-        -- REQUIRED - you must specify a snippet engine
-        expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-        end
-    },
-    mapping = {
-        ['<C-p>'] = cmp.mapping.select_prev_item(),
-        ['<C-n>'] = cmp.mapping.select_next_item(),
-        ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-        ['<C-f>'] = cmp.mapping.scroll_docs(4),
-        ['<C-Space>'] = cmp.mapping.complete(),
-        ['<C-e>'] = cmp.mapping.close(),
-        ['<CR>'] = cmp.mapping.confirm {
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true
-        },
-        ['<Tab>'] = function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            else
-                fallback()
-            end
-        end,
-        ['<S-Tab>'] = function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            else
-                fallback()
-            end
-        end
-    },
-    sources = {
-        {name = 'nvim_lsp'}, {name = 'buffer'}, {name = 'vim-dadbod-completion'}
-    },
-    formatting = {
-        format = lspkind.cmp_format({
-            mode = 'symbol-text', -- show only symbol annotations
-            maxwidth = 50 -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-        })
-    }
-}
+if vim.env.NVIM_SKIP_LSP_CONF then
+    return
+end
 

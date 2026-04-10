@@ -17,10 +17,11 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
- require'opts'
- require'plugins'
- require'plugin_conf'
- require'keybindings'
- require'lsp_conf'
- require'commands'
+  require'opts'
+  require'plugins'
+  require'plugin_conf'
+  require'keybindings'
+
+  require'commands'
+
 EOF
