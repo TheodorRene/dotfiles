@@ -1,0 +1,16 @@
+Zsh startup changes (2026-02-06)
+
+Backups created:
+- ~/.zprofile.bak
+- ~/dotfiles/.zshrc.bak
+- ~/dotfiles/zsh/path.zsh.bak
+- ~/dotfiles/zsh/exports.zsh.bak
+
+Changes made:
+- ~/.zprofile: wrapped Homebrew shellenv and rbenv init inside an interactive-shell guard to avoid running on non-interactive shells.
+- ~/dotfiles/.zshrc: deferred heavier init (fzf, direnv, deno env, ghcup env, Google Cloud SDK path/completion) into a one-time precmd hook so they load after the first prompt.
+- ~/dotfiles/.zshrc: removed the original eager fzf/direnv/deno/ghcup/gcloud sourcing block once the deferred hook was added.
+
+Notes:
+- compinit logic was left unchanged.
+- First prompt appears faster; deferred items load immediately after that first prompt.
