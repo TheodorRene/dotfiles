@@ -181,7 +181,13 @@ vim.lsp.config['lua_ls'] = {
         Lua = {
             runtime     = { version = 'LuaJIT' },
             diagnostics = { globals = { 'vim' } },
-            workspace   = { library = vim.api.nvim_get_runtime_file('', true), checkThirdParty = false },
+            workspace   = {
+                -- Only add the Neovim runtime for API completions — NOT the
+                -- entire rtp. nvim_get_runtime_file('', true) returns hundreds
+                -- of paths that lua_ls must index on every start (no caching).
+                library = { vim.env.VIMRUNTIME },
+                checkThirdParty = false,
+            },
             telemetry   = { enable = false },
         },
     },

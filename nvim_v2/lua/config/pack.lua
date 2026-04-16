@@ -66,11 +66,6 @@ vim.pack.add({
     -- ── Language-specific ─────────────────────────────────────────────────────
     { src = 'https://github.com/mrcjkb/rustaceanvim',       version = 'v9.0.1' },
     { src = 'https://github.com/mrcjkb/haskell-tools.nvim', version = 'v8.1.1' },
-    'https://github.com/Olical/conjure',
-
-
-    -- ── Notes ─────────────────────────────────────────────────────────────────
-    'https://github.com/epwalsh/obsidian.nvim',
 
     -- ── AI ────────────────────────────────────────────────────────────────────
     'https://github.com/github/copilot.vim',
@@ -81,18 +76,6 @@ vim.pack.add({
 
 -- ── Built-in opt plugins (shipped with Neovim 0.12) ──────────────────────────
 vim.cmd('packadd nvim.undotree')   -- :Undotree — replaces the undotree plugin
-
--- ── Conjure: restrict to Clojure only ────────────────────────────────────────
--- Conjure's default filetype list includes JS, TS, Python, Lua, Rust, SQL, etc.
--- and auto-spawns REPLs on BufEnter. Restrict it to Clojure before it loads.
--- Setting a filetype to false disables that client entirely.
-vim.g["conjure#filetypes"]           = { "clojure" }
-vim.g["conjure#filetype#javascript"] = false
-vim.g["conjure#filetype#typescript"] = false
-vim.g["conjure#filetype#python"]     = false
-vim.g["conjure#filetype#lua"]        = false
-vim.g["conjure#filetype#rust"]       = false
-vim.g["conjure#filetype#sql"]        = false
 
 -- ── Post-install / post-update hooks ─────────────────────────────────────────
 -- spec.name is the full URL when no explicit name is given, e.g.
@@ -262,31 +245,23 @@ if ok_gs then
     })
 end
 
--- Neogit (deferred — only needed when you open it)
-vim.api.nvim_create_autocmd('VimEnter', {
-    once = true,
-    desc = 'Deferred neogit setup',
-    callback = function()
-        setup('neogit', {
-            disable_commit_confirmation = true,
-            disable_hint                = true,
-            integrations                = { diffview = true },
-            sections                    = { stashes = { folded = true } },
-        })
-    end,
-})
+-- Neogit (deferred — load after first draw)
+vim.schedule(function()
+    setup('neogit', {
+        disable_commit_confirmation = true,
+        disable_hint                = true,
+        integrations                = { diffview = true },
+        sections                    = { stashes = { folded = true } },
+    })
+end)
 
 -- Oil (file manager)
 setup('oil')
 
 -- lspsaga — floating terminal only; suppress lightbulb sign (deferred)
-vim.api.nvim_create_autocmd('VimEnter', {
-    once = true,
-    desc = 'Deferred lspsaga setup',
-    callback = function()
-        setup('lspsaga', { lightbulb = { sign = false } })
-    end,
-})
+vim.schedule(function()
+    setup('lspsaga', { lightbulb = { sign = false } })
+end)
 
 -- Mason: must run eagerly — setup() prepends mason/bin to $PATH, which LSP
 -- servers installed via Mason depend on. Deferring it means lua-language-server
@@ -376,18 +351,6 @@ if ok_conform then
         format_on_save = false,
     })
 end
-
--- Obsidian (deferred — only needed for markdown files)
-vim.api.nvim_create_autocmd('BufReadPre', {
-    pattern  = '*.md',
-    once     = true,
-    desc     = 'Deferred obsidian setup',
-    callback = function()
-        setup('obsidian', {
-            workspaces = { { name = 'personal', path = '~/Documents/inner-sanctum-main' } },
-        })
-    end,
-})
 
 -- Copilot: disable tab map (we use <C-J> in keymaps.lua)
 vim.g.copilot_no_tab_map = true
