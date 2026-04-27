@@ -366,6 +366,7 @@ if ok_blink then
             preset = 'none',   -- define all mappings explicitly below
             ['<C-space>'] = { 'show', 'show_documentation', 'hide_documentation' },
             ['<C-e>']     = { 'hide' },
+            ['<CR>']      = { 'select_and_accept', 'fallback' },
             ['<C-y>']     = { 'select_and_accept' },
             ['<C-k>']     = { 'show_signature', 'hide_signature', 'fallback' },
             ['<Tab>']     = { 'select_next', 'fallback' },

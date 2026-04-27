@@ -23,6 +23,7 @@
     copybranch = "!git rev-parse --abbrev-ref HEAD | pbcopy && echo 'Branch name copied to clipboard'"
     coz = !git branch --sort=-committerdate | fzf | xargs git checkout 
     cotag = !git tag -l | fzf | xargs git checkout 
+    ds = -c diff.external=difft show --ext-diff
     dft = difftool -d
     diffword = diff --word-diff
     difflock = diff -- . ':(exclude)package-lock.json'

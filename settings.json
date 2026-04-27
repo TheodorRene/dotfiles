@@ -6,6 +6,10 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8",
+    "editor.formatOnSave": true,
+  },
   "editor.formatOnSave": true,
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -13,80 +17,168 @@
   "haskell.manageHLS": "GHCup",
   "vim.insertModeKeyBindings": [
     {
-      "before": ["j", "k"],
-      "after": ["<Esc>"]
+      "before": [
+        "j",
+        "k"
+      ],
+      "after": [
+        "<Esc>"
+      ]
     }
   ],
   "vim.normalModeKeyBindings": [
     {
-      "before": ["<leader>", "s"],
-      "commands": [":vsplit"]
+      "before": [
+        "<leader>",
+        "s"
+      ],
+      "commands": [
+        ":vsplit"
+      ]
     },
     {
-      "before": ["<leader>", "v"],
-      "commands": [":split"]
+      "before": [
+        "<leader>",
+        "v"
+      ],
+      "commands": [
+        ":split"
+      ]
     },
     {
-      "before": ["J"],
-      "after": ["3", "j"]
+      "before": [
+        "J"
+      ],
+      "after": [
+        "3",
+        "j"
+      ]
     },
     {
-      "before": ["K"],
-      "after": ["3", "k"]
+      "before": [
+        "K"
+      ],
+      "after": [
+        "3",
+        "k"
+      ]
     },
     {
-      "before": ["H"],
-      "after": ["3", "h"]
+      "before": [
+        "H"
+      ],
+      "after": [
+        "3",
+        "h"
+      ]
     },
     {
-      "before": ["L"],
-      "after": ["3", "l"]
+      "before": [
+        "L"
+      ],
+      "after": [
+        "3",
+        "l"
+      ]
     },
     {
-      "before": ["C-u"],
-      "after": ["C-u", "z", "z"]
+      "before": [
+        "C-u"
+      ],
+      "after": [
+        "C-u",
+        "z",
+        "z"
+      ]
     },
     {
-      "before": ["C-d"],
-      "after": ["C-d", "z", "z"]
+      "before": [
+        "C-d"
+      ],
+      "after": [
+        "C-d",
+        "z",
+        "z"
+      ]
     },
     {
-      "before": ["n"],
-      "after": ["n", "z", "z"]
+      "before": [
+        "n"
+      ],
+      "after": [
+        "n",
+        "z",
+        "z"
+      ]
     },
     {
-      "before": ["C-e"],
-      "after": ["C-e", "M"]
+      "before": [
+        "C-e"
+      ],
+      "after": [
+        "C-e",
+        "M"
+      ]
     },
     {
-      "before": ["C-y"],
-      "after": ["C-y", "M"]
+      "before": [
+        "C-y"
+      ],
+      "after": [
+        "C-y",
+        "M"
+      ]
     },
     {
-      "before": ["g", "r"],
-      "commands": ["editor.action.goToReferences"]
+      "before": [
+        "g",
+        "r"
+      ],
+      "commands": [
+        "editor.action.goToReferences"
+      ]
     },
     {
-      "before": ["]", "d"],
-      "commands": ["editor.action.marker.next"]
+      "before": [
+        "]",
+        "d"
+      ],
+      "commands": [
+        "editor.action.marker.next"
+      ]
     },
     {
-      "before": ["[", "d"],
-      "commands": ["editor.action.marker.prev"]
+      "before": [
+        "[",
+        "d"
+      ],
+      "commands": [
+        "editor.action.marker.prev"
+      ]
     },
     {
-      "before": ["]", "D"],
-      "commands": ["editor.action.marker.nextInFiles"]
+      "before": [
+        "]",
+        "D"
+      ],
+      "commands": [
+        "editor.action.marker.nextInFiles"
+      ]
     },
     {
-      "before": ["[", "D"],
-      "commands": ["editor.action.marker.prevInFiles"]
+      "before": [
+        "[",
+        "D"
+      ],
+      "commands": [
+        "editor.action.marker.prevInFiles"
+      ]
     }
   ],
   "editor.minimap.enabled": false,
-  "editor.lineNumbers": "off",
+  "editor.lineNumbers": "on",
   "editor.folding": false,
-  "editor.glyphMargin": false,
+  "editor.glyphMargin": true,
   "editor.hideCursorInOverviewRuler": true,
   "editor.scrollbar.horizontal": "hidden",
   "editor.scrollbar.vertical": "hidden",
@@ -133,5 +225,6 @@
   "security.promptForLocalFileProtocolHandling": false,
   "github.copilot.nextEditSuggestions.enabled": true,
   "gitlens.ai.model": "vscode",
-  "gitlens.ai.vscode.model": "copilot:gpt-4.1"
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "chat.viewSessions.orientation": "stacked"
 }

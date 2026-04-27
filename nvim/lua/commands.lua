@@ -11,7 +11,7 @@ vim.cmd([[
     :command! OpenJira :!git jira
     :command! Hover :lua vim.lsp.buf.hover()
     :command! ResetTS :write | edit | TSBufEnable highlight
-    :command! -nargs=* ChangeDir :chdir 
+    :command! -nargs=* ChangeDir :chdir
     :command! ValApp :chdir ~/dev/blank/valstuff/app
     :command! Projects :lua require("lazy").load({plugins = {"telescope.nvim"}}); vim.cmd("Telescope workspaces")
     :command! Reminder :e ~/dev/reminder_for_tomorrow.md
