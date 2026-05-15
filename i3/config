@@ -1,7 +1,7 @@
 #WELCOME THE ONE I3 CONFIG TO RULE THEM ALL
 
 # ===CONFIG===
-set $mod Mod4 
+set $mod Mod4
 set $browser firefox
 set $terminal alacritty
 set $screenshot screenshot
@@ -12,11 +12,10 @@ set $lock2 /usr/local/bin/betterlockscreen --lock blur
 
 #Gaps Settings
 for_window [class="^.*"] border pixel 4
-# gaps inner 11
-# gaps outer 5
-# smart_borders on
-# smart_gaps on
-# border_radius 3
+gaps inner 11
+gaps outer 5
+smart_borders on
+smart_gaps on
 
 #Desktop settings
 #gaps inner 8
@@ -24,10 +23,15 @@ for_window [class="^.*"] border pixel 4
 #exec ~/.screenlayout/standard.sh
 #font pango:DejaVu Sans Mono 10
 
+#Touchpad toggle
+bindsym $mod+Shift+t exec --no-startup-id ~/.config/i3/toggle-touchpad.sh
+
 #Startup
 exec_always --no-startup-id feh --bg-fill --randomize ~/wallpapers/macos
 exec --no-startup-id picom -f --backend glx --vsync
 exec_always setxkbmap -layout no -variant nodeadkeys -option ctrl:nocaps
+exec_always --no-startup-id xinput set-prop "VEN_04F3:00 04F3:31D1 Touchpad" "Synaptics Palm Detection" 1
+exec_always --no-startup-id syndaemon -i 0.5 -d -t
 
 
 
@@ -41,16 +45,17 @@ bindsym $mod+c exec --no-startup-id feh --bg-fill --randomize ~/wallpapers/*
 # emoji
 bindsym $mod+e exec --no-startup-id rofi -show emoji -modi emoji
 
-bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
-bindsym XF86MonBrightnessUp exec brightnessctl set 5%+
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 5%-
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set 5%+
 
 #Audiocontrols
 bindsym XF86AudioPlay exec playerctl play-pause
 bindsym XF86AudioNext exec playerctl next
 bindsym XF86AudioPrev exec playerctl previous
-bindsym XF86AudioRaiseVolume exec pulseaudio-ctl up
-bindsym XF86AudioLowerVolume exec pulseaudio-ctl down
-bindsym XF86AudioMute exec pulseaudio-ctl mute
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 #Cycling through workspaces
 bindsym $mod+Tab workspace next
@@ -155,7 +160,7 @@ bindsym $mod+0 workspace 10:itk
 # move focused container to workspace
 bindsym $mod+Shift+1 move container to workspace number 1
 bindsym $mod+Shift+2 move container to workspace number 2
-bindsym $mod+Shift+3 move container to workspace number 3 
+bindsym $mod+Shift+3 move container to workspace number 3
 bindsym $mod+Shift+4 move container to workspace 4:www
 bindsym $mod+Shift+5 move container to workspace 5:nvim
 bindsym $mod+Shift+6 move container to workspace 6:dev

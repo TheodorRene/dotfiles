@@ -114,10 +114,7 @@ vim.lsp.config['ts_ls'] = {
 }
 
 vim.lsp.config['eslint'] = {
-    cmd = {
-        '/Users/thca/.local/share/nvim/mason/bin/vscode-eslint-language-server',
-        '--stdio',
-    },
+    cmd = { 'vscode-eslint-language-server', '--stdio' },
     filetypes    = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
     root_markers = {
         '.eslintrc', '.eslintrc.js', '.eslintrc.cjs', '.eslintrc.json',
