@@ -1,43 +1,50 @@
+/* ── theme colors ──────────────────────────────────────────────
+   accent = shared red (matches wofi); alert = hotter red for warnings */
+@define-color accent #e0645a;
+@define-color alert  #ff5a4d;
+@define-color bg     rgba(13, 13, 13, 0.85);
+@define-color fg     #d6d6d6;
+@define-color dim    #8a8a8a;
+
 * {
     border: none;
     border-radius: 0;
-    font-family: monospace;
+    font-family: "JetBrainsMono Nerd Font", monospace;
     font-size: 13px;
     min-height: 0;
 }
 
 window#waybar {
-    background-color: rgba(34, 34, 34, 0.6);
-    color: #ffffff;
-    transition-property: background-color;
-    transition-duration: 0.5s;
+    background-color: @bg;
+    color: @fg;
 }
 
 #workspaces button {
-    padding: 0 8px;
+    padding: 0 9px;
     background-color: transparent;
-    color: #9e9e9e;
+    color: @dim;
 }
 
 #workspaces button:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.06);
     color: #ffffff;
+    box-shadow: none;
 }
 
 #workspaces button.focused {
-    background-color: rgba(206, 206, 206, 0.2);
-    color: #5f8700;
+    background-color: alpha(@accent, 0.16);
+    color: #ffffff;
 }
 
 #workspaces button.urgent {
-    background-color: #eb709b;
-    color: #ffffff;
+    background-color: @alert;
+    color: #0d0d0d;
 }
 
 #mode {
-    background-color: #444444;
-    color: #ffffff;
-    padding: 0 8px;
+    background-color: @accent;
+    color: #0d0d0d;
+    padding: 0 10px;
 }
 
 #clock,
@@ -54,11 +61,17 @@ window#waybar {
 #custom-language,
 #tray {
     padding: 0 10px;
-    color: #ffffff;
+    color: @fg;
 }
 
+/* clock as the right-side accent — muted warm sand, not loud */
+#clock {
+    color: #d9b08c;
+}
+
+/* ── alert states ────────────────────────────────────────────── */
 #temperature.critical {
-    color: #ff3b30;
+    color: @alert;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
@@ -71,7 +84,7 @@ window#waybar {
 }
 
 #battery.critical {
-    color: #eb709b;
+    color: @alert;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
@@ -79,18 +92,18 @@ window#waybar {
     animation-direction: alternate;
 }
 
+#memory.high {
+    color: @alert;
+}
+
+#network.disconnected {
+    color: @alert;
+}
+
 @keyframes blink {
     to {
         color: #ffffff;
     }
-}
-
-#memory.high {
-    color: #ff3b30;
-}
-
-#network.disconnected {
-    color: #eb709b;
 }
 
 #tray {

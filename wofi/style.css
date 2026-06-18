@@ -1,51 +1,82 @@
+/* Terminal-style wofi — JetBrainsMono, soft muted-red coral accent */
+
+/* override the GTK theme's blue selection color everywhere in wofi */
+@define-color theme_selected_bg_color #3a3a3a;
+@define-color theme_selected_fg_color #ffffff;
+
 window {
     margin: 0;
-    border: 1px solid #333333;
+    border: 1px solid #7a3a35;                                  /* muted, soft red — not harsh */
     border-radius: 8px;
-    background-color: #1a1a1a;
-    font-family: monospace;
-    font-size: 14px;
-}
-
-#input {
-    margin: 8px;
-    padding: 8px 12px;
-    border: none;
-    border-bottom: 1px solid #333333;
-    border-radius: 4px;
-    background-color: #222222;
-    color: #e0e0e0;
-    outline: none;
-}
-
-#input:focus {
-    border-bottom: 1px solid #555555;
-}
-
-#inner-box {
-    margin: 4px 8px 8px 8px;
+    background-image: linear-gradient(to bottom, #161616, #0d0d0d);
+    background-color: #0d0d0d;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+    color: #d0d0d0;
 }
 
 #outer-box {
     margin: 0;
+    padding: 8px;
+}
+
+/* search line — soft translucent red underline + coral caret */
+#input {
+    margin: 0 0 8px 0;
+    padding: 8px 10px;
+    border: none;
+    border-bottom: 2px solid rgba(224, 100, 90, 0.55);
+    border-radius: 0;
+    background-color: transparent;
+    color: #f0f0f0;
+    caret-color: #e0645a;
+    outline: none;
+}
+
+#input:focus {
+    border-bottom: 2px solid rgba(224, 100, 90, 0.85);
+}
+
+/* text selection in the search box — soft grey, not GTK's default blue */
+#input selection,
+#input text selection,
+entry selection,
+selection {
+    background-color: #3a3a3a;
+    color: #ffffff;
+}
+
+#inner-box {
+    margin: 0;
+}
+
+#scroll {
+    margin: 0;
     padding: 0;
 }
 
-#text {
-    color: #cccccc;
-    padding: 4px 8px;
-}
-
 #entry {
-    padding: 4px;
+    padding: 5px 8px;
+    border-left: 2px solid transparent;
     border-radius: 4px;
 }
 
+#text {
+    color: #cfcfcf;
+}
+
+/* selected row: opaque dark base (kills theme's blue) + soft red gradient on top */
 #entry:selected {
-    background-color: #2a2a2a;
+    background-color: #1a1a1a;
+    background-image: linear-gradient(to right, rgba(224, 100, 90, 0.30), rgba(224, 100, 90, 0.04));
+    border-left: 2px solid #e0645a;
     outline: none;
 }
 
 #entry:selected #text {
     color: #ffffff;
+}
+
+#entry image {
+    margin-right: 8px;
 }
