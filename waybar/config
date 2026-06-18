@@ -1,0 +1,138 @@
+{
+    "layer": "top",
+    "position": "bottom",
+    "height": 30,
+    "spacing": 4,
+
+    "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
+    "modules-center": ["mpris"],
+    "modules-right": ["network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
+
+    "sway/workspaces": {
+        "disable-scroll": false,
+        "format": "{name}"
+    },
+
+    "sway/mode": {
+        "format": "<span style=\"italic\">{}</span>"
+    },
+
+    "sway/window": {
+        "max-length": 50
+    },
+
+    "mpris": {
+        "format": "{player_icon} {artist} – {title}",
+        "format-paused": "{status_icon} {artist} – {title}",
+        "player-icons": {
+            "default": "▶",
+            "mpv": "🎵"
+        },
+        "status-icons": {
+            "paused": "⏸"
+        },
+        "max-length": 60,
+        "ignored-players": ["firefox"]
+    },
+
+    "network": {
+        "format-wifi": " {essid} ({signalStrength}%)",
+        "format-ethernet": " {ipaddr}",
+        "format-disconnected": "⚠ Disconnected",
+        "tooltip-format": "{ifname}: {ipaddr}/{cidr}",
+        "on-click": "nm-connection-editor"
+    },
+
+    "cpu": {
+        "format": "💻 {usage}%",
+        "tooltip": false,
+        "interval": 5
+    },
+
+    "memory": {
+        "format": "🧠 {used:0.1f}G",
+        "interval": 10,
+        "states": {
+            "high": 66
+        }
+    },
+
+    "backlight": {
+        "format": "{icon} {percent}%",
+        "format-icons": ["🔅", "🔆"],
+        "on-scroll-up": "brightnessctl set 5%+",
+        "on-scroll-down": "brightnessctl set 5%-"
+    },
+
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-muted": "🔇 {volume}%",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["🔈", "🔉", "🔊"]
+        },
+        "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-scroll-up": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+",
+        "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    },
+
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15
+        },
+        "format": "🔋 {capacity}%",
+        "format-charging": "⚡ {capacity}%",
+        "format-plugged": "🔌 {capacity}%",
+        "format-critical": "🪫 {capacity}%"
+    },
+
+    "temperature": {
+        "hwmon-path-abs": "/sys/devices/platform/coretemp.0/hwmon",
+        "input-filename": "temp1_input",
+        "critical-threshold": 85,
+        "interval": 5,
+        "format": "🌡 {temperatureC}°C",
+        "format-critical": "🔥 {temperatureC}°C"
+    },
+
+    "disk": {
+        "path": "/",
+        "interval": 30,
+        "format": "💽 {percentage_used}%",
+        "tooltip-format": "{used} used of {total} ({free} free)"
+    },
+
+    "power-profiles-daemon": {
+        "format": "{icon}",
+        "tooltip": true,
+        "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
+        "format-icons": {
+            "default": "⚡",
+            "performance": "🚀",
+            "balanced": "⚖️",
+            "power-saver": "🌱"
+        }
+    },
+
+    "custom/language": {
+        "exec": "~/dotfiles/scripts/waybar-layout.sh",
+        "restart-interval": 5,
+        "tooltip": false,
+        "on-click": "swaymsg input type:keyboard xkb_switch_layout next"
+    },
+
+    "tray": {
+        "spacing": 8
+    },
+
+    "clock": {
+        "format": " {:%a %d %b  %H:%M  ·  w%V}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+    }
+}
