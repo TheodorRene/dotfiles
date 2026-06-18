@@ -6,7 +6,7 @@
 
     "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
     "modules-center": ["mpris"],
-    "modules-right": ["network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
+    "modules-right": ["custom/claude", "network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
 
     "sway/workspaces": {
         "disable-scroll": false,
@@ -118,6 +118,13 @@
             "balanced": "⚖️",
             "power-saver": "🌱"
         }
+    },
+
+    "custom/claude": {
+        "exec": "~/dotfiles/scripts/waybar-claude.sh",
+        "return-type": "json",
+        "signal": 8,
+        "on-click": "swaymsg \"[con_id=$(cat ${XDG_RUNTIME_DIR:-/tmp}/claude-waybar-con 2>/dev/null)] focus\""
     },
 
     "custom/language": {

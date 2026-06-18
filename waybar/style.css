@@ -69,6 +69,24 @@ window#waybar {
     color: #d9b08c;
 }
 
+/* Claude Code status: dim while working, coral + blink when it needs input */
+#custom-claude {
+    padding: 0 10px;
+}
+
+#custom-claude.working {
+    color: @dim;
+}
+
+#custom-claude.waiting {
+    color: @accent;
+    animation-name: blink;
+    animation-duration: 0.6s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
 /* ── alert states ────────────────────────────────────────────── */
 #temperature.critical {
     color: @alert;
