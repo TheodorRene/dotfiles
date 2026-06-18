@@ -1,0 +1,41 @@
+# swaylock — coral theme (matches waybar/wofi). Colors are rrggbb[aa], no '#'.
+# The wallpaper image + scaling come from the $lock command in sway config.
+
+ignore-empty-password
+indicator-radius=110
+indicator-thickness=8
+font=JetBrainsMono Nerd Font
+
+# ring: neutral idle, coral while verifying, sand on clear, alert-red on wrong
+ring-color=1a1a1a
+ring-ver-color=e0645a
+ring-clear-color=d9b08c
+ring-wrong-color=ff5a4d
+ring-caps-lock-color=d9b08c
+
+# inside of the indicator — semi-transparent dark over the wallpaper
+inside-color=0d0d0dcc
+inside-ver-color=0d0d0dcc
+inside-clear-color=0d0d0dcc
+inside-wrong-color=0d0d0dcc
+inside-caps-lock-color=0d0d0dcc
+
+# the thin line uses the inside color (no contrasting ring line)
+line-uses-inside
+
+# typing feedback
+key-hl-color=e0645a
+bs-hl-color=ff5a4d
+separator-color=00000000
+
+# indicator text
+text-color=d6d6d6
+text-ver-color=e0645a
+text-clear-color=d9b08c
+text-wrong-color=ff5a4d
+text-caps-lock-color=d9b08c
+
+# keyboard-layout box (you toggle us/no)
+layout-bg-color=0d0d0dcc
+layout-border-color=e0645a
+layout-text-color=d6d6d6

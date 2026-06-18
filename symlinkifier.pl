@@ -20,6 +20,32 @@ foreach my $name (@conf_conf){
     my $out = `ln -sf ~/dotfiles/$name/config ~/.config/$name`;
 };
 
+# Sway (symlink whole directory)
+my $out=`ln -sf ~/dotfiles/sway ~/.config/sway`;
+
+# kanshi (symlink whole directory for output profiles)
+my $out=`ln -sf ~/dotfiles/kanshi ~/.config/kanshi`;
+
+# Waybar (symlink whole directory for config + style.css)
+my $out=`ln -sf ~/dotfiles/waybar ~/.config/waybar`;
+
+# xdg-desktop-portal (symlink whole directory for backend preferences)
+my $out=`ln -sf ~/dotfiles/xdg-desktop-portal ~/.config/xdg-desktop-portal`;
+
+# swaylock (symlink whole directory for the lock screen theme)
+my $out=`ln -sf ~/dotfiles/swaylock ~/.config/swaylock`;
+
+# alacritty (symlink whole directory for config + theme)
+my $out=`ln -sf ~/dotfiles/alacritty ~/.config/alacritty`;
+
+# mako (symlink whole directory for the notification theme)
+my $out=`ln -sf ~/dotfiles/mako ~/.config/mako`;
+
+# Claude Code global config — symlink individual files only, NOT the whole
+# ~/.claude dir (it holds session data, transcripts, plans, credentials).
+my $out=`mkdir -p ~/.claude && ln -sf ~/dotfiles/claude/settings.json ~/.claude/settings.json`;
+my $out=`ln -sf ~/dotfiles/claude/statusline-command.sh ~/.claude/statusline-command.sh`;
+
 # Custom for nvim
 my $out=`ln -sf ~/dotfiles/nvim/init.vim ~/.config/nvim/init.vim`;
 my $out=`mkdir -p ~/.config/nvim/config && ln -sf ~/dotfiles/nvim/coc.vimrc ~/.config/nvim/config/coc.vimrc`
@@ -31,5 +57,3 @@ my $out=`mkdir -p ~/.config/nvim/config && ln -sf ~/dotfiles/nvim/coc.vimrc ~/.c
 #Custom for visual code
 ##this crashes if visual code isnt installed
 #my $out2 = `ln -sf ~/dotfiles/settings.json ~/.config/Code/User/settings.json/`
-
-

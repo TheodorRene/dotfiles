@@ -1,0 +1,59 @@
+[font]
+size = 11.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "JetBrainsMono Nerd Font"
+style = "Italic"
+
+[window]
+padding = { x = 4, y = 4 }
+
+[selection]
+save_to_clipboard = true
+
+# ── Coral theme (matches waybar / wofi / swaylock) ──────────────
+[colors.primary]
+background = "#0d0d0d"
+foreground = "#d6d6d6"
+dim_foreground = "#8a8a8a"
+
+[colors.cursor]
+text = "#0d0d0d"
+cursor = "#ffffff"
+
+[colors.selection]
+text = "#ffffff"
+background = "#3a3a3a"
+
+[colors.normal]
+black = "#1a1a1a"
+red = "#e0645a"
+green = "#8faf7a"
+yellow = "#d9b08c"
+blue = "#7fa2c0"
+magenta = "#c98fb0"
+cyan = "#8ec0bf"
+white = "#c0c0c0"
+
+[colors.bright]
+black = "#4a4a4a"
+red = "#ff5a4d"
+green = "#a6c293"
+yellow = "#e6c08a"
+blue = "#9cb8d6"
+magenta = "#d6a8c4"
+cyan = "#a8d4d2"
+white = "#f0f0f0"
+
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\r"
