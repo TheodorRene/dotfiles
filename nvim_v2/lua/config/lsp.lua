@@ -41,11 +41,11 @@ local function on_attach(client, bufnr)
 
     -- Diagnostics float
     map('n', '<C-x>e', vim.diagnostic.open_float, 'LSP: open diagnostic float')
-    map('n', '<A-e>',  vim.diagnostic.open_float, 'LSP: open diagnostic float')
+    map('n', '<A-e>', vim.diagnostic.open_float, 'LSP: open diagnostic float')
 
     -- Diagnostic navigation
-    map('n', '[d',    vim.diagnostic.goto_prev, 'LSP: previous diagnostic')
-    map('n', ']d',    vim.diagnostic.goto_next, 'LSP: next diagnostic')
+    map('n', '[d', vim.diagnostic.goto_prev, 'LSP: previous diagnostic')
+    map('n', ']d', vim.diagnostic.goto_next, 'LSP: next diagnostic')
     map('n', '<C-a>d', vim.diagnostic.goto_next, 'LSP: next diagnostic')
     map('n', '<C-a>D', vim.diagnostic.goto_prev, 'LSP: previous diagnostic')
 
@@ -91,8 +91,8 @@ local function on_attach(client, bufnr)
     map('n', '<C-a>r', vim.lsp.buf.rename, 'LSP: rename')
 
     -- Code action: <C-.> / <A-.> / <C-a>a for muscle memory (gra is 0.12 default)
-    map('n', '<C-.>',  vim.lsp.buf.code_action, 'LSP: code action')
-    map('n', '<A-.>',  vim.lsp.buf.code_action, 'LSP: code action')
+    map('n', '<C-.>', vim.lsp.buf.code_action, 'LSP: code action')
+    map('n', '<A-.>', vim.lsp.buf.code_action, 'LSP: code action')
     map('n', '<C-a>a', vim.lsp.buf.code_action, 'LSP: code action')
 
     -- Declaration (rarely used but keep it)
@@ -108,37 +108,37 @@ _G.LSP_ON_ATTACH = on_attach
 -- Nested lists = equal-priority markers (0.12 feature).
 
 vim.lsp.config['ts_ls'] = {
-    cmd       = { 'typescript-language-server', '--stdio' },
-    filetypes = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
+    cmd          = { 'typescript-language-server', '--stdio' },
+    filetypes    = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
     root_markers = { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
 }
 
 vim.lsp.config['eslint'] = {
-    cmd = { 'vscode-eslint-language-server', '--stdio' },
-    filetypes    = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
-    root_markers = {
+    cmd                = { 'vscode-eslint-language-server', '--stdio' },
+    filetypes          = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
+    root_markers       = {
         '.eslintrc', '.eslintrc.js', '.eslintrc.cjs', '.eslintrc.json',
         'eslint.config.js', 'eslint.config.mjs', 'eslint.config.cjs',
         'package.json', '.git',
     },
     workspace_required = false,
-    settings = {
-        validate              = 'on',
-        run                   = 'onType',
-        useESLintClass        = false,
+    settings           = {
+        validate         = 'on',
+        run              = 'onType',
+        useESLintClass   = false,
         -- nodePath must be explicitly null (not nil/undefined) so the eslint
         -- server's `if (settings.nodePath !== null)` guard works correctly.
         -- If it's undefined the guard is bypassed and path.isAbsolute(undefined)
         -- throws "-32603 path must be of type string".
-        nodePath              = vim.NIL,
-        experimental          = { useFlatConfig = false },
-        codeAction            = {
+        nodePath         = vim.NIL,
+        experimental     = { useFlatConfig = false },
+        codeAction       = {
             disableRuleComment = { enable = true, location = 'separateLine' },
             showDocumentation  = { enable = true },
         },
-        workingDirectory      = { mode = 'location' },
-        problems              = { shortenToSingleLine = false },
-        format                = true,
+        workingDirectory = { mode = 'location' },
+        problems         = { shortenToSingleLine = false },
+        format           = true,
     },
 }
 
@@ -164,17 +164,17 @@ vim.lsp.handlers['workspace/configuration'] = function(err, params, ctx)
 end
 
 vim.lsp.config['pyright'] = {
-    cmd       = { 'pyright-langserver', '--stdio' },
-    filetypes = { 'python' },
+    cmd          = { 'pyright-langserver', '--stdio' },
+    filetypes    = { 'python' },
     root_markers = { 'pyproject.toml', 'setup.py', 'setup.cfg', 'requirements.txt', '.git' },
-    settings  = { python = { analysis = { autoSearchPaths = true, useLibraryCodeForTypes = true } } },
+    settings     = { python = { analysis = { autoSearchPaths = true, useLibraryCodeForTypes = true } } },
 }
 
 vim.lsp.config['lua_ls'] = {
-    cmd       = { 'lua-language-server' },
-    filetypes = { 'lua' },
+    cmd          = { 'lua-language-server' },
+    filetypes    = { 'lua' },
     root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
-    settings  = {
+    settings     = {
         Lua = {
             runtime     = { version = 'LuaJIT' },
             diagnostics = { globals = { 'vim' } },
@@ -191,64 +191,69 @@ vim.lsp.config['lua_ls'] = {
 }
 
 vim.lsp.config['gopls'] = {
-    cmd       = { 'gopls' },
-    filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
+    cmd          = { 'gopls' },
+    filetypes    = { 'go', 'gomod', 'gowork', 'gotmpl' },
     root_markers = { 'go.work', 'go.mod', '.git' },
 }
 
 vim.lsp.config['hls'] = {
-    cmd       = { 'haskell-language-server-wrapper', '--lsp' },
-    filetypes = { 'haskell', 'lhaskell', 'cabal' },
+    cmd          = { 'haskell-language-server-wrapper', '--lsp' },
+    filetypes    = { 'haskell', 'lhaskell', 'cabal' },
     root_markers = { 'hie.yaml', 'stack.yaml', 'cabal.project', '*.cabal', '.git' },
 }
 
 vim.lsp.config['clojure_lsp'] = {
-    cmd       = { 'clojure-lsp' },
-    filetypes = { 'clojure', 'edn' },
+    cmd          = { 'clojure-lsp' },
+    filetypes    = { 'clojure', 'edn' },
     root_markers = { 'project.clj', 'deps.edn', 'build.boot', 'shadow-cljs.edn', '.git' },
 }
 
 vim.lsp.config['elmls'] = {
-    cmd       = { 'elm-language-server' },
-    filetypes = { 'elm' },
+    cmd          = { 'elm-language-server' },
+    filetypes    = { 'elm' },
     root_markers = { 'elm.json', '.git' },
 }
 
 vim.lsp.config['jdtls'] = {
-    cmd       = { 'jdtls' },
-    filetypes = { 'java' },
+    cmd          = { 'jdtls' },
+    filetypes    = { 'java' },
     root_markers = { 'pom.xml', 'build.gradle', '.git' },
 }
 
 vim.lsp.config['lemminx'] = {
-    cmd       = { 'lemminx' },
-    filetypes = { 'xml', 'xsd', 'xsl', 'xslt', 'svg' },
+    cmd          = { 'lemminx' },
+    filetypes    = { 'xml', 'xsd', 'xsl', 'xslt', 'svg' },
     root_markers = { '.git' },
 }
 
 vim.lsp.config['jsonls'] = {
-    cmd       = { 'vscode-json-language-server', '--stdio' },
-    filetypes = { 'json', 'jsonc' },
+    cmd          = { 'vscode-json-language-server', '--stdio' },
+    filetypes    = { 'json', 'jsonc' },
     root_markers = { '.git' },
 }
 
 vim.lsp.config['html'] = {
-    cmd       = { 'vscode-html-language-server', '--stdio' },
-    filetypes = { 'html' },
+    cmd          = { 'vscode-html-language-server', '--stdio' },
+    filetypes    = { 'html' },
     root_markers = { 'package.json', '.git' },
 }
 
 vim.lsp.config['clangd'] = {
-    cmd       = { 'clangd' },
-    filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
+    cmd          = { 'clangd' },
+    filetypes    = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
     root_markers = { 'compile_commands.json', 'compile_flags.txt', '.clangd', 'CMakeLists.txt', '.git' },
+}
+vim.lsp.config['nil_ls'] = {
+    cmd = { 'nil' },
+    filetypes = { "nix" },
+    root_markeres = { "flake.nix", ".git" }
 }
 
 -- ── Enable all servers ────────────────────────────────────────────────────────
 local servers = {
     'ts_ls', 'eslint', 'pyright', 'lua_ls', 'gopls',
     'hls', 'clojure_lsp', 'elmls', 'jdtls',
-    'lemminx', 'jsonls', 'html', 'clangd',
+    'lemminx', 'jsonls', 'html', 'clangd', 'nil_ls'
 }
 
 for _, name in ipairs(servers) do
@@ -265,5 +270,34 @@ end
 
 -- ── Rust (rustaceanvim handles its own LSP client) ────────────────────────────
 vim.g.rustaceanvim = {
-    server = { on_attach = on_attach },
+    server = {
+        on_attach = on_attach,
+        default_settings = {
+            ['rust-analyzer'] = {
+                -- Clippy on save instead of plain `cargo check`.
+                -- allTargets = false skips tests/benches/examples — meaningful
+                -- speedup on the large impero workspace (~40 crates).
+                checkOnSave = true,
+                check = {
+                    command    = 'clippy',
+                    allTargets = false,
+                },
+                cargo = {
+                    -- Required here: ts-rs (TS_RS_EXPORT_DIR) + serde derives lean
+                    -- on build scripts; without this, generated types don't resolve.
+                    buildScripts = { enable = true },
+                    -- NOTE: features = 'all' intentionally NOT set. This workspace
+                    -- pins resolver = "1" (see backend/Cargo.toml) due to a
+                    -- feature-unification quirk with syn/impero_typebinder; forcing
+                    -- all features can surface the same breakage. Leave at default.
+                },
+                procMacro = { enable = true },
+                inlayHints = {
+                    bindingModeHints       = { enable = true },
+                    closureReturnTypeHints = { enable = 'always' },
+                    lifetimeElisionHints   = { enable = 'skip_trivial', useParameterNames = true },
+                },
+            },
+        },
+    },
 }

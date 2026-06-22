@@ -52,6 +52,7 @@ nmap('<leader>ln', ':set nonumber | set norelativenumber<CR>', 'Disable line num
 -- ── Visual mode ───────────────────────────────────────────────────────────────
 vmap('J',          ":m '>+1<CR>gv=gv", 'Move selection down')
 vmap('K',          ":m '<-2<CR>gv=gv", 'Move selection up')
+vmap('<C-a>c',     ":'<,'>CopyAI<CR>",  'Copy selection with file path for AI')
 
 -- ── Terminal mode ─────────────────────────────────────────────────────────────
 tmap('<Esc>', [[<C-\><C-n>]], 'Exit terminal mode')
@@ -93,6 +94,7 @@ nmap('<A-w>', ':tabnext<CR>',  'Next tab page')
 
 -- ── File manager ──────────────────────────────────────────────────────────────
 nmap('<C-n>', '<CMD>Oil --float .<CR>', 'Open Oil file manager (float)')
+nmap('<leader>e', '<CMD>Neotree toggle<CR>', 'Neo-tree: toggle sidebar')
 
 -- ── Fuzzy finding (fzf-lua) ───────────────────────────────────────────────────
 local fzf = function(fn, opts)
@@ -128,7 +130,7 @@ nmap('<C-g>p',  '<CMD>Git pull<CR>',                       'GIT: pull')
 nmap('<C-g>do', '<CMD>DiffviewOpen<CR>',                   'GIT: open diffview')
 nmap('<C-g>dq', '<CMD>DiffviewClose<CR>',                  'GIT: close diffview')
 nmap('<C-g>g',  ':Git ',                                   'GIT: fugitive command')
-nmap('<C-g>dd', '<CMD>DiffviewOpen develop...HEAD<CR>',    'GIT: diff vs develop')
+nmap('<C-g>dd', '<CMD>DiffviewOpen next...HEAD<CR>',    'GIT: diff vs develop')
 nmap('<A-g>',   '<CMD>Neogit kind=tab<CR>',                'Neogit (tab)')
 
 -- ── Gitsigns mappings (set in on_attach via gitsigns setup in pack.lua) ───────

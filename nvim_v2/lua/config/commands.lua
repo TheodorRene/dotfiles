@@ -92,3 +92,11 @@ cmd('Scrollbind', function()
 end, { desc = 'Toggle scrollbind on all windows' })
 
 cmd('Uniq', ':uniq', { desc = 'Deduplicate lines in buffer (0.12 built-in)' })
+
+cmd('CopyAI', function(opts)
+    local path   = vim.fn.expand('%:p')
+    local lines  = vim.fn.getline(opts.line1, opts.line2)
+    local header = path .. ':' .. opts.line1 .. '-' .. opts.line2
+    vim.fn.setreg('+', header .. '\n' .. table.concat(lines, '\n'))
+    vim.notify('Copied ' .. opts.line1 .. '-' .. opts.line2 .. ' → clipboard', vim.log.levels.INFO)
+end, { range = true, desc = 'Copy selection with file path for AI' })

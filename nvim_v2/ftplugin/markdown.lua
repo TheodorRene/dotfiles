@@ -11,9 +11,12 @@ vim.g._obsidian_loaded = true
 -- Register with vim.pack (download if missing) and load
 vim.pack.add({ 'https://github.com/epwalsh/obsidian.nvim' })
 
+local vault = vim.fn.expand('~/Documents/inner-sanctum')
+if vim.fn.isdirectory(vault) == 0 then return end
+
 local ok, obsidian = pcall(require, 'obsidian')
 if ok then
     obsidian.setup({
-        workspaces = { { name = 'personal', path = '~/Documents/inner-sanctum-main' } },
+        workspaces = { { name = 'personal', path = vault } },
     })
 end

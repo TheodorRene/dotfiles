@@ -11,6 +11,7 @@ vim.pack.add({
     -- ── Dependencies ─────────────────────────────────────────────────────────
     'https://github.com/nvim-lua/plenary.nvim',
     'https://github.com/nvim-tree/nvim-web-devicons',
+    'https://github.com/MunifTanjim/nui.nvim',
 
     -- ── Colorscheme (loaded first so everything else inherits it) ─────────────
     'https://github.com/catppuccin/nvim',
@@ -34,6 +35,7 @@ vim.pack.add({
     -- ── Navigation ───────────────────────────────────────────────────────────
     'https://github.com/folke/flash.nvim',
     'https://github.com/stevearc/oil.nvim',
+    { src = 'https://github.com/nvim-neo-tree/neo-tree.nvim', version = vim.version.range('3') },
 
     -- ── LSP extras ───────────────────────────────────────────────────────────
     -- lspsaga: kept only for the floating terminal (<A-d>)
@@ -257,6 +259,19 @@ end)
 
 -- Oil (file manager)
 setup('oil')
+
+-- Neo-tree (sidebar file tree)
+setup('neo-tree', {
+    close_if_last_window = true,
+    enable_git_status    = true,
+    enable_diagnostics   = true,
+    window = {
+        position = 'right',
+    },
+    filesystem = {
+        follow_current_file = { enabled = true },
+    },
+})
 
 -- lspsaga — floating terminal only; suppress lightbulb sign (deferred)
 vim.schedule(function()
