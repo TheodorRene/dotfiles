@@ -246,7 +246,7 @@ vim.lsp.config['clangd'] = {
 vim.lsp.config['nil_ls'] = {
     cmd = { 'nil' },
     filetypes = { "nix" },
-    root_markeres = { "flake.nix", ".git" }
+    root_markers = { "flake.nix", ".git" }
 }
 
 -- ── Enable all servers ────────────────────────────────────────────────────────
