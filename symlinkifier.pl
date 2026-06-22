@@ -1,59 +1,57 @@
 #! /usr/bin/perl
 use strict;
 use warnings;
+use File::Basename qw(dirname);
+use File::Path qw(make_path);
 
-##TODO Make single function that retrives path and name from dictionary
+my $home = $ENV{HOME};
+my $dotfiles = "$home/dotfiles";
+my $stamp = do {
+    my ($sec, $min, $hour, $mday, $mon, $year) = localtime;
+    sprintf('%04d%02d%02d%02d%02d%02d', $year + 1900, $mon + 1, $mday, $hour, $min, $sec);
+};
 
-# List with config that recides in home folder
-my @home_conf = qw(.tmux.conf .vimrc .zshrc .gitconfig);
-foreach my $file (@home_conf){
-    if( `test -f ~/dotfiles/$file`){
-        my $out = `ln -sf ~/dotfiles/$file ~/`;
-    } else{
-        printf $file . " does not exist\n"
+sub symlink_path {
+    my ($source, $target) = @_;
+
+    if (!-e $source) {
+        print "$source does not exist\n";
+        return;
     }
-};
 
-# List with config that recides in .config folder
-my @conf_conf = qw(i3 rofi terminator polybar);
-foreach my $name (@conf_conf){
-    my $out = `ln -sf ~/dotfiles/$name/config ~/.config/$name`;
-};
+    make_path(dirname($target));
 
-# Sway (symlink whole directory)
-my $out=`ln -sf ~/dotfiles/sway ~/.config/sway`;
+    if (-l $target) {
+        unlink $target or die "failed to remove $target: $!";
+    } elsif (-e $target) {
+        my $backup = "$target.bak.$stamp";
+        rename $target, $backup or die "failed to backup $target to $backup: $!";
+        print "backed up $target to $backup\n";
+    }
 
-# kanshi (symlink whole directory for output profiles)
-my $out=`ln -sf ~/dotfiles/kanshi ~/.config/kanshi`;
+    symlink $source, $target or die "failed to link $target -> $source: $!";
+}
 
-# Waybar (symlink whole directory for config + style.css)
-my $out=`ln -sf ~/dotfiles/waybar ~/.config/waybar`;
+# Config that resides in the home folder.
+for my $file (qw(.tmux.conf .vimrc .zshrc .gitconfig)) {
+    symlink_path("$dotfiles/$file", "$home/$file");
+}
 
-# xdg-desktop-portal (symlink whole directory for backend preferences)
-my $out=`ln -sf ~/dotfiles/xdg-desktop-portal ~/.config/xdg-desktop-portal`;
+# Config directories under ~/.config.
+for my $name (qw(i3 sway kanshi waybar xdg-desktop-portal swaylock alacritty kitty mako opencode)) {
+    symlink_path("$dotfiles/$name", "$home/.config/$name");
+}
 
-# swaylock (symlink whole directory for the lock screen theme)
-my $out=`ln -sf ~/dotfiles/swaylock ~/.config/swaylock`;
+# Claude Code global config: link individual files only, not ~/.claude.
+symlink_path("$dotfiles/claude/settings.json", "$home/.claude/settings.json");
+symlink_path("$dotfiles/claude/statusline-command.sh", "$home/.claude/statusline-command.sh");
 
-# alacritty (symlink whole directory for config + theme)
-my $out=`ln -sf ~/dotfiles/alacritty ~/.config/alacritty`;
-
-# mako (symlink whole directory for the notification theme)
-my $out=`ln -sf ~/dotfiles/mako ~/.config/mako`;
-
-# Claude Code global config — symlink individual files only, NOT the whole
-# ~/.claude dir (it holds session data, transcripts, plans, credentials).
-my $out=`mkdir -p ~/.claude && ln -sf ~/dotfiles/claude/settings.json ~/.claude/settings.json`;
-my $out=`ln -sf ~/dotfiles/claude/statusline-command.sh ~/.claude/statusline-command.sh`;
-
-# Custom for nvim
-my $out=`ln -sf ~/dotfiles/nvim/init.vim ~/.config/nvim/init.vim`;
-my $out=`mkdir -p ~/.config/nvim/config && ln -sf ~/dotfiles/nvim/coc.vimrc ~/.config/nvim/config/coc.vimrc`
-
+# Neovim v2 config.
+symlink_path("$dotfiles/nvim_v2", "$home/.config/nvim");
 
 # zsh theme
-#my $out3 = `ln -sf ~/dotfiles/theodorc.zsh-theme ~/.oh-my-zsh/custom/themes/theodorc.zsh-theme`
+#symlink_path("$dotfiles/theodorc.zsh-theme", "$home/.oh-my-zsh/custom/themes/theodorc.zsh-theme");
 
-#Custom for visual code
-##this crashes if visual code isnt installed
-#my $out2 = `ln -sf ~/dotfiles/settings.json ~/.config/Code/User/settings.json/`
+# Custom for visual code
+## this crashes if visual code isnt installed
+#symlink_path("$dotfiles/settings.json", "$home/.config/Code/User/settings.json");
