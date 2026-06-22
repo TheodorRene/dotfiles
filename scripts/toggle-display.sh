@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Toggle between laptop-only (eDP-1) and external-only (DP-1) display modes.
-set -euo pipefail
+set -euxo pipefail
 
 LAPTOP="eDP-1"
 EXTERNAL="DP-1"
@@ -24,15 +24,13 @@ restart_waybar() {
 if is_active "$LAPTOP"; then
   # --> go EXTERNAL-ONLY
   exists "$EXTERNAL" || die "External monitor ($EXTERNAL) is not connected — staying on laptop."
-  swaymsg -q "output $EXTERNAL enable"
-  swaymsg -q "output $EXTERNAL mode preferred position 0,0"
+  swaymsg -q "output $EXTERNAL enable position 0 0"   # enable auto-selects the preferred mode
   swaymsg -q "output $LAPTOP disable"   # sway auto-migrates eDP-1's workspaces + focus to DP-1
   restart_waybar
   notify "External only ($EXTERNAL)"
 else
   # --> go LAPTOP-ONLY
-  swaymsg -q "output $LAPTOP enable"
-  swaymsg -q "output $LAPTOP mode preferred position 0,0"
+  swaymsg -q "output $LAPTOP enable position 0 0"   # enable auto-selects the preferred mode
   exists "$EXTERNAL" && swaymsg -q "output $EXTERNAL disable"   # auto-migrates DP-1's workspaces + focus to eDP-1
   restart_waybar
   notify "Laptop only ($LAPTOP)"
