@@ -110,7 +110,7 @@ _G.LSP_ON_ATTACH = on_attach
 vim.lsp.config['ts_ls'] = {
     cmd          = { 'typescript-language-server', '--stdio' },
     filetypes    = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
-    root_markers = { 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
+    root_markers = { 'pnpm-workspace.yaml', 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
 }
 
 vim.lsp.config['eslint'] = {
