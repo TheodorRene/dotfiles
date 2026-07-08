@@ -38,7 +38,7 @@ for my $file (qw(.tmux.conf .vimrc .zshrc .gitconfig)) {
 }
 
 # Config directories under ~/.config.
-for my $name (qw(i3 sway kanshi waybar xdg-desktop-portal swaylock alacritty kitty mako opencode)) {
+for my $name (qw(i3 sway kanshi waybar xdg-desktop-portal swaylock alacritty kitty mako opencode direnv)) {
     symlink_path("$dotfiles/$name", "$home/.config/$name");
 }
 

@@ -1,0 +1,11 @@
+# Quiet direnv's own chatter (the "direnv: loading"/"using flake"/"export +VARS"
+# lines) while leaving the flake's shellHook output (versions, hosts check)
+# untouched.
+#
+# NOTE: on this direnv build, DIRENV_LOG_FORMAT is ignored and log_format = "-"
+# is treated as a literal printf string (broken), so neither silences it.
+# log_filter behaves as an ALLOWLIST here: only log lines matching the regex are
+# shown. "a^" can never match (an "a" before start-of-string is impossible), so
+# every direnv log line is suppressed.
+[global]
+log_filter = "a^"
