@@ -1,22 +1,46 @@
 #!/usr/bin/env bash
-# Claude Code hook handler: track state for the waybar module, and on "waiting"
-# flash the terminal (sway urgent) + send a clickable toast that focuses it.
-# Usage: claude-attention.sh working|waiting|idle   (Notification message on stdin)
+# Claude Code hook handler: desktop notifications, plus flash the terminal
+# (sway urgent) and a clickable toast that focuses it when input is needed.
+# Usage: claude-attention.sh waiting|idle   (Notification message on stdin for 'waiting')
 set -uo pipefail
 
-runtime="${XDG_RUNTIME_DIR:-/tmp}"
+runtime_dir="${XDG_RUNTIME_DIR:-/tmp}"
 
-# Detached click-handler: wait for the toast action, focus the terminal on click.
+# Pidfile tracking the current toast for a given sway container.
+pidfile_for() { printf '%s/claude-attention-con-%s.pid' "$runtime_dir" "$1"; }
+
+# Supersede the toast still open for a container: kill the detached __click
+# process group (which includes its blocking `notify-send --wait`) so toasts
+# don't accumulate one-per-event. Guarded by a cmdline check so a recycled PID
+# can't make us kill an unrelated process group.
+kill_toast() {
+  local con="$1" pf pg
+  pf="$(pidfile_for "$con")"
+  [ -f "$pf" ] || return 0
+  pg="$(cat "$pf" 2>/dev/null || true)"
+  if [ -n "$pg" ] && grep -qa 'claude-attention' "/proc/$pg/cmdline" 2>/dev/null; then
+    kill -- "-$pg" 2>/dev/null || true
+  fi
+  rm -f "$pf"
+}
+
+# Detached click-handler: clickable toast that focuses the terminal.
+# `notify-send --wait` blocks until the toast is actioned or closed. The caller
+# runs us via `setsid -f`, so $$ is our session/process-group leader; we register
+# it in a pidfile so the next attention event (or `idle`) can supersede us
+# instead of leaving a blocked notify-send behind.
 if [ "${1:-}" = "__click" ]; then
   con="$2"; msg="$3"
+  kill_toast "$con"                       # replace any previous toast for this con
+  echo "$$" > "$(pidfile_for "$con")"     # $$ == our PGID (session leader via setsid -f)
   action="$(notify-send --wait -A default=Focus -u normal "🤖 Claude Code" "$msg" 2>/dev/null || true)"
+  pf="$(pidfile_for "$con")"
+  [ "$(cat "$pf" 2>/dev/null || true)" = "$$" ] && rm -f "$pf"   # clean up if still ours
   [ -n "$action" ] && swaymsg "[con_id=$con] focus" >/dev/null 2>&1
   exit 0
 fi
 
 state="${1:-idle}"
-printf '%s' "$state" > "$runtime/claude-waybar-state"
-pkill -RTMIN+8 -x waybar 2>/dev/null || true   # refresh the custom/claude module
 
 # Find the sway container running this Claude: walk our ancestor PIDs, match the tree.
 find_con() {
@@ -31,21 +55,20 @@ find_con() {
     | (.[0].id // empty)'
 }
 
-# Record this Claude's window id on every state so clicking the module always focuses it.
-con="$(find_con)"
-printf '%s' "${con:-}" > "$runtime/claude-waybar-con"
-
 case "$state" in
   waiting)
     msg="$(jq -r '.message // empty' 2>/dev/null || true)"; msg="${msg:-Needs your input}"
+    con="$(find_con)"
     if [ -n "${con:-}" ]; then
-      swaymsg "[con_id=$con] urgent enable" >/dev/null 2>&1 || true
-      setsid -f "$0" __click "$con" "$msg" >/dev/null 2>&1 || true
+      swaymsg "[con_id=$con] urgent enable" >/dev/null 2>&1 || true       # flash the workspace red
+      setsid -f "$0" __click "$con" "$msg" >/dev/null 2>&1 || true        # clickable toast (detached)
     else
       notify-send -u normal "🤖 Claude Code" "$msg" 2>/dev/null || true
     fi
     ;;
   idle)
+    con="$(find_con)"
+    [ -n "${con:-}" ] && kill_toast "$con"     # clear any pending toast now that we're done
     notify-send -u normal -t 4000 "🤖 Claude Code" "✅ Done — finished working" 2>/dev/null || true
     ;;
 esac
