@@ -11,7 +11,9 @@ else
     compinit -C
 fi
 
-source $MY_CUSTOM_ZSH/lazy-load-nvm.zsh
+source $MY_CUSTOM_ZSH/history.zsh
+[ -s "$HOME/.nvm/nvm.sh" ] && \. "$HOME/.nvm/nvm.sh"
+[ -s "$HOME/.nvm/bash_completion" ] && \. "$HOME/.nvm/bash_completion"
 source $MY_CUSTOM_ZSH/path.zsh
 source $MY_CUSTOM_ZSH/exports.zsh
 source $MY_CUSTOM_ZSH/alias.zsh
@@ -47,9 +49,26 @@ __post_init() {
 }
 add-zsh-hook precmd __post_init
 
+. /usr/share/autojump/autojump.sh
 
-PROMPT="%F{blue}%~%f
+_build_prompt() {
+    local nix=''
+    [[ -n "$IN_NIX_SHELL" ]] && nix=' %F{yellow}[nix]%f'
+
+    local git=''
+    local branch
+    branch=$(git symbolic-ref --short HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null)
+    if [[ -n "$branch" ]]; then
+        local dirty=''
+        git diff --quiet 2>/dev/null || dirty='*'
+        git diff --cached --quiet 2>/dev/null || dirty='*'
+        git="%F{green} ${branch}${dirty}%f"
+    fi
+
+    PROMPT="%F{blue}%~%f${git}${nix}
 > "
+}
+add-zsh-hook precmd _build_prompt
 
 
 # github copilot cli x

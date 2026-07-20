@@ -19,3 +19,10 @@ export MANPAGER='nvim +Man!'
 
 export EDITOR=$(which nvim)
 export VISUAL=$(which nvim)
+
+# Wayland / Sway
+export MOZ_ENABLE_WAYLAND=1
+export XDG_CURRENT_DESKTOP=sway
+export ELECTRON_OZONE_PLATFORM_HINT=wayland
+export INTEL_FORCE_PROBE=b080
+export GTK_USE_PORTAL=0

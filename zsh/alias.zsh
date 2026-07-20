@@ -1,19 +1,21 @@
 alias ls="eza"
 alias bc="bc -lq"
+alias battery="cat /sys/class/power_supply/BAT0/capacity"
 #alias c="code . && exit" So long and thanks for all the fish
 alias cal="ncal -3wb"
 alias cass="mosh cassarossa.samfundet.no"
-alias cat="bat"
-alias clip="pbcopy"
+alias cat="batcat"
+alias clip="wl-copy"
 alias clipboard2file='xclip -selection clipboard -t image/png -o > "$(date +%Y-%m-%d_%T).png"'
 alias deadkeys='setxkbmap -layout no -variant nodeadkeys -option ctrl:nocaps'
+alias d="docker"
 alias dir="ls -d */"
 alias dig="dig +noall +answer"
 #alias dsize="du -h --max-depth=1 | sort -h"
 alias dsize="du -xhd 1 | sort -h"
 alias gs="git status" #So many misstyping and fk ghostscript
 alias locate="plocate"
-alias lr="eza -lrhF -snew" 
+alias lr="eza -lrhF -snew"
 #alias lr="ls -lrthF"
 alias lra="ls -ltrha"
 alias lsblk="lsblk -f"
@@ -44,6 +46,7 @@ alias vimnote="vim $(date +"%m_%d_%Y").md"
 alias wclip="wl-copy"
 
 alias blank="autorandr blank"
+alias p="pnpm"
 alias nrd="npm run dev"
 alias nrt="npm run test"
 alias nrs="npm run start"
@@ -62,25 +65,6 @@ alias gl="git pull"
 alias gb="osascript -e 'tell application \"GitButler\" to activate'"
 alias g="git"
 
-# ANDROID
-alias shake="adb shell input keyevent 82"
-alias logcat="adb logcat"
-alias run_android2="/Users/thca/Library/Android/sdk/emulator/emulator -avd GURBA_API_36 -no-snapshot"
-alias run_android="/Users/thca/Library/Android/sdk/emulator/emulator -avd theopixel -no-snapshot"
-alias run_tablet="/Users/thca/Library/Android/sdk/emulator/emulator -avd Pixel_Tablet_API_34"
-alias run_android_ipad="/Users/thca/Library/Android/sdk/emulator/emulator -avd Ipad_10th_Generation_API_34"
-
-#iPad (10th generation) (E5AD111D-2FF1-4D56-9FE1-FE5904D9194C)
-alias run_ipad="xcrun simctl boot 'iPad (10th generation)'"
-#iPhone 15 (7B2D6F3D-168B-463A-AF5D-AE6D2735572D)
-alias run_iphone="xcrun simctl boot 'iPhone 15'"
-
-
-alias universallink="xcrun simctl openurl booted"
-alias applink="adb shell am start -W -a android.intent.action.VIEW -d"
-alias adbfix="adb reverse tcp:8081 tcp:8081"
-# open links in iphone or android
-
 # Pacman specific
 alias pacclean='sudo paccache -r && sudo pacman -Qtdq | sudo pacman -Rns -'
 alias pacinstall="sudo pacman -S"
@@ -94,8 +78,12 @@ alias aptsearch="apt search"
 alias aptupgrade="sudo apt update && apt list --upgradable && sudo apt upgrade"
 
 alias dc="cd"
-alias dr="cd ~/Documents/inner-sanctum-main/DR"
+alias obs="cd ~/Documents/inner-sanctum/Impero"
 alias news="cd ~/dev/dr/nyhedsapp"
+alias frontend="cd ~/dev/impero/frontend/"
+alias backend="cd ~/dev/impero/backend"
+alias start_db="docker compose -f ~/dev/impero/docker-compose.yml up --wait impero_db"
+alias dotfiles="cd ~/dotfiles"
 alias gencert="sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout selfsigned.key -out selfsigned.crt"
 alias ipp="curl -s ip.xxd.no"
 alias random="tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo ''"
@@ -108,3 +96,5 @@ alias ai="gh copilot suggest -t shell"
 # alias break="sleep $((60*5)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
 #alias v="vim"
 alias gd="git diff"
+# remove build artifacts not compiled in the last 14 days (operates on cwd)
+alias rust_clean="cargo sweep --time 14 ."

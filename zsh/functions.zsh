@@ -3,7 +3,7 @@ mango(){
 }
 
 fd(){
-  bfs -name "*$1*" 
+  bfs -name "*$1*"
 }
 
 nuke_containers() {docker rm -f $(docker ps -a -q)}
@@ -29,7 +29,38 @@ b64d(){
 }
 
 b64e(){
-    echo $1 | base64 
+    echo $1 | base64
+}
+
+srcenv() {
+  local envfile=".env"
+
+  if [[ "$1" == "-e" ]]; then
+    if [[ -z "$2" ]]; then
+      print -u2 "usage: srcenv [-e envfile] command [args...]"
+      return 2
+    fi
+
+    envfile="$2"
+    shift 2
+  fi
+
+  if [[ $# -eq 0 ]]; then
+    print -u2 "usage: srcenv [-e envfile] command [args...]"
+    return 2
+  fi
+
+  if [[ ! -f "$envfile" ]]; then
+    print -u2 "srcenv: env file not found: $envfile"
+    return 1
+  fi
+
+  (
+    set -a
+    source "$envfile" || return 1
+    set +a
+    command "$@"
+  )
 }
 
 # check if a file with the name of 'Session.vim' exists in the current directory
@@ -66,7 +97,7 @@ ios(){
         echo "Usage: ios devices"
         exit 1
     fi
-} 
+}
 
 #make grep work like rg and ag
 tgrep(){
@@ -97,7 +128,70 @@ pass() {
 tsv() {
     column -s$'\t' -t < $1 | less -N -S
 }
-load_dotenv() { 
-    echo "dotenv" > .envrc; direnv allow 
+load_dotenv() {
+    echo "dotenv" > .envrc; direnv allow
+}
+
+dirty() {
+    local root="${1:-.}"
+    find "$root" -name ".git" -type d -prune | while read gitdir; do
+        local repo="${gitdir%/.git}"
+        if ! git -C "$repo" diff --quiet 2>/dev/null || \
+           ! git -C "$repo" diff --cached --quiet 2>/dev/null || \
+           [[ -n $(git -C "$repo" ls-files --others --exclude-standard 2>/dev/null) ]]; then
+            echo "$repo"
+        fi
+    done
+}
+
+# Claude Code launcher: resume or create a named session
+# Usage:
+#   cc              → auto-name from dir+branch, resume or create
+#   cc enter        → same as above
+#   cc -n <name>    → resume or create session with given name
+#   cc <other args> → pass through to claude
+cc() {
+    local session_name
+
+    if [[ $# -eq 0 ]] || [[ "$1" == "enter" ]]; then
+        local dir branch
+        dir=$(basename "$PWD")
+        branch=$(git branch --show-current 2>/dev/null)
+        session_name="${dir}${branch:+-${branch}}"
+    elif [[ "$1" == "-n" ]] && [[ -n "$2" ]]; then
+        session_name="$2"
+    else
+        command claude "$@"
+        return
+    fi
+
+    local session_id
+    session_id=$(python3 - "$session_name" <<'EOF'
+import json, pathlib, sys
+name = sys.argv[1]
+p = pathlib.Path.home() / '.claude/projects'
+matches = []
+for f in p.glob('**/*.jsonl'):
+    try:
+        for line in f.read_text().splitlines():
+            d = json.loads(line)
+            if d.get('type') == 'custom-title' and d.get('customTitle') == name:
+                matches.append((f.stat().st_mtime, d['sessionId']))
+                break
+    except:
+        pass
+if matches:
+    matches.sort(reverse=True)
+    print(matches[0][1])
+EOF
+    )
+
+    if [[ -n "$session_id" ]]; then
+        echo "Resuming: $session_name"
+        command claude --resume "$session_id"
+    else
+        echo "New session: $session_name"
+        command claude -n "$session_name"
+    fi
 }
 
