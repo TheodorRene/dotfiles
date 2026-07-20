@@ -48,10 +48,37 @@ These live only on this disk — back each one up:
 | Wallpapers | `~/wallpapers/` | swaylock/swaybg need them |
 | Nerd Fonts | `~/.local/share/fonts/` | or re-download later (§3.5) |
 | Firefox profile | `~/snap/firefox/common/.mozilla/firefox/` | **snap path** while Firefox is a snap; restore into `~/.mozilla/firefox/` after (§3.6) |
-| impero local files | `~/dev/impero/` | `.env`, `docker-compose.override.yml`, `CLAUDE.md`, `.claude/settings.local.json`, `.mcp.json`, `backend/dev_data/` — all gitignored, so in no remote |
+| impero local files | `~/dev/impero/` | gitignored, in no remote — see the `impero-local.tar.gz` command below |
 
-If your dev Postgres holds state you care about, dump it — Docker volumes die with
-the disk:
+### What was actually backed up (reference)
+
+The USB auto-mounts root-owned (FAT32), so make it writable first — this is a
+mount-option change only, it does **not** reformat or touch existing files:
+
+```bash
+sudo mount -o remount,uid=$(id -u),gid=$(id -g) /mnt/usb   # if remount is ignored: sudo umount, then sudo mount -o uid=$(id -u),gid=$(id -g) /dev/sdX1 /mnt/usb
+```
+
+**impero local config + secrets** → `impero-local.tar.gz`. Includes env/MCP/Claude
+config and, importantly, the local dev **TLS certs + private keys** under
+`backend/dev_data/` (SMTP `noreply` + `ca`, nginx cert/key) which are gitignored:
+
+```bash
+tar czf /mnt/usb/impero-local.tar.gz -C ~/dev/impero --ignore-failed-read \
+  .env .mcp.json CLAUDE.md docker-compose.override.yml \
+  .claude/settings.local.json backend/.claude/settings.local.json \
+  frontend/.claude/settings.local.json \
+  backend/dev_data tools/impero/.dev_session_cookies
+```
+
+**Everything except `~/dev`** → `trc-home.tar.gz.part-*` (split tar; see §1.4).
+
+Not backed up (regenerable / re-clonable): `~/dev` build artifacts, the nested
+`dotnet/` and `product-wiki/` git repos (re-clone them), playwright profiles,
+generated frontend assets.
+
+If your dev Postgres holds state you care about, also dump it — Docker volumes die
+with the disk:
 
 ```bash
 docker compose exec -T <db-service> pg_dumpall -U postgres > ~/impero-db-backup.sql
@@ -393,12 +420,23 @@ Copy back what you saved in §1.3:
 | Wallpapers | `~/wallpapers/` |
 | Nerd Fonts | `~/.local/share/fonts/` → `fc-cache -fv` |
 | Firefox profile | `~/.mozilla/firefox/` (fix `profiles.ini` paths if it opens a blank profile — check `about:profiles`) |
-| impero local files | back into `~/dev/impero/` after cloning |
+| impero local files | after cloning impero: `tar xzf /mnt/usb/impero-local.tar.gz -C ~/dev/impero` |
 | Postgres dump | `docker compose exec -T <db> psql -U postgres < ~/impero-db-backup.sql` |
 
-Then re-add any extra apt repos from §1.4, and set up impero hosts:
+For the bulk archive (§1.4), extract with:
 
 ```bash
+cat /mnt/usb/trc-home.tar.gz.part-* | tar xzf - -C ~   # everything-but-dev
+```
+
+Then clone impero and its nested repos, re-add extra apt repos (§1.5), and set up
+hosts:
+
+```bash
+git clone git@github.com:impero-com/impero.git ~/dev/impero
+# nested, gitignored repos:
+git clone git@github.com:impero-com/impero_legacy.git       ~/dev/impero/dotnet
+git clone git@github.com:impero-com/Impero-product-wiki.git ~/dev/impero/product-wiki
 cd ~/dev/impero && just add_hosts   # writes the IMPERO-HOSTS block to /etc/hosts
 ```
 
