@@ -1,0 +1,17 @@
+profile mirrored {
+    output DP-1 enable mode preferred position 0,0
+    output eDP-1 enable mode preferred position 0,0
+    exec sh -c 'for n in 1 2 3 4 5 6 7 8 9 10; do swaymsg "workspace number $n, move workspace to output eDP-1"; done; swaymsg "focus output eDP-1"'
+}
+
+profile docked {
+    output DP-1 enable mode preferred position 0,0
+    output eDP-1 disable
+    exec sh -c 'for n in 1 2 3 4 5 6 7 8 9 10; do swaymsg "workspace number $n, move workspace to output DP-1"; done; swaymsg "focus output DP-1"'
+}
+
+profile undocked {
+    output eDP-1 enable mode preferred position 0,0
+    output DP-1 disable
+    exec sh -c 'for n in 1 2 3 4 5 6 7 8 9 10; do swaymsg "workspace number $n, move workspace to output eDP-1"; done; swaymsg "focus output eDP-1"'
+}
