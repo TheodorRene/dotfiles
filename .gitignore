@@ -1,1 +1,7 @@
 .DS_Store
+
+# Editor/tool backup artifacts
+*.bak
+
+# Per-user Claude Code state (local permissions etc. — not shared)
+.claude/settings.local.json
