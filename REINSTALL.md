@@ -57,12 +57,47 @@ the disk:
 docker compose exec -T <db-service> pg_dumpall -U postgres > ~/impero-db-backup.sql
 ```
 
-## 1.4 Note extra apt repos to re-add later
+## 1.4 Optional: bulk backup of everything except ~/dev
+
+If you want more than the targeted list in §1.3, back up all of `~` **except
+`~/dev`** — dev is ~90% of the disk and is either pushed to remotes or
+regenerable (node_modules, Rust `target/`, Docker data). That's ~24 GB, or ~11 GB
+if you also skip regenerable caches (`.cache`, `.npm`, `.nvm`, `.cargo`,
+`.local/share/{bob,nvim}`).
+
+**FAT32 gotchas** (default for most USB sticks): it can't store symlinks or Unix
+permissions, and caps files at 4 GB — so don't naive-`cp` (it breaks `~/.config`
+symlinks into dotfiles and `~/.ssh` perms). Two working options:
+
+**A — split tar** (keeps perms/symlinks inside the archive; parts stay <4 GB):
+
+```bash
+# FAT32 sticks often auto-mount root-owned; make it writable first:
+sudo mount -o remount,uid=$(id -u),gid=$(id -g) /mnt/usb
+
+tar czf - -C ~ --exclude=./dev \
+  --exclude=./.cache --exclude=./.npm --exclude=./.nvm --exclude=./.cargo \
+  --exclude=./.local/share/bob --exclude=./.local/share/nvim . \
+  | split -b 3900M -d - /mnt/usb/home-backup.tar.gz.part-
+
+# restore later:
+cat /mnt/usb/home-backup.tar.gz.part-* | tar xzf - -C <dest>
+```
+
+**B — reformat the stick to ext4** (no limits, preserves everything, browsable):
+
+```bash
+sudo umount /mnt/usb && sudo mkfs.ext4 -L backup /dev/sdX1
+sudo mount /dev/sdX1 /mnt/usb && sudo chown $USER:$USER /mnt/usb
+rsync -aH --info=progress2 --exclude=dev ~/ /mnt/usb/home/
+```
+
+## 1.5 Note extra apt repos to re-add later
 
 Beyond what §3.5 installs, this machine also had: **signal-desktop, dbeaver-ce,
 solaar, mozillateam PPA**. Jot down any others from `ls /etc/apt/sources.list.d/`.
 
-## 1.5 Dual-boot / BitLocker
+## 1.6 Dual-boot / BitLocker
 
 Reinstalling GRUB touches the shared EFI partition. If Windows has **BitLocker**
 enabled, have the recovery key ready (it can prompt on next Windows boot).
