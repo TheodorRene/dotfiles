@@ -171,12 +171,16 @@ sudo mkswap /swap.img && sudo swapon /swap.img   # fstab entry already exists
 > CPU stays at max responsiveness via power-profiles-daemon
 > (`powerprofilesctl set performance`) — no config needed, just verify.
 
-## 3.4 Shell + Node
+## 3.4 Node (nvm)
+
+The shell needs no framework — `.zshrc` (symlinked in §3.2) is self-contained:
+its own `compinit`, a custom `_build_prompt` precmd, and it sources
+`~/dotfiles/zsh/*.zsh` directly. `fzf`, `direnv`, and `autojump` (installed in
+§3.5) wire themselves in on first prompt. **No oh-my-zsh.**
+
+Install nvm + Node:
 
 ```bash
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-ln -sf ~/dotfiles/theodorc.zsh-theme ~/.oh-my-zsh/custom/themes/theodorc.zsh-theme
-
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
 # restart shell, then:
 nvm install --lts && nvm use --lts
@@ -276,7 +280,6 @@ sudo apt install -f  # fix any dependency issues
 ### Snap
 
 ```bash
-sudo snap install ghostty --classic
 sudo snap install chromium
 ```
 
