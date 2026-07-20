@@ -130,25 +130,61 @@ Reinstalling GRUB touches the shared EFI partition. If Windows has **BitLocker**
 enabled, have the recovery key ready (it can prompt on next Windows boot).
 *Currently not enabled here — the Windows partitions are plain NTFS.*
 
+## 1.7 Verify backups BEFORE wiping
+
+The source disk is about to be destroyed — confirm the archives are readable and
+actually contain the irreplaceable files first:
+
+```bash
+# integrity: do the archives list cleanly end-to-end?
+cat /mnt/usb/trc-home.tar.gz.part-* | tar tz >/dev/null && echo "bulk OK"
+tar tzf /mnt/usb/impero-local.tar.gz >/dev/null && echo "impero-local OK"
+
+# spot-check the things you can't regenerate:
+cat /mnt/usb/trc-home.tar.gz.part-* | tar tz \
+  | grep -E '\.ssh/|\.gnupg/|logins\.json|key4\.db|wallpapers/' | head
+tar tzf /mnt/usb/impero-local.tar.gz | grep -E '\.env|dev_data'
+
+# confirm every split part copied fully (a truncated part = dead archive):
+du -ch /mnt/usb/trc-home.tar.gz.part-*
+```
+
+Only wipe once all three checks pass.
+
 ---
 
 # Part 2 — During (the installer)
 
-Boot from the USB → **Try Ubuntu** → launch installer → **Manual partitioning**.
+Boot from the USB → **Try Ubuntu** → launch installer. Prefer guided encryption
+if it's offered; otherwise partition manually (both below).
 
 ## 2.1 Partitioning (encrypted dual boot)
 
-| Partition | Type | Mount | Action |
-|---|---|---|---|
-| Windows EFI | FAT32 | `/boot/efi` | Keep — do NOT format |
-| Windows C: | NTFS | — | Leave untouched |
-| Free space | ext4 + LUKS | `/` | Create new, enable encryption |
+**Easiest — guided:** if the installer offers "Install alongside Windows" with an
+**"Encrypt the new installation"** checkbox (or Advanced → LVM + encryption), use
+it. It builds the correct EFI + unencrypted `/boot` + LUKS layout automatically.
+Only go manual if guided won't coexist with the existing Windows/EFI setup.
 
-Select free space → Add → type **Physical Volume for Encryption** → set
-passphrase → format inside as ext4 → mount as `/`. GRUB installs to the existing
-EFI partition automatically.
+**Manual layout** — root lives in a LUKS2 container, but **`/boot` must be a
+separate *unencrypted* partition**: LUKS2 uses the argon2id KDF, which GRUB can't
+unlock, so the kernel + initramfs have to sit outside the container (the
+initramfs then prompts for the passphrase to unlock `/`).
+
+| Partition | Type | Mount | Encrypted | Action |
+|---|---|---|---|---|
+| Windows EFI | FAT32 | `/boot/efi` | no | Keep — do NOT format |
+| Windows C: etc. | NTFS | — | no | Leave untouched |
+| New, ~2 GB | ext4 | `/boot` | no | Create |
+| Remaining free space | LUKS → ext4 | `/` | yes | Create, enable encryption |
+
+For the root: select the free space → Add → type **Physical Volume for
+Encryption** → set passphrase → format the volume inside as ext4 → mount `/`.
+Mount the existing Windows EFI at `/boot/efi` (do **not** format it) and the new
+ext4 partition at `/boot`. GRUB installs to the shared EFI partition.
 
 Encryption notes:
+- `/boot` unencrypted is expected and safe — it holds only the kernel/initramfs,
+  no user data.
 - The swapfile and zram live inside the LUKS root — nothing extra to encrypt.
 - TRIM through LUKS: after boot, check `lsblk --discard` shows nonzero DISC-GRAN
   for the crypt device; if not, add `discard` to its line in `/etc/crypttab`
