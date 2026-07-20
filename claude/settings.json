@@ -1,26 +1,6 @@
 {
-  "model": "claude-opus-4-8[1m]",
-  "statusLine": {
-    "type": "command",
-    "command": "bash /home/trc/.claude/statusline-command.sh"
-  },
-  "enabledPlugins": {
-    "typescript-lsp@claude-plugins-official": true,
-    "rust-analyzer-lsp@claude-plugins-official": true
-  },
-  "effortLevel": "high",
-  "theme": "dark",
+  "model": "opus[1m]",
   "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "~/dotfiles/scripts/claude-attention.sh working"
-          }
-        ]
-      }
-    ],
     "Notification": [
       {
         "hooks": [
@@ -41,5 +21,24 @@
         ]
       }
     ]
-  }
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/trc/.claude/statusline-command.sh"
+  },
+  "enabledPlugins": {
+    "typescript-lsp@claude-plugins-official": true,
+    "rust-analyzer-lsp@claude-plugins-official": true,
+    "impero-ai-skills@impero-plugins": true
+  },
+  "extraKnownMarketplaces": {
+    "impero-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "impero-com/impero-ai-skills"
+      }
+    }
+  },
+  "effortLevel": "high",
+  "theme": "dark"
 }
