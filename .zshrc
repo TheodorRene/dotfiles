@@ -32,7 +32,7 @@ __post_init() {
 }
 add-zsh-hook precmd __post_init
 
-. /usr/share/autojump/autojump.sh
+[ -f /usr/share/autojump/autojump.sh ] && . /usr/share/autojump/autojump.sh
 
 _build_prompt() {
     local nix=''
