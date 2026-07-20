@@ -17,7 +17,8 @@
 
 ## Terminal & Shell
 - **Terminal**: kitty (config ported from Alacritty); Alacritty also still configured
-- **Shell**: zsh (via oh-my-zsh)
+- **Shell**: zsh (self-contained config, no framework; `.zshrc` sources
+  `~/dotfiles/zsh/*.zsh` and builds its own prompt via a `precmd` hook)
 
 ## Editor
 - **Primary**: Neovim (`$EDITOR` and `$VISUAL` both set to `nvim`)
@@ -25,7 +26,7 @@
 
 ## Runtimes & Package Managers
 - **System packages**: apt
-- **Node.js**: managed via nvm (lazy-loaded in zsh)
+- **Node.js**: managed via nvm (sourced eagerly in `.zshrc` from `~/.nvm`)
 - **npm globals**: installed to `~/.npm-packages`
 
 ## Wayland-specific env
