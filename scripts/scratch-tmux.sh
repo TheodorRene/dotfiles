@@ -9,5 +9,5 @@ if swaymsg -t get_tree \
    >/dev/null 2>&1; then
   swaymsg '[app_id="scratch-tmux"] scratchpad show'
 else
-  exec alacritty --class scratch-tmux -e tmux new-session -A -s scratch
+  exec alacritty --class scratch-tmux -e tmux new-session -A -s main
 fi
