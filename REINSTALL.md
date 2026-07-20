@@ -47,7 +47,7 @@ These live only on this disk — back each one up:
 | Claude Code state | `~/.claude/` | memory, projects, plans — not in dotfiles |
 | Wallpapers | `~/wallpapers/` | swaylock/swaybg need them |
 | Nerd Fonts | `~/.local/share/fonts/` | or re-download later (§3.5) |
-| Firefox profile | `~/snap/firefox/common/.mozilla/firefox/` | **snap path** while Firefox is a snap; restore into `~/.mozilla/firefox/` after (§3.6) |
+| Firefox profile | `~/snap/firefox/common/.mozilla/firefox/` | **Close Firefox first** (sqlite DBs must be quiescent), else `places`/`cookies` may need recovery. **snap path** while Firefox is a snap. Includes saved passwords (`logins.json` + `key4.db`). Restore into `~/.mozilla/firefox/` (§3.6). |
 | impero local files | `~/dev/impero/` | gitignored, in no remote — see the `impero-local.tar.gz` command below |
 
 ### What was actually backed up (reference)
@@ -419,7 +419,7 @@ Copy back what you saved in §1.3:
 | Claude Code state | `~/.claude/` |
 | Wallpapers | `~/wallpapers/` |
 | Nerd Fonts | `~/.local/share/fonts/` → `fc-cache -fv` |
-| Firefox profile | `~/.mozilla/firefox/` (fix `profiles.ini` paths if it opens a blank profile — check `about:profiles`) |
+| Firefox profile | see the dedicated steps below |
 | impero local files | after cloning impero: `tar xzf /mnt/usb/impero-local.tar.gz -C ~/dev/impero` |
 | Postgres dump | `docker compose exec -T <db> psql -U postgres < ~/impero-db-backup.sql` |
 
@@ -428,6 +428,27 @@ For the bulk archive (§1.4), extract with:
 ```bash
 cat /mnt/usb/trc-home.tar.gz.part-* | tar xzf - -C ~   # everything-but-dev
 ```
+
+### Firefox profile (snap backup → apt Firefox)
+
+The backup holds the profile under the **snap** path
+`snap/firefox/common/.mozilla/firefox/`; native apt Firefox reads
+`~/.mozilla/firefox/`. After installing apt Firefox (§3.5) and with Firefox
+**closed**:
+
+```bash
+# The bulk archive (extracted above) put the profile here:
+SRC=~/snap/firefox/common/.mozilla/firefox
+mkdir -p ~/.mozilla
+cp -a "$SRC"/. ~/.mozilla/firefox/        # copies all profiles + profiles.ini + installs.ini
+```
+
+The main profile is `p0t8fdxe.default-release-1` (has `logins.json` = saved
+passwords, decrypted by `key4.db` in the same dir — keep them together). If
+Firefox opens a blank profile, go to `about:profiles` and "Set as default
+profile" on that folder, or edit `~/.mozilla/firefox/profiles.ini` so the
+`Default=` path points at it. Saved passwords survive only if `key4.db` and
+`logins.json` are both restored.
 
 Then clone impero and its nested repos, re-add extra apt repos (§1.5), and set up
 hosts:
