@@ -1,11 +1,8 @@
 MY_CUSTOM_ZSH=$HOME/dotfiles/zsh
-DISABLE_AUTO_UPDATE="true"
-DISABLE_MAGIC_FUNCTIONS="true"
-DISABLE_COMPFIX="true"
 bindkey -e
 
 autoload -Uz compinit
-if [ "$(date +'%j')" != "$(stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)" ]; then
+if [ "$(date +'%j')" != "$(date +'%j' -r ~/.zcompdump 2>/dev/null)" ]; then
     compinit
 else
     compinit -C
@@ -28,20 +25,6 @@ __post_init() {
 
     if command -v direnv >/dev/null 2>&1; then
         eval "$(direnv hook zsh)"
-    fi
-
-    [ -f "/Users/thca/.deno/env" ] && . "/Users/thca/.deno/env"
-
-    if [ -f "/Users/thca/.ghcup/env" ]; then
-        . "/Users/thca/.ghcup/env"
-    fi
-
-    if [ -f '/Users/thca/dev/google-cloud-sdk/path.zsh.inc' ]; then
-        . '/Users/thca/dev/google-cloud-sdk/path.zsh.inc'
-    fi
-
-    if [ -f '/Users/thca/dev/google-cloud-sdk/completion.zsh.inc' ]; then
-        . '/Users/thca/dev/google-cloud-sdk/completion.zsh.inc'
     fi
 
     add-zsh-hook -d precmd __post_init
@@ -70,23 +53,6 @@ _build_prompt() {
 }
 add-zsh-hook precmd _build_prompt
 
-
-# github copilot cli x
-# eval "$(github-copilot-cli alias -- "$0")"
-# See https://github.com/robbyrussell/oh-my-zsh/wiki/Themes
-ZSH_THEME="theodorc"
-
-
-
-plugins=(
-    extract
-    fzf
-    git
-    autojump
-    sudo
-)
-#source $ZSH/oh-my-zsh.sh
-
 # Add completion to custom pdf command
 zstyle ':completion:*:*:pdf:*' file-patterns '*.pdf'
 zstyle ':completion:*:*:(nvim|vim):*' ignored-patterns '*.pdf'
@@ -96,6 +62,4 @@ zstyle ':completion:*:*:(nvim|vim):*' ignored-patterns '*.pdf'
 export LESS="-RFX"
 
 # bun completions
-[ -s "/home/theodorc/.bun/_bun" ] && source "/home/theodorc/.bun/_bun"
-
-#defaults write -g NSWindowShouldDragOnGesture YES
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"

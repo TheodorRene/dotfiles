@@ -49,9 +49,6 @@ symlink_path("$dotfiles/claude/statusline-command.sh", "$home/.claude/statusline
 # Neovim v2 config.
 symlink_path("$dotfiles/nvim_v2", "$home/.config/nvim");
 
-# zsh theme
-#symlink_path("$dotfiles/theodorc.zsh-theme", "$home/.oh-my-zsh/custom/themes/theodorc.zsh-theme");
-
 # Custom for visual code
 ## this crashes if visual code isnt installed
 #symlink_path("$dotfiles/settings.json", "$home/.config/Code/User/settings.json");
