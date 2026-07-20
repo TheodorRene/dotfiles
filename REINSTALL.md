@@ -105,10 +105,10 @@ sudo mount -o remount,uid=$(id -u),gid=$(id -g) /mnt/usb
 tar czf - -C ~ --exclude=./dev \
   --exclude=./.cache --exclude=./.npm --exclude=./.nvm --exclude=./.cargo \
   --exclude=./.local/share/bob --exclude=./.local/share/nvim . \
-  | split -b 3900M -d - /mnt/usb/home-backup.tar.gz.part-
+  | split -b 3900M -d - /mnt/usb/trc-home.tar.gz.part-
 
 # restore later:
-cat /mnt/usb/home-backup.tar.gz.part-* | tar xzf - -C <dest>
+cat /mnt/usb/trc-home.tar.gz.part-* | tar xzf - -C <dest>
 ```
 
 **B — reformat the stick to ext4** (no limits, preserves everything, browsable):
@@ -198,7 +198,9 @@ chsh -s $(which zsh)
 ## 3.2 Dotfiles
 
 ```bash
-git clone git@github.com:<handle>/dotfiles.git ~/dotfiles
+# HTTPS so it works before SSH keys are restored (§3.6); switch the remote to
+# SSH later with: git -C ~/dotfiles remote set-url origin git@github.com:TheodorRene/dotfiles.git
+git clone https://github.com/TheodorRene/dotfiles.git ~/dotfiles
 cd ~/dotfiles && perl symlinkifier.pl
 ```
 
@@ -255,8 +257,8 @@ nvm install --lts && nvm use --lts
 ```bash
 sudo apt install -y \
   sway swaybg swaylock swayidle \
-  waybar wofi kanshi \
-  alacritty \
+  waybar wofi kanshi mako \
+  alacritty kitty \
   xdg-desktop-portal xdg-desktop-portal-gtk xdg-desktop-portal-wlr \
   wl-clipboard wl-mirror wdisplays wev \
   grim slurp \
@@ -290,7 +292,7 @@ sudo apt install -y \
 sudo apt install -y \
   fzf ripgrep eza bat \
   direnv htop tmux mosh \
-  just mpv \
+  just mpv autojump \
   network-manager-gnome
 ```
 
@@ -303,6 +305,7 @@ sudo apt install -y gh vim
 ### apt — Docker (needs repo first)
 
 ```bash
+sudo install -m 0755 -d /etc/apt/keyrings   # may not exist on fresh Ubuntu
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
   | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
@@ -361,9 +364,10 @@ npm install -g \
 ### Neovim via bob
 
 ```bash
-# Install bob (neovim version manager)
-cargo install bob-nvim  # needs rust, OR download binary from releases
-# OR: download prebuilt bob binary to ~/.local/bin/bob
+# Install bob (neovim version manager). rust/cargo isn't installed system-wide
+# (it comes from the Nix impero shell), so grab the prebuilt binary:
+#   download from github.com/MordechaiHadad/bob/releases -> ~/.local/bin/bob (chmod +x)
+# or, only if you already have cargo on PATH: cargo install bob-nvim
 
 bob install v0.12.2
 bob use v0.12.2
@@ -415,7 +419,7 @@ Copy back what you saved in §1.3:
 | What | Restore to |
 |---|---|
 | SSH keys | `~/.ssh/` (`chmod 600` the private keys) |
-| GPG keys | `~/.gnupg/` |
+| GPG keys | `~/.gnupg/` then `chmod 700 ~/.gnupg && chmod 600 ~/.gnupg/*` |
 | Claude Code state | `~/.claude/` |
 | Wallpapers | `~/wallpapers/` |
 | Nerd Fonts | `~/.local/share/fonts/` → `fc-cache -fv` |
@@ -439,7 +443,7 @@ The backup holds the profile under the **snap** path
 ```bash
 # The bulk archive (extracted above) put the profile here:
 SRC=~/snap/firefox/common/.mozilla/firefox
-mkdir -p ~/.mozilla
+mkdir -p ~/.mozilla/firefox
 cp -a "$SRC"/. ~/.mozilla/firefox/        # copies all profiles + profiles.ini + installs.ini
 ```
 
