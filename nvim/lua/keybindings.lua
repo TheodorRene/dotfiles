@@ -124,7 +124,7 @@ nmap('<C-g>p', '<CMD> Git pull  <CR>', "GIT: Pull")
 nmap('<C-g>do', '<CMD> DiffviewOpen <CR>', "GIT: Show diff")
 nmap('<C-g>dq', '<CMD> DiffviewClose <CR>', "GIT: Close diff")
 nmap('<C-g>g', ':Git ', "GIT")
-nmap('<C-g>dd', '<CMD> DiffviewOpen develop...HEAD <CR>', "GIT: Diff develop")
+nmap('<C-g>dd', '<CMD> DiffviewOpen next...HEAD <CR>', "GIT: Diff develop")
 nmap('<A-g>', '<CMD> Neogit kind=tab<CR>', "Neogit")
 
 --
@@ -219,7 +219,7 @@ nmap('<C-f>', ':lua TRC_LOAD_FZF(); FzfLua.live_grep() <CR>', "Live grep")
 -- nmap('<C-t>', '<CMD> Telescope lsp_dynamic_workspace_symbols <CR>')
 nmap('<C-t>', ':lua TRC_LOAD_FZF(); FzfLua.lsp_live_workspace_symbols() <CR>', "Search workspace symbols")
 
--- Yank whole file 
+-- Yank whole file
 nmap('yf', 'ggVGy<C-o>', "Yank whole file")
 
 -- Function keys
