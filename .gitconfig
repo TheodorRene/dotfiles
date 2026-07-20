@@ -44,11 +44,13 @@
     rbd = rebase develop
     recentb = "!r() { count=$1; base=$2; if [ -z \"$base\" ]; then for b in origin/next origin/develop; do if git rev-parse -q --verify \"$b\" >/dev/null; then base=$b; break; fi; done; fi; base=${base:-$(git symbolic-ref -q --short refs/remotes/origin/HEAD)}; base=${base:-origin/main}; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"$base..${branch}\" 2>/dev/null); behind=$(git rev-list --count \"${branch}..$base\" 2>/dev/null); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
     resetremote = !git fetch origin && git reset --hard @{u}
+    review = !git fetch origin && git reset --soft "$(git merge-base origin/next HEAD)"
+    unreview = !git reset --hard @{u}
     rid = rebase -i develop --autosquash
     st = status
     staash = stash --all
     suntracked = !git ls-files --others --exclude-standard | xargs bat
-    sync = pull origin develop
+    sync = pull origin next
     unstage = restore --staged
     view = !gh repo view --web
     wt = worktree
@@ -101,3 +103,6 @@
 [merge "conflictStyle.custom"]
 	ours = current
 	theirs = incoming
+[maintenance]
+	repo = /home/trc/dev/impero/product-wiki
+	repo = /home/trc/dev/impero
