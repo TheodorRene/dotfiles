@@ -52,6 +52,9 @@ exec blueman-applet
 # Notification daemon (themed; reload live with: makoctl reload)
 exec mako
 
+# Idle management: auto-lock at 5m, blank displays at 10m, lock before sleep
+exec_always "pkill swayidle; ~/dotfiles/scripts/swayidle-lock.sh"
+
 bindsym $mod+x exec voxtype record toggle
 # Change wallpaper
 bindsym $mod+c exec swaybg -i $(find ~/wallpapers/ -type f | shuf -n1) -m fill
