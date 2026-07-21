@@ -32,3 +32,24 @@ vim, vimdoc, markdown, query).
 npm install -g typescript-language-server typescript  # ts_ls
 npm install -g vscode-langservers-extracted            # eslint, html, json, css
 ```
+
+### fff.nvim binary
+
+`fff.nvim` (the fast file picker) needs a native Rust binary. A `PackChanged`
+autocmd (`lua/config/pack.lua`) calls `require('fff.download').download_or_build_binary()`
+on install/update, which first tries to fetch a prebuilt binary matching the
+plugin's pinned rev and **falls back to `cargo build`** if the download fails.
+
+**Symptom if missing:** opening the picker errors with something like
+`fff_nvim` / the Rust library not found, and the picker never appears.
+
+Fix — run inside Neovim:
+
+```vim
+:lua require('fff.download').download_or_build_binary()
+```
+
+If that falls through to a build, it needs `cargo` on `PATH`. Rust isn't
+installed system-wide here (it comes from the Nix impero shell), so either
+launch `nvim` once from inside `nix develop` (in `~/dev/impero`) so `cargo` is
+available, or install rust via `rustup`.

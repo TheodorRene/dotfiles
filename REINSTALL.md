@@ -352,11 +352,15 @@ sudo apt install -y \
 
 ```bash
 sudo apt install -y \
-  fzf ripgrep eza bat \
+  fzf ripgrep eza bat bfs \
   direnv htop tmux mosh \
   just mpv autojump \
   network-manager-gnome
 ```
+
+> `bfs` (breadth-first `find`) backs the `fd` shell function in
+> `zsh/functions.zsh` (`fd(){ bfs -name "*$1*" }`) — without it that function
+> silently errors.
 
 ### apt — Dev
 
@@ -421,6 +425,12 @@ npm install -g \
   tree-sitter-cli
 ```
 
+> `tree-sitter-cli` isn't optional: nvim-treesitter v1 needs it to **compile**
+> parser grammars. Without it, `ensure_installed`/`:TSUpdate` silently no-op (no
+> `.so` files), so **LSP hover (`K`) renders markdown but leaves fenced code
+> blocks unstyled** — the language injections (e.g. typescript-in-markdown) have
+> no compiled parser. See `nvim_v2/SETUP.md`.
+
 > `bun` installs itself separately: `curl -fsSL https://bun.sh/install | bash`
 
 ### Neovim via bob
@@ -437,6 +447,13 @@ bob use stable
 ```
 
 > `bob` puts the nvim binary at `~/.local/share/bob/nvim-bin/nvim` — already in PATH via `zsh/path.zsh`.
+
+> **First-boot Neovim gotchas — see `nvim_v2/SETUP.md`.** Two things don't work
+> until an extra step runs: (1) treesitter parsers need `tree-sitter-cli` (above)
+> to compile, or markdown hover code blocks stay unstyled; (2) `fff.nvim`'s Rust
+> binary must download/build — if the picker errors, run
+> `:lua require('fff.download').download_or_build_binary()` (the build fallback
+> needs `cargo`, so launch nvim from the Nix impero shell if the download fails).
 
 ### lazydocker
 
