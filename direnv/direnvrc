@@ -1,1 +1,7 @@
-source "$HOME/.nix-profile/share/nix-direnv/direnvrc"
+# Load nix-direnv (caches `use flake` devshells so they load warm). Guarded so a
+# missing install — e.g. before `nix profile install nixpkgs#nix-direnv` on a
+# fresh machine, or if the profile gets reset — degrades to direnv's builtin
+# use_flake instead of erroring on every cd.
+_nix_direnv="$HOME/.nix-profile/share/nix-direnv/direnvrc"
+[ -f "$_nix_direnv" ] && source "$_nix_direnv"
+unset _nix_direnv
