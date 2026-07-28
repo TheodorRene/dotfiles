@@ -12,6 +12,24 @@ end, { desc = 'Copy absolute file path to clipboard' })
 
 cmd('Reminder', ':e ~/dev/reminder_for_tomorrow.md', { desc = 'Open reminder file' })
 
+-- Open this week's Impero note; seeds from last week's note if missing.
+-- weekly-note.rb prints the note path on stdout (diagnostics go to stderr).
+cmd('Week', function()
+    local script = vim.fn.expand('~/dotfiles/scripts/weekly-note.rb')
+    local res = vim.system({ 'ruby', script }, { text = true }):wait()
+    if res.code ~= 0 then
+        local msg = vim.trim(res.stderr or '')
+        vim.notify('Week: ' .. (msg ~= '' and msg or 'failed to resolve note'), vim.log.levels.ERROR)
+        return
+    end
+    local path = vim.trim(res.stdout or '')
+    if path == '' then
+        vim.notify('Week: script returned no path', vim.log.levels.ERROR)
+        return
+    end
+    vim.cmd.tabedit(vim.fn.fnameescape(path))
+end, { desc = "Open this week's Impero note (weekly-note.rb)" })
+
 cmd('Dotfiles', function()
     require('fzf-lua').files({ cwd = '~/dotfiles' })
 end, { desc = 'FZF: browse dotfiles' })
