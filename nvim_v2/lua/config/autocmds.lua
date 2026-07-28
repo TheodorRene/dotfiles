@@ -73,13 +73,19 @@ autocmd('FileType', {
 })
 
 -- ── Remove trailing whitespace on save ────────────────────────────────────────
+-- Skipped for filetypes where trailing whitespace is meaningful: in Markdown
+-- two trailing spaces are a hard line break, so stripping them silently
+-- rewrites the document.
+local no_trim = { markdown = true }
+
 autocmd('BufWritePre', {
     group    = augroup('trim_whitespace', { clear = true }),
     pattern  = '*',
-    callback = function()
-        -- Preserve cursor position
+    callback = function(ev)
+        if no_trim[vim.bo[ev.buf].filetype] then return end
+        -- Preserve cursor position; keeppatterns leaves the search register alone
         local pos = vim.api.nvim_win_get_cursor(0)
-        vim.cmd([[%s/\s\+$//e]])
+        vim.cmd([[keeppatterns %s/\s\+$//e]])
         pcall(vim.api.nvim_win_set_cursor, 0, pos)
     end,
     desc = 'Strip trailing whitespace on save',

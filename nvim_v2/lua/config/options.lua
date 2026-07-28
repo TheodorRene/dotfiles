@@ -55,6 +55,13 @@ opt.statusline = table.concat({
 opt.pumborder   = 'rounded'
 opt.pummaxwidth = 40
 
+-- ── Float borders ─────────────────────────────────────────────────────────────
+-- 0.12: one global default for every float created without an explicit border.
+-- Covers LSP hover/signature, diagnostic floats and blink.cmp's windows (blink
+-- treats its own `border = nil` as "use winborder"), so none of those need to
+-- pass border = 'rounded' individually.
+opt.winborder = 'rounded'
+
 -- ── Splits ───────────────────────────────────────────────────────────────────
 opt.splitbelow = true
 opt.splitright = true
@@ -99,9 +106,3 @@ opt.sessionoptions:append('localoptions')
 -- SQL completion (bundled with vim, set sensible defaults)
 g.sql_type_default        = 'postgresql'
 g.omni_sql_default_compl_type = 'syntax'
-
--- DB UI (vim-dadbod)
-g.db                          = vim.env.DB_VAL_LOCAL or ''
-g.dbs                         = { val = vim.env.DB_VAL or '', ['val-local'] = vim.env.DB_VAL_LOCAL or '' }
-g.db_ui_use_nerd_fonts        = 1
-g.db_ui_auto_execute_table_helpers = 1

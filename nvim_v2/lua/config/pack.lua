@@ -387,14 +387,14 @@ if ok_blink then
         appearance = {
             nerd_font_variant = 'mono',
         },
+        -- Window borders are left unset: blink treats `border = nil` as "use
+        -- vim.o.winborder" on 0.11+, which options.lua sets to 'rounded'.
         completion = {
             documentation = {
                 auto_show       = true,
                 auto_show_delay_ms = 200,
-                window = { border = 'rounded' },
             },
             menu = {
-                border = 'rounded',
                 draw = {
                     -- Show icon + kind label + label + source name
                     columns = {
@@ -411,7 +411,7 @@ if ok_blink then
             default = { 'lsp', 'path', 'buffer' },
         },
         fuzzy = { implementation = 'prefer_rust_with_warning' },
-        signature = { enabled = true, window = { border = 'rounded' } },
+        signature = { enabled = true },
     })
 end
 

@@ -41,7 +41,7 @@ end, { nargs = '*', desc = 'Change directory' })
 
 -- ── LSP helpers ───────────────────────────────────────────────────────────────
 cmd('Hover', function()
-    vim.lsp.buf.hover({ border = 'rounded' })
+    vim.lsp.buf.hover()
 end, { desc = 'LSP hover' })
 
 cmd('Rename', function()
@@ -53,6 +53,52 @@ cmd('CodeAction', function()
 end, { desc = 'LSP code action' })
 
 cmd('LspInfo', ':checkhealth vim.lsp', { desc = 'LSP healthcheck' })
+
+-- :LspRestart is NOT a Neovim built-in (it came from nvim-lspconfig), so the
+-- <C-x>r keymap in lsp.lua needs it defined here.
+--
+-- vim.lsp.enable() autostarts servers from a FileType autocmd in the
+-- nvim.lsp.enable augroup, so firing that group again is what re-attaches —
+-- no :edit and no reload, which means unsaved changes are safe.
+cmd('LspRestart', function()
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    -- Only touch clients that vim.lsp.enable() owns. Copilot starts its own
+    -- client on its own triggers, so stopping it here would just leave it down.
+    local clients = vim.tbl_filter(function(c)
+        local ok, enabled = pcall(vim.lsp.is_enabled, c.name)
+        return ok and enabled
+    end, vim.lsp.get_clients({ bufnr = bufnr }))
+
+    if #clients == 0 then
+        vim.notify('LspRestart: no restartable clients attached to this buffer',
+            vim.log.levels.WARN)
+        return
+    end
+
+    local names = vim.tbl_map(function(c) return c.name end, clients)
+    for _, client in ipairs(clients) do
+        client:stop()
+    end
+
+    -- Wait for the old clients to exit, otherwise vim.lsp.start reuses them.
+    local stopped_ids = vim.tbl_map(function(c) return c.id end, clients)
+    local stopped = vim.wait(3000, function()
+        for _, id in ipairs(stopped_ids) do
+            if vim.lsp.get_client_by_id(id) then return false end
+        end
+        return true
+    end, 50)
+
+    vim.cmd('doautocmd nvim.lsp.enable FileType')
+
+    if stopped then
+        vim.notify('LspRestart: ' .. table.concat(names, ', '))
+    else
+        vim.notify('LspRestart: timed out waiting for ' .. table.concat(names, ', '),
+            vim.log.levels.WARN)
+    end
+end, { desc = 'Restart LSP clients attached to this buffer' })
 
 -- ── Treesitter ────────────────────────────────────────────────────────────────
 cmd('ResetTS', function()

@@ -186,11 +186,6 @@ map({'n','x','o'}, 'S', function() require('flash').treesitter() end, 'Flash: tr
 nmap('<A-d>', '<cmd>Lspsaga term_toggle<CR>', 'Lspsaga: floating terminal')
 tmap('<A-d>', '<cmd>Lspsaga term_toggle<CR>', 'Lspsaga: floating terminal (close)')
 
--- ── SQL / DB ──────────────────────────────────────────────────────────────────
-nmap('<C-s>d', ':DBUIToggle<CR>', 'DB: toggle UI')
-nmap('<C-s>r', ':DB ',           'DB: run query')
-nmap('<C-s>f', ':%DB<CR>',       'DB: run file')
-
 -- ── Search / replace ─────────────────────────────────────────────────────────
 nmap('<C-x>s', "<cmd>lua require('spectre').open()<CR>", 'Spectre: open')
 nmap('<C-x>z', ':ZenMode<CR>',                           'ZenMode: toggle')

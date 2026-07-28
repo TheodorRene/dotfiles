@@ -31,10 +31,8 @@ local function on_attach(client, bufnr)
         require('fzf-lua').lsp_references({ jump_type = 'vsplit' })
     end, 'LSP: references (vsplit)')
 
-    -- Hover with rounded border (built-in, explicit border)
-    map('n', 'K', function()
-        vim.lsp.buf.hover({ border = 'rounded' })
-    end, 'LSP: hover')
+    -- K (hover) is a 0.12 default and picks its border up from 'winborder',
+    -- so it needs no override here.
 
     -- Signature help
     map('n', '<C-k>', vim.lsp.buf.signature_help, 'LSP: signature help')
@@ -43,11 +41,16 @@ local function on_attach(client, bufnr)
     map('n', '<C-x>e', vim.diagnostic.open_float, 'LSP: open diagnostic float')
     map('n', '<A-e>', vim.diagnostic.open_float, 'LSP: open diagnostic float')
 
-    -- Diagnostic navigation
-    map('n', '[d', vim.diagnostic.goto_prev, 'LSP: previous diagnostic')
-    map('n', ']d', vim.diagnostic.goto_next, 'LSP: next diagnostic')
-    map('n', '<C-a>d', vim.diagnostic.goto_next, 'LSP: next diagnostic')
-    map('n', '<C-a>D', vim.diagnostic.goto_prev, 'LSP: previous diagnostic')
+    -- Diagnostic navigation. [d and ]d are 0.12 defaults, so only the <C-a>
+    -- aliases are defined. goto_next/goto_prev are deprecated (removed in 0.13)
+    -- — vim.diagnostic.jump() is the replacement.
+    local function diag_jump(count)
+        return function()
+            vim.diagnostic.jump({ count = count, float = true })
+        end
+    end
+    map('n', '<C-a>d', diag_jump(1),  'LSP: next diagnostic')
+    map('n', '<C-a>D', diag_jump(-1), 'LSP: previous diagnostic')
 
     -- Workspace diagnostics via fzf-lua
     map('n', '<C-x>d', function()
@@ -57,7 +60,7 @@ local function on_attach(client, bufnr)
     -- Autofix: jump to next diagnostic then trigger code action
     -- (grn=rename, gra=code_action are 0.12 defaults — no need to redefine)
     map('n', '<C-x>q', function()
-        vim.diagnostic.goto_next()
+        vim.diagnostic.jump({ count = 1 })
         vim.lsp.buf.code_action()
     end, 'LSP: autofix (next diag + code action)')
 

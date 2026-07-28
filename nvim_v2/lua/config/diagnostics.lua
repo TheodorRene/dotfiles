@@ -12,8 +12,8 @@ vim.diagnostic.config({
     -- Keeps the buffer readable while still surfacing errors inline.
     virtual_lines = { current_line = true },
 
+    -- Border comes from 'winborder' (see options.lua)
     float = {
-        border = 'rounded',
         source = true,   -- show which LSP server reported the diagnostic
     },
 
