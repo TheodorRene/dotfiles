@@ -18,7 +18,6 @@ vim.pack.add({
 
     -- ── Treesitter ────────────────────────────────────────────────────────────
     'https://github.com/nvim-treesitter/nvim-treesitter',
-    'https://github.com/nvim-treesitter/nvim-treesitter-textobjects',
 
     -- ── Fuzzy finding ─────────────────────────────────────────────────────────
     'https://github.com/ibhagwan/fzf-lua',
