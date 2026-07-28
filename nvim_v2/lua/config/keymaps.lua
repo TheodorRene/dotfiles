@@ -186,6 +186,13 @@ map({'n','x','o'}, 'S', function() require('flash').treesitter() end, 'Flash: tr
 nmap('<A-d>', '<cmd>Lspsaga term_toggle<CR>', 'Lspsaga: floating terminal')
 tmap('<A-d>', '<cmd>Lspsaga term_toggle<CR>', 'Lspsaga: floating terminal (close)')
 
+-- ── Floating terminal (lspsaga replacement, on trial) ────────────────────────
+-- Same behaviour as <A-d> above, without lspsaga. If this holds up, <A-d> can
+-- be pointed here and lspsaga dropped. See lua/config/floatterm.lua.
+local floatterm = function() require('config.floatterm').toggle() end
+nmap('<A-t>', floatterm, 'Floating terminal: toggle')
+tmap('<A-t>', floatterm, 'Floating terminal: hide')
+
 -- ── Search / replace ─────────────────────────────────────────────────────────
 nmap('<C-x>s', "<cmd>lua require('spectre').open()<CR>", 'Spectre: open')
 nmap('<C-x>z', ':ZenMode<CR>',                           'ZenMode: toggle')
