@@ -116,18 +116,28 @@ vim.g.fff = {
 -- ── First-boot parser bootstrap ───────────────────────────────────────────────
 -- nvim-treesitter installs parsers to stdpath('data')/site/parser/ by default.
 -- On first boot that directory is empty. Detect this by checking directly for
--- the typescript parser (a non-Homebrew-bundled one) and run TSUpdate if absent.
+-- the typescript parser (a non-Homebrew-bundled one) and install if absent.
+--
+-- NOTE: :TSUpdate only refreshes parsers that are already installed, so a fresh
+-- machine needs an explicit install() of the languages we care about.
+local ts_ensure_installed = {
+    'bash', 'c', 'cpp', 'css', 'dockerfile', 'go', 'html',
+    'java', 'javascript', 'json', 'lua', 'python', 'regex',
+    'rust', 'toml', 'typescript', 'yaml', 'haskell', 'query',
+    'tsx', 'vue', 'svelte', 'markdown', 'markdown_inline',
+}
+
 vim.api.nvim_create_autocmd('VimEnter', {
     once = true,
-    desc = 'Auto-run TSUpdate when compiled parsers are missing',
+    desc = 'Install parsers when none are compiled yet',
     callback = function()
-        local ok, _ = pcall(require, 'nvim-treesitter')
+        local ok, nvim_treesitter = pcall(require, 'nvim-treesitter')
         if not ok then return end
         -- The default install_dir is stdpath('data')/site; parsers live there.
         local site_parser = vim.fn.stdpath('data') .. '/site/parser/typescript.so'
         if vim.uv.fs_stat(site_parser) == nil then
-            vim.notify('[nvim-treesitter] Parsers missing — running TSUpdate…', vim.log.levels.INFO)
-            vim.cmd('TSUpdate')
+            vim.notify('[nvim-treesitter] Parsers missing — installing…', vim.log.levels.INFO)
+            pcall(nvim_treesitter.install, ts_ensure_installed)
         end
     end,
 })
@@ -196,43 +206,27 @@ if vim.uv.fs_stat(ts_runtime) then
     vim.opt.rtp:append(ts_runtime)
 end
 
-local ok_ts, ts_configs = pcall(require, 'nvim-treesitter.configs')
-if ok_ts then
-    ts_configs.setup({
-        ensure_installed = {
-            'bash', 'c', 'cpp', 'css', 'dockerfile', 'go', 'html',
-            'java', 'javascript', 'json', 'lua', 'python', 'regex',
-            'rust', 'toml', 'typescript', 'yaml', 'haskell', 'query',
-            'tsx', 'vue', 'svelte', 'markdown', 'markdown_inline',
-        },
-        highlight = {
-            enable = true,
-            -- Disable on very large files to avoid slowdowns
-            disable = function(_, buf)
-                local ok2, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(buf))
-                return ok2 and stats and stats.size > 50 * 1024
-            end,
-            additional_vim_regex_highlighting = false,
-        },
-        -- NOTE: incremental selection (an/in/]n/[n) is built-in in 0.12 via
-        -- textDocument/selectionRange (LSP) or Treesitter nodes — no plugin config needed.
-        textobjects = {
-            select = {
-                enable    = true,
-                lookahead = true,
-                keymaps = {
-                    ['af'] = '@function.outer',
-                    ['if'] = '@function.inner',
-                },
-                selection_modes = {
-                    ['@parameter.outer'] = 'v',
-                    ['@function.outer']  = 'V',
-                },
-                include_surrounding_whitespace = true,
-            },
-        },
-    })
-end
+-- Highlighting must be started per-buffer ourselves: nvim-treesitter v1 has no
+-- auto-attach (that was the master branch's `highlight.enable`), and Neovim
+-- 0.12 only calls vim.treesitter.start() from its own ftplugins for lua, query,
+-- help and markdown. Without this autocmd every other filetype silently falls
+-- back to the bundled Vim regex syntax, which mis-nests regions in files with
+-- template literals and goes wrong from that point down.
+--
+-- The size cap is deliberately generous: the old 50 KB limit was small enough
+-- to knock ordinary source files back onto regex syntax.
+local TS_MAX_FILESIZE = 1024 * 1024
+
+vim.api.nvim_create_autocmd('FileType', {
+    group = vim.api.nvim_create_augroup('treesitter_highlight', { clear = true }),
+    desc  = 'Start Treesitter highlighting when a parser exists',
+    callback = function(ev)
+        local ok_stat, stats = pcall(vim.uv.fs_stat, vim.api.nvim_buf_get_name(ev.buf))
+        if ok_stat and stats and stats.size > TS_MAX_FILESIZE then return end
+        -- Fails for filetypes with no parser installed; that's the no-op case.
+        pcall(vim.treesitter.start, ev.buf)
+    end,
+})
 
 -- fzf-lua
 setup('fzf-lua')
