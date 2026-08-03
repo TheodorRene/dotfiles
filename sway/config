@@ -14,6 +14,12 @@ for_window [class=".*"] border pixel 1
 
 # tmux scratchpad: float, size, center, and drop into the scratchpad (shown on first launch)
 for_window [app_id="scratch-tmux"] floating enable, resize set 70 ppt 70 ppt, move position center, move scratchpad, scratchpad show
+
+# Don't let swayidle lock/blank while a window is fullscreen (movies, video calls,
+# presentations). Covers both native-Wayland (app_id) and Xwayland (class) apps —
+# needed because snap Firefox's own idle inhibitor often can't reach the compositor.
+for_window [app_id=".*"] inhibit_idle fullscreen
+for_window [class=".*"] inhibit_idle fullscreen
 gaps inner 11
 gaps outer 5
 smart_borders on
