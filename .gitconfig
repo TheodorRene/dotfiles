@@ -1,6 +1,11 @@
 [user]
     email = theodor.rene@gmail.com
     name = Theodor René Carlsen
+# Work email for Impero repos (impero, dotnet/impero_legacy, product-wiki, impero-ai-skills)
+[includeIf "gitdir:~/dev/impero/"]
+    path = ~/dotfiles/.gitconfig-impero
+[includeIf "gitdir:~/.claude/plugins/marketplaces/impero-plugins/"]
+    path = ~/dotfiles/.gitconfig-impero
 [gui]
     encoding = utf-8
 [init]
