@@ -82,6 +82,10 @@ nmap('<A-q>', ':tabprev<CR>',   'Previous tab')
 nmap('<A-w>', ':tabnext<CR>',   'Next tab')
 nmap('<A-c>', '<CMD>lua TRC_close_win()<CR>', 'Save and close window')
 
+-- Global escape hatch for focus.nvim's autoresize (per-panel exclusions live in
+-- pack.lua). Handy when manual resizes keep getting undone.
+nmap('<leader>F', '<CMD>FocusToggle<CR>', 'Focus: toggle autoresize globally')
+
 -- Window resize (Nordic keyboard: ø æ å Å)
 nmap('ø', ':vertical resize +10<CR>', 'Resize window wider')
 nmap('æ', ':vertical resize -10<CR>', 'Resize window narrower')

@@ -316,8 +316,42 @@ setup('neoscroll', {
     cursor_scrolls_alone = true,
 })
 
--- Auto-resize focused window
+-- Auto-resize focused window.
+-- Sidebars and panels must be exempt: focus would otherwise shrink neo-tree /
+-- trouble whenever they lose focus, fighting their own fixed widths. focus.nvim
+-- reads `focus_disable` per-window (w:) and per-buffer (b:), so the exclusions
+-- below are the documented mechanism — see :FocusToggle for a global off switch.
+--
+-- Note most panels also carry buftype=nofile, so the buftype list catches them
+-- even before the filetype list does; both are kept as belt-and-braces. Add
+-- 'terminal' to ignore_buftypes if you dislike terminal splits reflowing.
+local focus_ignore_filetypes = {
+    'neo-tree', 'trouble', 'spectre_panel', 'undotree', 'fugitive',
+    'NeogitStatus', 'NeogitPopup', 'NeogitCommitMessage',
+    'DiffviewFiles', 'DiffviewFileHistory',
+    'dbui', 'dbout',
+}
+local focus_ignore_buftypes = { 'nofile', 'prompt', 'popup', 'help' }
+
 setup('focus')
+
+local focus_group = vim.api.nvim_create_augroup('FocusDisable', { clear = true })
+
+vim.api.nvim_create_autocmd('WinEnter', {
+    group = focus_group,
+    callback = function()
+        vim.w.focus_disable = vim.tbl_contains(focus_ignore_buftypes, vim.bo.buftype)
+    end,
+    desc = 'Disable focus autoresize for excluded buftypes',
+})
+
+vim.api.nvim_create_autocmd('FileType', {
+    group = focus_group,
+    callback = function()
+        vim.b.focus_disable = vim.tbl_contains(focus_ignore_filetypes, vim.bo.filetype)
+    end,
+    desc = 'Disable focus autoresize for excluded filetypes',
+})
 
 -- Which-key
 setup('which-key')
