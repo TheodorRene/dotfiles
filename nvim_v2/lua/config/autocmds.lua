@@ -56,20 +56,26 @@ autocmd('BufReadPost', {
     desc = 'Restore cursor to last position when reopening a file',
 })
 
--- ── Markdown: enable wrapping and spell ───────────────────────────────────────
+-- ── Markdown / gitcommit: spell check, and wrap only where it helps ───────────
 -- Guard against floating windows (LSP hover, etc.) which also get
 -- filetype=markdown but should never have spell checking applied.
+--
+-- wrap is set explicitly per filetype rather than left to the global default:
+-- it's window-local, so a window that previously held a wrapping buffer would
+-- otherwise keep wrap on. Markdown stays unwrapped because soft-wrapped lines
+-- interleave badly with markview's in-buffer rendering; gitcommit keeps wrap so
+-- long subject/body lines stay readable.
 autocmd('FileType', {
     group    = augroup('markdown_opts', { clear = true }),
     pattern  = { 'markdown', 'gitcommit' },
-    callback = function()
+    callback = function(ev)
         -- Skip floating windows (e.g. LSP hover popups)
         if vim.api.nvim_win_get_config(0).relative ~= '' then return end
-        vim.opt_local.wrap      = true
+        vim.opt_local.wrap      = ev.match == 'gitcommit'
         vim.opt_local.spell     = true
         vim.opt_local.spelllang = 'en,nb'   -- English + Norwegian bokmål
     end,
-    desc = 'Enable wrap and spell check for markdown / git commits',
+    desc = 'Spell check for markdown / git commits; wrap for gitcommit only',
 })
 
 -- ── Remove trailing whitespace on save ────────────────────────────────────────

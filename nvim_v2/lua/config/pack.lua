@@ -63,6 +63,10 @@ vim.pack.add({
     'https://github.com/nvim-focus/focus.nvim',
     'https://github.com/folke/which-key.nvim',
     'https://github.com/folke/zen-mode.nvim',
+    -- markview: in-buffer markdown rendering (headings, tables, code blocks).
+    -- Relies on the markdown + markdown_inline treesitter parsers (both in
+    -- ensure_installed below); html/yaml/latex injections degrade gracefully.
+    'https://github.com/OXY2DEV/markview.nvim',
 
     -- ── Language-specific ─────────────────────────────────────────────────────
     { src = 'https://github.com/mrcjkb/rustaceanvim',       version = 'v9.0.1' },
