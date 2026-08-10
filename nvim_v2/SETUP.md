@@ -53,3 +53,19 @@ If that falls through to a build, it needs `cargo` on `PATH`. Rust isn't
 installed system-wide here (it comes from the Nix impero shell), so either
 launch `nvim` once from inside `nix develop` (in `~/dev/impero`) so `cargo` is
 available, or install rust via `rustup`.
+
+## Custom tooling
+
+### Keybinding usage tracker (`lua/config/usage.lua`)
+
+Answers "which of my custom keybindings do I actually use?" by counting how
+often each mapping fires (keyed by mode + `lhs`). It patches `vim.keymap.set`
+(loaded first in `lua/config/init.lua`) — it does **not** log typed text, so
+there's no keylogger footprint. Counts persist to
+`stdpath('data')/keymap-usage.json` and accumulate across sessions.
+
+- `:KeymapStats` — usage table sorted most→least used, plus a "defined but
+  never fired this session" list (your prune candidates). Run it *after*
+  editing real files, since buffer-local maps (LSP/gitsigns) only register once
+  a buffer attaches them.
+- `:KeymapStatsReset` — wipe the accumulated counts.

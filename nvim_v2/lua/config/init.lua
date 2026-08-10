@@ -1,5 +1,7 @@
 -- Load modules in order. Options and pack go first so plugins are available
 -- before keymaps and LSP try to reference them.
+-- usage MUST be first: it patches vim.keymap.set before any mapping is defined.
+require('config.usage')
 require('config.options')
 require('config.pack')
 require('config.diagnostics')
