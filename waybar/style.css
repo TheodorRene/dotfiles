@@ -58,6 +58,7 @@ window#waybar {
 #temperature,
 #disk,
 #power-profiles-daemon,
+#custom-docker,
 #custom-language,
 #tray {
     padding: 0 10px;
@@ -97,6 +98,16 @@ window#waybar {
 }
 
 #network.disconnected {
+    color: @alert;
+}
+
+/* docker: restarting / health-check still starting */
+#custom-docker.warning {
+    color: #f0a500;
+}
+
+/* docker: at least one container reports unhealthy */
+#custom-docker.critical {
     color: @alert;
 }
 

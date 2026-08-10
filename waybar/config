@@ -6,7 +6,7 @@
 
     "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
     "modules-center": ["mpris"],
-    "modules-right": ["network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
+    "modules-right": ["custom/docker", "network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
 
     "sway/workspaces": {
         "disable-scroll": false,
@@ -118,6 +118,14 @@
             "balanced": "⚖️",
             "power-saver": "🌱"
         }
+    },
+
+    "custom/docker": {
+        "exec": "~/dotfiles/scripts/waybar-docker.sh",
+        "return-type": "json",
+        "interval": 10,
+        "tooltip": true,
+        "on-click": "kitty --class docker-tui -e lazydocker"
     },
 
     "custom/language": {
