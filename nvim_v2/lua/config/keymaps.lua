@@ -52,7 +52,7 @@ nmap('<leader>ln', ':set nonumber | set norelativenumber<CR>', 'Disable line num
 -- ── Visual mode ───────────────────────────────────────────────────────────────
 vmap('J',          ":m '>+1<CR>gv=gv", 'Move selection down')
 vmap('K',          ":m '<-2<CR>gv=gv", 'Move selection up')
-vmap('<C-a>c',     ":'<,'>CopyAI<CR>",  'Copy selection with file path for AI')
+vmap('<leader>c',  ":'<,'>CopyAI<CR>",  'Copy selection with file path for AI')
 
 -- ── Terminal mode ─────────────────────────────────────────────────────────────
 tmap('<Esc>', [[<C-\><C-n>]], 'Exit terminal mode')
