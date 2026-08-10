@@ -45,6 +45,8 @@ for my $name (qw(i3 sway kanshi waybar wofi xdg-desktop-portal swaylock alacritt
 # Claude Code global config: link individual files only, not ~/.claude.
 symlink_path("$dotfiles/claude/settings.json", "$home/.claude/settings.json");
 symlink_path("$dotfiles/claude/statusline-command.sh", "$home/.claude/statusline-command.sh");
+# Skills dir: link the whole dir so any skill dropped in the repo appears.
+symlink_path("$dotfiles/claude/skills", "$home/.claude/skills");
 
 # Neovim v2 config.
 symlink_path("$dotfiles/nvim_v2", "$home/.config/nvim");
