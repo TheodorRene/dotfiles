@@ -40,5 +40,10 @@
     }
   },
   "effortLevel": "high",
-  "theme": "dark"
+  "voice": {
+    "enabled": true,
+    "mode": "hold"
+  },
+  "theme": "dark",
+  "voiceEnabled": true
 }
