@@ -122,6 +122,15 @@ umnt(){
     sudo umount /mnt/usb && echo "Unmounted successfully"
 }
 
+# Open this week's Impero note in nvim. If it doesn't exist yet, it's seeded
+# from the previous week's note (with the id: frontmatter bumped) so you can
+# prune what's no longer relevant. See scripts/weekly-note.rb.
+week() {
+    local note
+    note=$(ruby "$HOME/dotfiles/scripts/weekly-note.rb") || return
+    nvim "$note"
+}
+
 pass() {
     bw get password $1 | xclip -selection c && "Password copied"
 }
