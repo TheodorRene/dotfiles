@@ -15,6 +15,16 @@
 - **Desktop portal**: xdg-desktop-portal (Wayland variant)
 - **Notifications**: mako
 
+## Keyboard
+- **ZSA Voyager**; keymap is built in ZSA's online configurator (Oryx) — that's
+  the source of truth, and the firmware is flashed from Oryx/Keymapp.
+- The firmware source is **not** kept in this repo; Oryx's "Download source" zip
+  is the readable form when a keymap question comes up.
+- Open/optional: `docs/nordic-letters-on-us-layout.md` — plan to get æøå on a US
+  layout (`us(altgr-intl)` + three Oryx remaps), **not applied**; the layout's
+  current Nordic keys are dead and `grp:alt_shift_toggle` is still in place. Also
+  holds a layer-by-layer cheat sheet of the layout as of 2026-08-03.
+
 ## Terminal & Shell
 - **Terminal**: kitty (config ported from Alacritty); Alacritty also still configured
 - **Shell**: zsh (self-contained config, no framework; `.zshrc` sources
@@ -89,6 +99,38 @@ To add a config: put it in the repo, add the symlink line to `symlinkifier.pl`
   the process name.
 - Open/optional: `docs/rust-analyzer-memory-cap.md` — plan to cap rust-analyzer
   (a repeat OOM offender) in a memory-limited cgroup slice.
+
+## Boot / disk
+- Root is **LUKS-encrypted**: `nvme0n1p8` (LUKS) → `dm_crypt-0` → `ubuntu-vg/ubuntu-lv`
+  → `/`. So an initramfs complaining `/dev/ubuntu-vg/ubuntu-lv does not exist` is
+  **not an LVM fault** — it means the LUKS unlock never completed.
+- Initramfs is **dracut** (systemd-based), *not* initramfs-tools — the latter isn't
+  installed, so most Ubuntu advice and its knobs don't apply. `rdsosreport.txt` is
+  dracut's emergency dump.
+- Happened once (2026-08-05, fixed by a reboot). Hardware ruled out; **cause not
+  established** — three theories were built and killed by later evidence, so read
+  the write-up before theorising. What *is* solid: the ~90s hang matches
+  `DefaultDeviceTimeoutUSec`, so the **LV device job** timed out, not the passphrase
+  step (`systemd-cryptsetup` has `TimeoutSec=infinity`).
+- If it recurs, **run `ls /dev/mapper/` first** — `dm_crypt-0` present means an LVM
+  activation failure, absent means the unlock never happened. That datum is
+  unrecoverable afterwards (`/run` is tmpfs, and a failed boot leaves no journal).
+- Write-up: `docs/luks-boot-emergency-shell.md` — symptom record, verified mechanics
+  (incl. the trap that `rd.lvm.lv` **is** set via `hostonly_cmdline` inside the
+  image, not `/proc/cmdline`), a dead-ends table, in-place recovery without
+  rebooting, and candidate grub changes. **Nothing applied.**
+- `smartmontools` **is** installed, but `smartctl` (and `tune2fs`) need root:
+  `sudo smartctl -a /dev/nvme0n1`.
+
+## Remote access
+- No SSH server installed (`openssh-server` absent, so no `/etc/ssh/sshd_config`),
+  no Tailscale. `mosh` **is** installed (the package is client + server); `tmux`
+  and `screen` are in `/usr/bin`, but `zellij` only exists inside the impero nix
+  shell.
+- Open/optional: `docs/claude-code-from-phone.md` — plan to drive Claude Code from
+  a phone over SSH + Tailscale, incl. pushing the existing `Notification`/`Stop`
+  hooks to the phone via ntfy (`scripts/claude-attention.sh` is sway/mako-only, so
+  it's silent over SSH). **Nothing applied.**
 
 ## Work project
 - Main project is `~/dev/impero`: a **Nix flake dev shell** (`nix develop`), run
