@@ -500,7 +500,7 @@ Copy back what you saved in §1.3:
 |---|---|
 | SSH keys | `~/.ssh/` (`chmod 600` the private keys) |
 | GPG keys | `~/.gnupg/` then `chmod 700 ~/.gnupg && chmod 600 ~/.gnupg/*` |
-| Claude Code state | `~/.claude/` |
+| Claude Code state | `~/.claude/` — preserve symlinks (`tar`/`cp -a` do); then see the note below |
 | Wallpapers | `~/wallpapers/` |
 | Nerd Fonts | `~/.local/share/fonts/` → `fc-cache -fv` |
 | Firefox profile | see the dedicated steps below |
@@ -512,6 +512,19 @@ For the bulk archive (§1.4), extract with:
 ```bash
 cat /mnt/usb/trc-home.tar.gz.part-* | tar xzf - -C ~   # everything-but-dev
 ```
+
+### Claude Code memory symlinks
+
+impero's subdir memory dirs (`backend`, `frontend`, `frontend/spa`, `dotnet`)
+are symlinks to the repo root's, so Claude sees one shared memory wherever it's
+opened. `tar` preserves them, so a restored `~/.claude/` needs nothing. If
+`~/.claude/` was **not** restored, or new subdirs have appeared since:
+
+```bash
+~/dotfiles/scripts/install-claude-memory-links.sh    # idempotent, safe to re-run
+```
+
+Background: `docs/claude-memory-across-subdirs.md`.
 
 ### Firefox profile (snap backup → apt Firefox)
 

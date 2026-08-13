@@ -138,3 +138,17 @@ To add a config: put it in the repo, add the symlink line to `symlinkifier.pl`
   backend via `cargo-watch`, and a Node/TS frontend. rust-analyzer comes from the
   Nix toolchain on `PATH`. Local-only dev overrides go in gitignored files (e.g.
   `docker-compose.override.yml` via `.git/info/exclude`).
+
+## Claude Code
+- Config in this repo is `claude/settings.json` and `claude/skills/` (symlinked
+  into `~/.claude` by `symlinkifier.pl`). Everything else under `~/.claude/` —
+  memory, projects, plans, history — is **state**, not tracked here.
+- `CLAUDE.md` is read from the cwd **and every parent dir up to `/`**, so opening
+  Claude in `~/dev/impero/backend` already gets the repo-root `CLAUDE.md`. The
+  **memory tool** is different: it keys off the *literal cwd*
+  (`~/.claude/projects/<slug>/memory/`, slug = abs path with `/ . _` → `-`), so
+  each subdir would otherwise start from an empty memory.
+- Applied: `scripts/install-claude-memory-links.sh` symlinks impero's subdir
+  memory dirs (backend, frontend, frontend/spa, dotnet) at the repo root's, so
+  all sessions share one set of facts. Idempotent; re-run for new subdirs or
+  after a reinstall. Write-up: `docs/claude-memory-across-subdirs.md`.
