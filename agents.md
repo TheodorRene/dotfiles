@@ -33,6 +33,10 @@
 ## Editor
 - **Primary**: Neovim (`$EDITOR` and `$VISUAL` both set to `nvim`)
 - Man pages open in Neovim (`MANPAGER=nvim +Man!`)
+- Config is `nvim_v2/` (symlinked to `~/.config/nvim`). It has its **own
+  `agents.md`** — read it before touching the config; it's 0.12-specific
+  (`vim.pack`, native LSP, no lazy.nvim) and most external advice doesn't apply.
+  New-machine prerequisites are in `nvim_v2/SETUP.md`.
 
 ## Runtimes & Package Managers
 - **System packages**: apt
