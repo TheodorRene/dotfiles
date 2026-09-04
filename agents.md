@@ -145,11 +145,28 @@ To add a config: put it in the repo, add the symlink line to `symlinkifier.pl`
     `default-wifi-powersave-on.conf` (`wifi.powersave = 3`); NM reads `conf.d`
     **alphanumerically**, later wins, so the override needs a `zz-` prefix — `90-`
     would sort *before* `default-` and silently lose.
+  - **PBAP (phonebook) server off** — the Bose pull this laptop's phonebook on
+    every connect, which woke `evolution-data-server` for nothing. `obex.service`
+    is a **user** unit, so no root needed: `systemd/user/obex.service.d/override.conf`
+    (`ExecStart=` cleared, then `obexd --noplugin=pbap`), symlinked by
+    `symlinkifier.pl`.
+- **`br-connection-busy` is not a failure.** It's `org.bluez.Error.InProgress`
+  from `connect_profiles()` (`src/device.c`) when `dev->pending || dev->connect ||
+  dev->browse` — a connect attempt is *already in flight*, so BlueZ refuses a
+  second. blueman renders it as "Failed". **Clicking again does nothing**;
+  blueman's AutoConnect plugin already retries every 60s (with the
+  `GENERIC_CONNECT` all-profiles UUID), as does bluetoothd's `[Policy]` plugin.
+- **Gotcha:** `obexd` defers plugin loading **~30s** after start. Inside that
+  window the adapter advertises only its 11 non-obexd profiles, so a UUID count
+  taken right after `systemctl --user restart obex.service` looks like everything
+  broke. 18 UUIDs = PBAP off and correct; 11 = you checked too early.
 - **Dead end, don't re-theorise:** 2.4 GHz co-channel interference from wifi is not
   the cause — wifi associates on **6 GHz** (ch 53, 160 MHz wide).
-- Write-up: `docs/bluetooth-reliability-vs-phone.md` — ranked causes, what was
-  applied, inspection commands. Open/optional there: forcing SBC-XQ over AAC, and
-  disabling `autoswitch-to-headset-profile`.
+- Write-up: `docs/bluetooth-reliability-vs-phone.md` — ranked causes, the
+  `br-connection-busy` decode, what was applied, inspection commands.
+  Open/optional there: narrowing blueman's autoconnect to A2DP (unverified — would
+  make the headset mic connect on demand), forcing SBC-XQ over AAC, and disabling
+  `autoswitch-to-headset-profile`.
 
 ## Remote access
 - No SSH server installed (`openssh-server` absent, so no `/etc/ssh/sshd_config`),

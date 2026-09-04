@@ -48,6 +48,10 @@ symlink_path("$dotfiles/claude/statusline-command.sh", "$home/.claude/statusline
 # Skills dir: link the whole dir so any skill dropped in the repo appears.
 symlink_path("$dotfiles/claude/skills", "$home/.claude/skills");
 
+# User systemd drop-ins (obex.service.d disables the PBAP server; see
+# docs/bluetooth-reliability-vs-phone.md).
+symlink_path("$dotfiles/systemd/user/obex.service.d", "$home/.config/systemd/user/obex.service.d");
+
 # Neovim v2 config.
 symlink_path("$dotfiles/nvim_v2", "$home/.config/nvim");
 
