@@ -122,6 +122,31 @@ To add a config: put it in the repo, add the symlink line to `symlinkifier.pl`
 - `smartmontools` **is** installed, but `smartctl` (and `tune2fs`) need root:
   `sudo smartctl -a /dev/nvme0n1`.
 
+## Bluetooth / wifi radio
+- BT and wifi are **one Intel CNVi part** — `hci0` on PCI `00:14.7`, `iwlwifi`
+  `wlp0s20f3` on `00:14.3` — sharing the RF front-end and antennas. Audio stack is
+  PipeWire + WirePlumber (`libspa-0.2-bluetooth`); **`pactl` is not installed**, use
+  `wpctl status` and `pw-dump` (`pw-dump | grep api.bluez5` gives the live profile
+  and codec).
+- Headphones are Bose (`Thrash Cans`, vendor `0x009E`), A2DP on **AAC**. They're
+  **multipoint** and page their last-connected device on power-on, so a nearby phone
+  wins the race — that part is not fixable from the laptop.
+- **Applied 2026-09-04:**
+  - `FastConnectable = true` in `/etc/bluetooth/main.conf` (page-scan interval; the
+    file was otherwise entirely default). **`bluetoothd` supports no `conf.d`
+    drop-ins**, so this is an in-place edit of a package conffile, *not* symlinked
+    from this repo — re-run the `sed` in the write-up after a reinstall.
+  - **Wifi power save off**, via `etc/NetworkManager/conf.d/zz-wifi-powersave-off.conf`
+    + `scripts/install-wifi-powersave-off.sh`. Ubuntu's `network-manager` ships
+    `default-wifi-powersave-on.conf` (`wifi.powersave = 3`); NM reads `conf.d`
+    **alphanumerically**, later wins, so the override needs a `zz-` prefix — `90-`
+    would sort *before* `default-` and silently lose.
+- **Dead end, don't re-theorise:** 2.4 GHz co-channel interference from wifi is not
+  the cause — wifi associates on **6 GHz** (ch 53, 160 MHz wide).
+- Write-up: `docs/bluetooth-reliability-vs-phone.md` — ranked causes, what was
+  applied, inspection commands. Open/optional there: forcing SBC-XQ over AAC, and
+  disabling `autoswitch-to-headset-profile`.
+
 ## Remote access
 - No SSH server installed (`openssh-server` absent, so no `/etc/ssh/sshd_config`),
   no Tailscale. `mosh` **is** installed (the package is client + server); `tmux`
