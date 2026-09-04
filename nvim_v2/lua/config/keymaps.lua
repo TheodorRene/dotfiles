@@ -100,6 +100,11 @@ nmap('<A-w>', ':tabnext<CR>',  'Next tab page')
 nmap('<C-n>', '<CMD>Oil --float .<CR>', 'Open Oil file manager (float)')
 nmap('<leader>e', '<CMD>Neotree toggle<CR>', 'Neo-tree: toggle sidebar')
 
+-- ── Directory switching ───────────────────────────────────────────────────────
+-- <enter> in the picker opens the dir in a new tab with a tab-local cwd, so
+-- sibling projects can be open at once. See :Dirs in commands.lua.
+nmap('<leader>d', '<CMD>Dirs<CR>', 'Dirs: switch directory (autojump)')
+
 -- ── Fuzzy finding (fzf-lua) ───────────────────────────────────────────────────
 local fzf = function(fn, opts)
     return function() require('fzf-lua')[fn](opts or {}) end

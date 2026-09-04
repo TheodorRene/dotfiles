@@ -35,9 +35,88 @@ cmd('Dotfiles', function()
 end, { desc = 'FZF: browse dotfiles' })
 
 -- ── Navigation ───────────────────────────────────────────────────────────────
+-- nargs=1 rather than '*' so a bare :ChangeDir errors instead of silently
+-- jumping home (see 'cdh' in options.lua); complete=dir gives path completion.
 cmd('ChangeDir', function(args)
-    vim.cmd('chdir ' .. args.args)
-end, { nargs = '*', desc = 'Change directory' })
+    vim.cmd.chdir(args.args)
+end, { nargs = 1, complete = 'dir', desc = 'Change global directory' })
+
+-- Fuzzy-pick a directory from autojump's frecency database. The shell already
+-- maintains it (sourced in .zshrc), so the ranking reflects where work actually
+-- happens — no extra dependency and no separate list to curate.
+--
+-- <enter> opens the directory in a NEW TAB with a tab-local cwd, so sibling
+-- projects (impero frontend + backend, say) can be open simultaneously without
+-- their pickers bleeding into each other. 'tcd' is per-tab, and fzf-lua reads
+-- the window's cwd, so each tab searches its own project. Note LSP roots come
+-- from root_markers, not cwd, so switching here never strands a client.
+local AUTOJUMP_DB = vim.fn.expand('~/.local/share/autojump/autojump.txt')
+
+-- Rows are "<weight>\t<path>", unsorted. Stale paths are dropped so the picker
+-- never offers a directory that has since been deleted or moved.
+local function autojump_dirs()
+    local fh = io.open(AUTOJUMP_DB, 'r')
+    if not fh then return nil end
+    local rows = {}
+    for line in fh:lines() do
+        local weight, path = line:match('^([%d%.eE%+%-]+)\t(.+)$')
+        if path and vim.fn.isdirectory(path) == 1 then
+            table.insert(rows, { w = tonumber(weight) or 0, path = path })
+        end
+    end
+    fh:close()
+    table.sort(rows, function(a, b) return a.w > b.w end)
+    local out = {}
+    for _, r in ipairs(rows) do
+        table.insert(out, vim.fn.fnamemodify(r.path, ':~'))
+    end
+    return out
+end
+
+local function switch_to(display, how)
+    local path = vim.fn.expand(display)
+    if vim.fn.isdirectory(path) == 0 then
+        vim.notify('Dirs: no longer a directory: ' .. path, vim.log.levels.ERROR)
+        return
+    end
+    if how == 'tabnew' then
+        vim.cmd.tabnew()
+        vim.cmd.tcd(path)
+    elseif how == 'tcd' then
+        vim.cmd.tcd(path)
+    else
+        vim.cmd.chdir(path)
+    end
+    local scope = how == 'chdir' and 'cwd' or 'tab cwd'
+    vim.notify(scope .. ' → ' .. vim.fn.fnamemodify(path, ':~'), vim.log.levels.INFO)
+end
+
+cmd('Dirs', function()
+    local dirs = autojump_dirs()
+    if not dirs or #dirs == 0 then
+        vim.notify('Dirs: no usable autojump database at ' .. AUTOJUMP_DB, vim.log.levels.WARN)
+        return
+    end
+    local ok, fzf = pcall(require, 'fzf-lua')
+    if not ok then
+        vim.notify('Dirs: fzf-lua not available', vim.log.levels.ERROR)
+        return
+    end
+    local function act(how)
+        return function(sel) if sel and sel[1] then switch_to(sel[1], how) end end
+    end
+    fzf.fzf_exec(dirs, {
+        prompt    = 'Dir❯ ',
+        fzf_opts  = {
+            ['--header'] = 'enter: new tab   alt-c: this tab   alt-g: global cd',
+        },
+        actions = {
+            ['default'] = act('tabnew'),
+            ['alt-c']   = act('tcd'),
+            ['alt-g']   = act('chdir'),
+        },
+    })
+end, { desc = 'Switch directory (autojump frecency)' })
 
 -- ── LSP helpers ───────────────────────────────────────────────────────────────
 cmd('Hover', function()
