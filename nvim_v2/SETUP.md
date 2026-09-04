@@ -68,4 +68,8 @@ there's no keylogger footprint. Counts persist to
   never fired this session" list (your prune candidates). Run it *after*
   editing real files, since buffer-local maps (LSP/gitsigns) only register once
   a buffer attaches them.
+- `:KeymapStats!` — the same, but including plugin and built-in mappings.
+  Patching `vim.keymap.set` catches every map created at runtime, so the plain
+  form filters to maps defined under this config; without that the list is
+  dominated by Neovim's own `K`, blink's `<Tab>`, and neo-tree's `j`/`k`.
 - `:KeymapStatsReset` — wipe the accumulated counts.

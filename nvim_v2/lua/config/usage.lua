@@ -10,17 +10,30 @@
 -- are re-derived every session (nothing is lazy-loaded), so :KeymapStats can also
 -- list bindings that have never fired.
 --
--- Inspect with :KeymapStats.
+-- Provenance: patching vim.keymap.set catches EVERY mapping created at runtime,
+-- including Neovim's own LSP defaults (K) and plugin buffer-local maps (j/k
+-- inside neo-tree, <Tab> in blink). Counting those together with your own
+-- bindings answers the wrong question, so each mapping records the file that
+-- defined it and :KeymapStats reports only maps from this config by default.
+--
+-- Inspect with :KeymapStats (own maps) or :KeymapStats! (everything).
 
 local M = {}
 
 local data_file = vim.fn.stdpath('data') .. '/keymap-usage.json'
 
--- Persisted usage: key = "<mode> <lhs>" → { n, lhs, mode, desc }
+-- Persisted usage: key = "<mode> <lhs>" → { n, lhs, mode, desc, src, own }
 local counts = {}
--- Session definitions (deduped): key = "<mode> <lhs>" → { lhs, mode, desc }
+-- Session definitions (deduped): key = "<mode> <lhs>" → { lhs, mode, desc, src, own }
 local defined = {}
+-- "<triggered mode char> <lhs>" → own?, used only to backfill records written
+-- before `own` existed. Keyed by mode as well as lhs: a visual-mode K of your
+-- own must not mark Neovim's normal-mode K (hover) as yours.
+local own_lhs = {}
 local dirty = false
+
+-- Resolved so the ~/.config/nvim symlink into this repo still matches.
+local CONFIG_ROOT = vim.fn.resolve(vim.fn.stdpath('config'))
 
 -- ── Load prior counts ──────────────────────────────────────────────────────────
 do
@@ -33,7 +46,7 @@ do
     end
 end
 
-local function bump(lhs, desc)
+local function bump(lhs, desc, src, own)
     local mode = vim.api.nvim_get_mode().mode:sub(1, 1)
     local key = mode .. ' ' .. lhs
     local rec = counts[key]
@@ -43,6 +56,7 @@ local function bump(lhs, desc)
     end
     rec.n = rec.n + 1
     if desc and desc ~= '' then rec.desc = desc end
+    rec.src, rec.own = src, own
     dirty = true
 end
 
@@ -55,8 +69,33 @@ local function replay(rhs)
 end
 
 -- Record a definition for the "never fired" report (dedup by mode+lhs).
-local function record_def(mode, lhs, desc)
-    defined[mode .. ' ' .. lhs] = { lhs = lhs, mode = mode, desc = desc }
+-- mode() reports a single char at trigger time; a declared mode can produce
+-- several (visual is v/V/<C-v>), and operator-pending reports 'n'.
+local TRIGGER_MODES = {
+    n = { 'n' },              o = { 'n' },
+    x = { 'v', 'V', '\22' }, v = { 'v', 'V', '\22', 's' },
+    s = { 's' },              i = { 'i' },
+    c = { 'c' },              t = { 't' },
+    [''] = { 'n', 'v', 'V', '\22' },
+}
+
+local function record_def(mode, lhs, desc, src, own)
+    defined[mode .. ' ' .. lhs] = { lhs = lhs, mode = mode, desc = desc, src = src, own = own }
+    for _, m in ipairs(TRIGGER_MODES[mode] or { mode }) do
+        local k = m .. ' ' .. lhs
+        own_lhs[k] = own_lhs[k] or own
+    end
+end
+
+-- Which file called vim.keymap.set. Level 3 skips this function and the wrapper,
+-- landing on the caller — which for the local map()/nmap()/bmap() helpers is
+-- still the config file that defines them, exactly what we want.
+local function caller()
+    local info = debug.getinfo(3, 'S')
+    local src = info and info.source or ''
+    if src:sub(1, 1) ~= '@' then return nil, false end   -- C function or a string chunk
+    local path = vim.fn.resolve(src:sub(2))
+    return path, path:sub(1, #CONFIG_ROOT) == CONFIG_ROOT
 end
 
 -- ── Patch vim.keymap.set ────────────────────────────────────────────────────────
@@ -65,13 +104,14 @@ vim.keymap.set = function(mode, lhs, rhs, opts)
     opts = opts or {}
     local desc = opts.desc
     local modes = type(mode) == 'table' and mode or { mode }
-    for _, m in ipairs(modes) do record_def(m, lhs, desc) end
+    local src, own = caller()
+    for _, m in ipairs(modes) do record_def(m, lhs, desc, src, own) end
 
     local wrapped = rhs
     if type(rhs) == 'function' then
         -- Preserves return value, so expr-function mappings still work.
         wrapped = function(...)
-            bump(lhs, desc)
+            bump(lhs, desc, src, own)
             return rhs(...)
         end
     elseif type(rhs) == 'string' and not opts.expr then
@@ -86,13 +126,13 @@ vim.keymap.set = function(mode, lhs, rhs, opts)
         end
         if ex then
             wrapped = function()
-                bump(lhs, desc)
+                bump(lhs, desc, src, own)
                 vim.cmd(ex)
             end
         else
             -- Raw key sequences and visual-range commands: replay verbatim.
             wrapped = function()
-                bump(lhs, desc)
+                bump(lhs, desc, src, own)
                 replay(rhs)
             end
         end
@@ -118,12 +158,33 @@ vim.api.nvim_create_autocmd('VimLeavePre', {
 -- ── Viewer ───────────────────────────────────────────────────────────────────────
 local MODE_ORDER = { n = 1, v = 2, x = 2, s = 3, o = 4, i = 5, c = 6, t = 7 }
 
-vim.api.nvim_create_user_command('KeymapStats', function()
-    -- Used, sorted by count desc.
-    local used = {}
-    local used_lhs = {}
+-- The flag stored at trigger time is authoritative — it came from the actual
+-- rhs that fired. Only records predating that field fall back to matching this
+-- session's definitions on mode + lhs.
+local function is_own(rec)
+    if rec.own ~= nil then return rec.own end
+    return own_lhs[(rec.mode or '') .. ' ' .. rec.lhs] == true
+end
+
+-- src is an absolute path; show it relative to the config root for readability.
+local function short_src(src)
+    if not src then return '' end
+    if src:sub(1, #CONFIG_ROOT) == CONFIG_ROOT then
+        return src:sub(#CONFIG_ROOT + 2)
+    end
+    return vim.fn.fnamemodify(src, ':t')
+end
+
+vim.api.nvim_create_user_command('KeymapStats', function(opts)
+    local all = opts.bang
+
+    local used, used_lhs, skipped = {}, {}, 0
     for _, rec in pairs(counts) do
-        table.insert(used, rec)
+        if all or is_own(rec) then
+            table.insert(used, rec)
+        else
+            skipped = skipped + 1
+        end
         used_lhs[rec.lhs] = true
     end
     table.sort(used, function(a, b) return a.n > b.n end)
@@ -131,7 +192,7 @@ vim.api.nvim_create_user_command('KeymapStats', function()
     -- Defined but never fired (any mode) — approximate: match on lhs.
     local never = {}
     for _, d in pairs(defined) do
-        if not used_lhs[d.lhs] then table.insert(never, d) end
+        if (all or d.own) and not used_lhs[d.lhs] then table.insert(never, d) end
     end
     table.sort(never, function(a, b)
         local ma, mb = MODE_ORDER[a.mode] or 9, MODE_ORDER[b.mode] or 9
@@ -139,17 +200,29 @@ vim.api.nvim_create_user_command('KeymapStats', function()
         return a.lhs < b.lhs
     end)
 
-    local lines = { '# Keymap usage  (counts persist across sessions)', '' }
-    table.insert(lines, string.format('%-5s %6s  %-16s %s', 'mode', 'count', 'lhs', 'desc'))
-    table.insert(lines, string.rep('─', 60))
+    local scope = all and 'all mappings, including plugins and built-ins'
+                       or 'this config only — :KeymapStats! for everything'
+    local lines = {
+        '# Keymap usage  (' .. scope .. ')',
+        '',
+        string.format('%-5s %6s  %-16s %-38s %s', 'mode', 'count', 'lhs', 'desc', 'defined in'),
+        string.rep('─', 100),
+    }
     for _, r in ipairs(used) do
-        table.insert(lines, string.format('%-5s %6d  %-16s %s', r.mode, r.n, r.lhs, r.desc or ''))
+        table.insert(lines, string.format('%-5s %6d  %-16s %-38s %s',
+            r.mode, r.n, r.lhs, r.desc or '', short_src(r.src)))
     end
+    if not all and skipped > 0 then
+        table.insert(lines, '')
+        table.insert(lines, string.format('(%d entries from plugins / built-ins hidden)', skipped))
+    end
+
     table.insert(lines, '')
     table.insert(lines, string.format('# Defined but never fired this session (%d)', #never))
-    table.insert(lines, string.rep('─', 60))
+    table.insert(lines, string.rep('─', 100))
     for _, d in ipairs(never) do
-        table.insert(lines, string.format('%-5s %6s  %-16s %s', d.mode, '·', d.lhs, d.desc or ''))
+        table.insert(lines, string.format('%-5s %6s  %-16s %-38s %s',
+            d.mode, '·', d.lhs, d.desc or '', short_src(d.src)))
     end
 
     vim.cmd('botright new')
@@ -160,7 +233,7 @@ vim.api.nvim_create_user_command('KeymapStats', function()
     vim.bo[buf].swapfile = false
     vim.bo[buf].modifiable = false
     vim.bo[buf].filetype = 'markdown'
-end, { desc = 'Show keybinding usage counts' })
+end, { bang = true, desc = 'Show keybinding usage counts (! includes plugins)' })
 
 vim.api.nvim_create_user_command('KeymapStatsReset', function()
     counts = {}
