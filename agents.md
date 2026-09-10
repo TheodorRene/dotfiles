@@ -80,6 +80,43 @@ To add a config: put it in the repo, add the symlink line to `symlinkifier.pl`
   servers, the Wayland session) yourself — give the command and let them run it
   at a safe point.
 
+## Documenting things
+"Write it up in docs" / "document it" means **two** edits, always both:
+1. A write-up in `docs/<kebab-case-topic>.md`.
+2. An index entry in `agents.md` (`CLAUDE.md` is a symlink to it), as bullets
+   under the relevant `## System notes` subsection — new subsection if none fits.
+
+Do **not** reach for the `impero-ai-skills` doc skills here; those are for work
+repos only. This repo's docs are plain markdown files, nothing else involved.
+
+### What a write-up looks like
+- `# Title` naming the **symptom or the change in plain words**, not the tool
+  (`The USB webcam is unusable for the first minute after plug-in`, not
+  `uvcdynctrl`). These get found by symptom, months later.
+- A **`**Status:**` line right under it**: `APPLIED <absolute date>`, or
+  `Nothing applied` for a plan. Always absolute dates — never "last week".
+- Then: symptom → cause (with the actual log lines / config text as evidence) →
+  the fix as **exact copy-pasteable commands** → **verified end state** (the real
+  command output proving it took) → how to reverse it.
+- **Separate what's verified from what's theorised**, explicitly. Mark leftover
+  puzzles as unexplained rather than papering over them, and keep a dead-ends
+  list so the same wrong theory isn't rebuilt later (see
+  `docs/luks-boot-emergency-shell.md`).
+- Say when something is **not tracked by this repo** (in-place `/etc` edits,
+  `/dev/null` masks) and what to re-run after a reinstall.
+
+### What the `agents.md` entry looks like
+- Bullets, each leading with the **load-bearing claim in bold** — the thing that
+  would otherwise be re-derived or got wrong once.
+- Prefer gotchas and negative results over description; `**Gotcha:**` and
+  `**Dead end, don't re-theorise:**` are the useful ones.
+- Mark state as `**Applied <date>:**` or `Open/optional:` … `**Nothing applied.**`
+- Close with a `Write-up:` line pointing at `docs/<file>.md` and saying what's in it.
+
+### Committing
+`agents.md` usually has unrelated pending edits in the working tree. **Stage
+only your own section** (`git add -p`), never the whole file.
+
 # System notes
 
 ## Memory / OOM
