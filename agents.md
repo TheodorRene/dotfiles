@@ -265,6 +265,33 @@ only your own section** (`git add -p`), never the whole file.
   make the headset mic connect on demand), forcing SBC-XQ over AAC, and disabling
   `autoswitch-to-headset-profile`.
 
+## Webcam / USB video
+- Built-in camera is the Intel **`ipu7`** block and claims **`/dev/video0`-`video31`**
+  on its own. A USB webcam therefore lands somewhere above that (the Anker
+  PowerConf C200 is `/dev/video33` capture + `/dev/video34` metadata). **Those
+  numbers are not stable** — match on `ID_V4L_PRODUCT`, never a hardcoded index.
+- **Applied 2026-09-08: `80-uvcdynctrl.rules` is masked.** Every UVC add event was
+  running `/lib/udev/uvcdynctrl`, which spins for **over a minute** (udev logs
+  "Spawned process ... is taking longer than 59s"). `RUN+=` is synchronous, so the
+  node stayed at devtmpfs defaults `root:root 0600` — no `GROUP="video"`, no
+  `uaccess` ACL — and **no app could open the camera until it finished**. It then
+  self-heals, which is what makes it confusing.
+- **`root:root 0600` on a `/dev/video*` node means udev never finished the event**,
+  not that a rule set it that way. Check `stat`/`getfacl` against `/dev/video0`
+  (correct: `root:video 0660` + a `uaccess` ACL) before suspecting the app or cable.
+- **Replugging makes it worse** — the new node reuses the identical syspath, so its
+  event queues behind the stuck one rather than starting fresh.
+- `uvcdynctrl` ships extension-unit data for two vendors only (`046d`, `a0c8`), so
+  it can never do anything for this hardware. Don't `apt purge` it — it's a
+  dependency of `guvcview`; masking the rule is the fix.
+- The mask is an in-place `/etc/udev/rules.d/` symlink to `/dev/null`, **not
+  symlinked from this repo** (there's no file to track) — re-run it after a
+  reinstall. Verify with `udevadm test`, not by eyeballing the directory.
+- The C200 also registers a **mic** and steals the default PipeWire source from
+  `sof-soundwire Microphones` when plugged in.
+- Write-up: `docs/uvcdynctrl-udev-stall.md` — symptom, the timeline, the two
+  commands, how to reverse it, and the one unexplained detail.
+
 ## Remote access
 - No SSH server installed (`openssh-server` absent, so no `/etc/ssh/sshd_config`),
   no Tailscale. `mosh` **is** installed (the package is client + server); `tmux`
