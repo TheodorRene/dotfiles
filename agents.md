@@ -152,14 +152,23 @@ only your own section** (`git add -p`), never the whole file.
 - Root is **LUKS-encrypted**: `nvme0n1p8` (LUKS) → `dm_crypt-0` → `ubuntu-vg/ubuntu-lv`
   → `/`. So an initramfs complaining `/dev/ubuntu-vg/ubuntu-lv does not exist` is
   **not an LVM fault** — it means the LUKS unlock never completed.
-- Initramfs is **dracut** (systemd-based), *not* initramfs-tools — the latter isn't
-  installed, so most Ubuntu advice and its knobs don't apply. `rdsosreport.txt` is
-  dracut's emergency dump.
+- The boot initramfs is **dracut** (systemd-based), *not* initramfs-tools, so most
+  Ubuntu advice and its knobs don't apply. `rdsosreport.txt` is dracut's emergency
+  dump. **Caveat:** `initramfs-tools-bin` and `initramfs-tools-core` *are* installed
+  — `kdump-tools` uses them to build its crash-capture initrd from its own config
+  tree at `/var/lib/kdump/initramfs-tools/`. Nothing on the **boot** path does.
 - Happened once (2026-08-05, fixed by a reboot). Hardware ruled out; **cause not
-  established** — three theories were built and killed by later evidence, so read
+  established** — several theories were built and killed by later evidence, so read
   the write-up before theorising. What *is* solid: the ~90s hang matches
   `DefaultDeviceTimeoutUSec`, so the **LV device job** timed out, not the passphrase
   step (`systemd-cryptsetup` has `TimeoutSec=infinity`).
+- **New evidence 2026-09-04:** prompt→passphrase gaps of **27.7s / 41s / 90.4s /
+  114.7s** occur on boots that then succeed, while unlock→LV was 0.3s on all 21
+  boots measured. So the LVM branch is nearly dead and the incident looks like *the
+  ordinary long gap, one second past the 90s device timeout*. Missing discriminator:
+  whether those gaps are the human typing late or keystrokes not reaching plymouth
+  — not in the logs, and not recalled. **Next time the spinner drags: type one
+  character and see if a dot appears.** That single observation settles it.
 - If it recurs, **run `ls /dev/mapper/` first** — `dm_crypt-0` present means an LVM
   activation failure, absent means the unlock never happened. That datum is
   unrecoverable afterwards (`/run` is tmpfs, and a failed boot leaves no journal).
@@ -167,6 +176,28 @@ only your own section** (`git add -p`), never the whole file.
   (incl. the trap that `rd.lvm.lv` **is** set via `hostonly_cmdline` inside the
   image, not `/proc/cmdline`), a dead-ends table, in-place recovery without
   rebooting, and candidate grub changes. **Nothing applied.**
+- **There is no "the boot time"** — measured across 21 boots (2026-09-04) the total
+  ranges **19s to 2min 29s**. Never reason about boot speed from one
+  `systemd-analyze` run; the earlier "~35s, ~13s of it typing" figure was one
+  unrepresentative sample. What does hold:
+  - **The decryption is never the slow part**: argon2 was **2.0s on all 21 boots**,
+    and unlock→LV another 0.3s. If a boot feels slow, don't look at the crypto.
+  - **`systemd-analyze` counts the human typing the passphrase**, and that gap ran
+    **3.4s to 114.7s**. It's the largest and least predictable term.
+  - **Plymouth holds the screen ~10.5s *after* the desktop is painted** on 17 of 21
+    boots (`plymouth-quit-wait.service`, `TimeoutSec=0`, so not a systemd timeout);
+    that alone is the whole 13.5-14.9s vs 3.6-4.4s split in `userspace`. This is
+    what "I typed my password and got a spinner for ages" actually is.
+  - GRUB (`loader`) swings **2.1s → 14.1s** for the same 58 MiB read, so the old
+    "~8.5 MiB/s constant" explanation is wrong; firmware usually 5.4s but has hit
+    28.7s. Both unexplained. FPDT is the source of those two numbers (no `Loader*`
+    EFI vars exist here).
+  - `systemd-analyze blame` misleads: its top ~30 `*.device` entries just inherit
+    the initrd duration — filter with `grep -vE '\.device$'`.
+  - Open/optional: `docs/boot-time-budget.md` — the 21-boot table, the four
+    markers that decompose any single boot, and ranked fixes (TPM2 auto-unlock;
+    dropping `quiet splash`, which kills the plymouth stall *and* makes the next
+    hang legible). **Nothing applied.**
 - `smartmontools` **is** installed, but `smartctl` (and `tune2fs`) need root:
   `sudo smartctl -a /dev/nvme0n1`.
 

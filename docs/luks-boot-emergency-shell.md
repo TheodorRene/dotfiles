@@ -4,9 +4,12 @@
 tracked in this repo). This is the diagnosis plus candidate fixes, written up so a
 repeat can be recognised in seconds instead of re-derived. Written 2026-08-05.
 
-**Cause is NOT established.** Two plausible theories were built and then killed by
-further evidence (see *Dead ends*). Read the symptom record and the verified
+**Cause is NOT established.** Several plausible theories were built and then killed
+by further evidence (see *Dead ends*). Read the symptom record and the verified
 mechanics; treat the leading explanation as a lead, not a conclusion.
+
+**Revised 2026-09-04** with a 21-boot measurement that narrows it to one branch —
+see *New evidence, 2026-09-04*. Nothing is applied as a result.
 
 ## The incident
 
@@ -60,7 +63,9 @@ means, stated precisely and with confidence:
 > **`/dev/mapper/ubuntu--vg-ubuntu--lv` did not appear within 90 seconds of the
 > device job starting.**
 
-That's the one solid conclusion. Everything below is about *why*.
+That's the one solid conclusion. Everything below is about *why* — and see
+*New evidence, 2026-09-04* for the measurement that makes a 90s **passphrase**
+delay look ordinary rather than exotic.
 
 ## Verified mechanics (so future-me doesn't re-derive or misread these)
 
@@ -157,6 +162,8 @@ not a bug.
 
 ## Leading explanation (a lead, not a conclusion)
 
+*Updated 2026-09-04 — see [New evidence](#new-evidence-2026-09-04-90s-prompt-gaps-happen-on-successful-boots-too) below, which shifts the odds sharply toward branch (a).*
+
 Given that the prompt appeared, the passphrase was typed, the spinner kept
 animating, and the **device** job — not the passphrase step — timed out, the
 surviving shape is:
@@ -182,6 +189,57 @@ ls /dev/mapper/          # is dm_crypt-0 there?
 `dm_crypt-0` present ⇒ branch (b), an LVM activation failure. Absent ⇒ branch (a),
 the unlock never happened. **Record this before anything else.**
 
+## New evidence, 2026-09-04: 90s+ prompt gaps happen on *successful* boots too
+
+Decomposing 21 consecutive boots from the journal (full table in
+[boot-time-budget.md](boot-time-budget.md)) turned up something this document
+did not have when it was written: the gap between **the prompt appearing** and
+**`cryptsetup` having the passphrase in hand** is wildly variable on boots that
+then completed perfectly normally.
+
+| boot | prompt → passphrase in hand | outcome |
+|---|---|---|
+| 2026-08-28 16:31 | 27.7s | booted fine |
+| 2026-08-31 16:57 | 41.0s | booted fine |
+| 2026-09-01 16:45 | **90.4s** | booted fine |
+| 2026-08-31 19:32 | **114.7s** | booted fine |
+
+And on all 21 boots, once the passphrase arrived, argon2 took **2.0s** (±0.05) and
+the LV appeared **0.3s** after that. Two consequences for the branches above:
+
+- **Branch (b) is now much less likely.** LVM activation has not been slow or
+  flaky even once in three weeks of boots — the unlock→LV step is one of the most
+  consistent things in the whole boot.
+- **Branch (a) gained a mechanism.** A **90.4s** gap on a *successful* boot lands
+  exactly on top of the 90s `DefaultDeviceTimeoutUSec` that expired during the
+  incident. If that same delay runs a second or two longer, the `.device` job gives
+  up first and you get the emergency shell. Under that reading the incident is not
+  a distinct failure at all — it is **the ordinary long gap, one second too long**,
+  which also explains why a plain reboot "fixed" it and why it has not recurred.
+
+**The discriminator is still missing, and it is not recoverable from the logs.**
+Nothing in the journal separates "the human typed late" from "keystrokes were not
+reaching plymouth". Asked directly on 2026-09-04; not recallable for those four
+boots. So this remains a lead, not a conclusion — but it is now the *only* live
+branch.
+
+### How to capture the discriminator next time
+
+**Free, no config change:** when the wait feels long, **type one character and
+watch the screen.** Plymouth echoes each keystroke immediately (a dot/asterisk per
+character).
+
+- Dots appear ⇒ input *is* being delivered; the delay is human or downstream.
+- No dots ⇒ input is not reaching plymouth ⇒ **branch (a) confirmed**, and this
+  stops being a mystery.
+
+**Config option, unverified:** `plymouth.debug` on the kernel cmdline makes
+`plymouthd` log verbosely, input handling included. `/run` survives switch-root, so
+on a boot that *succeeds* the log is still readable afterwards. Not tested here —
+confirm where the log actually lands before relying on it. Note that candidate
+change #1 below (dropping `quiet splash`) removes plymouth from the path entirely,
+which answers the question a different way.
+
 ## Dead ends — theories that were built and then killed
 
 Recorded so they don't get rebuilt from the same starting point:
@@ -189,8 +247,9 @@ Recorded so they don't get rebuilt from the same starting point:
 | Theory | Killed by |
 |---|---|
 | **Blind plymouthd** — `plymouthd` alive but rendering nothing, stranding the request behind an invisible prompt | The prompt **was visible** and the **spinner animated**. Plymouth's display path worked. |
-| **Dropped keystrokes / wrong passphrase** from the USB Voyager not having enumerated | A wrong passphrase fails *fast and visibly* with retries (~1-2s per attempt); it cannot produce a 90s silent spin. And the passphrase was entered, not missed. |
+| **Wrong passphrase** (e.g. the USB Voyager not having enumerated, so characters landed wrong) | A wrong passphrase fails *fast and visibly* with retries (~1-2s per attempt); it cannot produce a 90s silent spin. **Note the narrow scope:** this kills *wrong* input, not *undelivered* input — "keystrokes never reached plymouth" is branch (a) and is now the live lead, not a dead end. |
 | **dracut deleted the LVM activation rules** because `rd.lvm.vg`/`rd.lvm.lv` were absent from `/proc/cmdline` | `hostonly_cmdline` defaults to `yes` under `hostonly`, so `rd.lvm.lv=ubuntu-vg/ubuntu-lv` is baked into the image at `/etc/cmdline.d/20-lvm.conf`. The rules and their retry fallback are present. |
+| **LVM autoactivation never fired** (branch (b)) | Weakened further 2026-09-04: across 21 boots, unlock→LV was 0.3s every single time. Redundant activation paths plus a timeout retry, and no observed flakiness. |
 | **Failing NVMe / filesystem** | See *What was ruled out*. Also: hardware faults don't clear on a plain reboot. |
 
 ## Why the evidence was gone
@@ -208,8 +267,12 @@ mount /dev/nvme0n1p7 /mnt && cp /run/initramfs/rdsosreport.txt /mnt/
 
 ## If it recurs — do these, in this order
 
+0. **Before it drops to a shell, while the spinner is still going: type one
+   character and look for a dot appearing.** As of 2026-09-04 this is the highest-value
+   observation available and it is only available *then* — see *How to capture the
+   discriminator next time*.
 1. **`ls /dev/mapper/`** — the branch (a)/(b) discriminator above. Most valuable
-   single command; everything else is recoverable, this datum isn't.
+   single command at the shell; everything else is recoverable, this datum isn't.
 2. **Save the report**: `mount /dev/nvme0n1p7 /mnt && cp /run/initramfs/rdsosreport.txt /mnt/`
 3. **Recover in place** rather than rebooting:
 
