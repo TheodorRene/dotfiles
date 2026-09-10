@@ -142,6 +142,23 @@ vim.lsp.config['eslint'] = {
         workingDirectory = { mode = 'location' },
         problems         = { shortenToSingleLine = false },
         format           = true,
+        -- rulesCustomizations MUST be present and MUST be a list. The server
+        -- does `for (const c of settings.rulesCustomizations)` inside
+        -- Diagnostics.create() — i.e. only once it actually has a problem to
+        -- report. Omit it and every lint run with >=1 finding dies with
+        -- "TypeError: undefined is not iterable", so the buffer silently shows
+        -- zero eslint diagnostics while a clean buffer looks perfectly healthy.
+        -- An empty Lua table encodes as JSON `[]` (vim.empty_dict() would give
+        -- `{}` and throw the same way), so leave this as `{}`.
+        rulesCustomizations = {},
+        -- Same shape of bug: SaveRuleConfigs.get() reads
+        -- settings.codeActionOnSave.rules unguarded, so the fixAll-on-save
+        -- code action throws if this key is missing.
+        codeActionOnSave = { enable = true, mode = 'all' },
+        -- Without this the server defaults to warnIgnored=true and reports
+        -- "File ignored because of a matching ignore pattern" as a diagnostic.
+        onIgnoredFiles   = 'off',
+        quiet            = false,
     },
 }
 
