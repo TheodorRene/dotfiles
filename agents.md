@@ -201,6 +201,28 @@ only your own section** (`git add -p`), never the whole file.
 - `smartmontools` **is** installed, but `smartctl` (and `tune2fs`) need root:
   `sudo smartctl -a /dev/nvme0n1`.
 
+## Printing / cellular (unused hardware daemons)
+- **Applied 2026-09-03: printing and `ModemManager` are OFF.** `cups.service`,
+  `cups.socket`, `cups.path`, `cups-browsed.service` and `ModemManager.service` are
+  all disabled; the `cups` **snap is removed**. `lpstat -p` now says "Scheduler is
+  not running". ~112 MB of RSS reclaimed.
+- Two **complete CUPS stacks** had been running at once (deb `cups`+`cups-browsed`
+  *and* `snap.cups.*`). The printers `lpstat` used to show were **not added by
+  hand** — `cups-browsed` has `BrowseRemoteProtocols dnssd` and auto-creates a
+  queue for any printer advertised on the current network. **If printing is ever
+  re-enabled, expect those queues to reappear on their own** — that's by design,
+  not a leftover.
+- **Gotcha if re-enabling:** CUPS is **socket-activated**. `cups.socket` alone
+  brings it back; conversely, disabling only `cups.service` would not have stopped
+  it. The deb units still show in `list-unit-files` as `disabled` (package still
+  installed) — that is the expected end state.
+- `ModemManager` was managing **no WWAN hardware of any kind** (`mmcli -L` → none;
+  nothing on PCI or USB; only wifi + a USB ethernet dongle). It probes serial/USB
+  devices with AT commands at boot, which is also why it can interfere with
+  USB-serial gear (Arduino/ESP32/debug UARTs).
+- Write-up: `docs/disable-printing-and-modemmanager.md` — what each does, why it
+  was pointless here, verified end state, and how to reverse it.
+
 ## Bluetooth / wifi radio
 - BT and wifi are **one Intel CNVi part** — `hci0` on PCI `00:14.7`, `iwlwifi`
   `wlp0s20f3` on `00:14.3` — sharing the RF front-end and antennas. Audio stack is
