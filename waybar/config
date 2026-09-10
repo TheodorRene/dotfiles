@@ -6,7 +6,7 @@
 
     "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
     "modules-center": ["mpris"],
-    "modules-right": ["custom/docker", "network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
+    "modules-right": ["custom/docker", "network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "pulseaudio#mic", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
 
     "sway/workspaces": {
         "disable-scroll": false,
@@ -79,6 +79,22 @@
         "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
         "on-scroll-up": "wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+",
         "on-scroll-down": "wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+    },
+
+    // Microphone state, driven by the same default source the XF86AudioMicMute
+    // key toggles (sway/config). All four format-* variants forward to
+    // {format_source} so the sink's own mute/bluetooth state can't hijack it.
+    "pulseaudio#mic": {
+        "format": "{format_source}",
+        "format-muted": "{format_source}",
+        "format-bluetooth": "{format_source}",
+        "format-bluetooth-muted": "{format_source}",
+        "format-source": "",
+        "format-source-muted": "<span color=\"#e0645a\"></span>",
+        "tooltip-format": "Mic: {desc}",
+        "on-click": "~/dotfiles/scripts/mic.sh mute",
+        "on-scroll-up": "~/dotfiles/scripts/mic.sh up",
+        "on-scroll-down": "~/dotfiles/scripts/mic.sh down"
     },
 
     "battery": {

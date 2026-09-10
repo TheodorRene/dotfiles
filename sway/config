@@ -79,7 +79,7 @@ bindsym XF86AudioPrev exec playerctl previous
 bindsym --locked XF86AudioRaiseVolume exec ~/dotfiles/scripts/volume.sh up
 bindsym --locked XF86AudioLowerVolume exec ~/dotfiles/scripts/volume.sh down
 bindsym --locked XF86AudioMute exec ~/dotfiles/scripts/volume.sh mute
-bindsym --locked XF86AudioMicMute exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+bindsym --locked XF86AudioMicMute exec ~/dotfiles/scripts/mic.sh mute
 
 # Cycling through workspaces
 bindsym $mod+Tab workspace next

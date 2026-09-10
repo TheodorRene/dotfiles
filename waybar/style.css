@@ -65,6 +65,11 @@ window#waybar {
     color: @fg;
 }
 
+/* mic sits flush against the speaker module — they read as one audio group */
+#pulseaudio.mic {
+    padding-left: 0;
+}
+
 /* clock as the right-side accent — muted warm sand, not loud */
 #clock {
     color: #d9b08c;
