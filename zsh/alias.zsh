@@ -1,10 +1,11 @@
-alias ls="eza"
+alias ls="eza --icons=always"
 alias bc="bc -lq"
 alias battery="cat /sys/class/power_supply/BAT0/capacity"
 #alias c="code . && exit" So long and thanks for all the fish
 alias cal="ncal -3wb"
 alias cass="mosh cassarossa.samfundet.no"
 alias cat="batcat"
+alias ccr="claude --resume"
 alias clip="wl-copy"
 alias clipboard2file='xclip -selection clipboard -t image/png -o > "$(date +%Y-%m-%d_%T).png"'
 alias deadkeys='setxkbmap -layout no -variant nodeadkeys -option ctrl:nocaps'
