@@ -1,0 +1,137 @@
+# NixOS configs — `newhost` and `disco`
+
+A flake-based, multi-host NixOS config derived from the Ubuntu setup this repo
+already deploys: `REINSTALL.md`, `symlinkifier.pl`, `etc/`, `scripts/`, `docs/`,
+and `CLAUDE.md`.
+
+**Nothing here is applied to this machine.** The Ubuntu side of the repo is
+untouched and keeps working.
+
+| Host | What | Disks |
+|---|---|---|
+| `newhost` | **the machine you're actually installing on** — Intel CPU + iGPU, dual-boot off a shared ESP | declarative, via **disko** |
+| `disco` | this laptop (Dell XPS 14, Panther Lake) — kept as the worked example the rest was derived from | hand-written UUIDs |
+
+```
+nix/
+├── flake.nix                    inputs + `mkHost`; add a machine in one line
+├── hosts/
+│   ├── newhost/
+│   │   ├── default.nix          hostname, per-host knobs, stateVersion
+│   │   ├── hardware.nix         initrd modules, optional fingerprint/v4l2loopback
+│   │   └── disks-disko.nix      LUKS2 → btrfs subvolumes, declaratively
+│   └── disco/
+│       ├── default.nix hardware.nix
+│       ├── disks-btrfs.nix      LUKS → btrfs, literal UUIDs
+│       └── disks-ext4-lvm.nix   the current Ubuntu LUKS→LVM→ext4 layout
+├── modules/                     host-agnostic; imported via common.nix
+│   ├── common.nix               the shared import list
+│   ├── options.nix              the `local.*` knobs (see below)
+│   ├── hardware-intel.nix       Intel iGPU, microcode, thermald
+│   ├── boot.nix                 GRUB into the shared ESP, systemd initrd
+│   ├── memory.nix               zram + oomd + VM sysctls  (etc/ + install-*-tuning.sh)
+│   ├── desktop.nix              sway, GDM autologin, portals, backlight, firefox
+│   ├── backup.nix               snapper + btrbk + restic + btrfs scrub
+│   ├── networking.nix security.nix services.nix virtualisation.nix
+│   └── audio.nix bluetooth.nix fonts.nix packages.nix locale.nix users.nix
+│                                nix-daemon.nix home-manager.nix
+├── home/
+│   ├── dotfiles.nix             the symlinks — replaces symlinkifier.pl
+│   └── trc.nix packages.nix
+└── docs/
+    ├── install.md               disko install, step by step (+ the by-hand path)
+    ├── ubuntu-to-nixos.md       what maps to what, and what breaks
+    └── backup-and-recovery.md   snapshots, restores, rollback
+```
+
+## Yes, flakes
+
+`flake.nix` pins every input and `flake.lock` records exact revisions, so a
+rebuild today and a rebuild in six months resolve to the same closure.
+`nix-channel` is not used anywhere.
+
+```bash
+sudo nixos-rebuild switch --flake ~/dotfiles/nix#newhost   # apply
+sudo nixos-rebuild test   --flake ~/dotfiles/nix#newhost   # apply, no boot entry
+nix flake update --flake ~/dotfiles/nix                    # bump all inputs
+nix flake update nixpkgs --flake ~/dotfiles/nix            # bump just one
+```
+
+## Adding the new machine
+
+1. **Rename the host.** `newhost` is a placeholder:
+
+   ```bash
+   git mv hosts/newhost hosts/<name>
+   sed -i 's/newhost/<name>/g' flake.nix hosts/<name>/default.nix
+   ```
+
+   Nothing else refers to it — `btrbk` derives its instance name and backup
+   target from `networking.hostName`.
+
+2. **Set the three per-host knobs** in `hosts/<name>/default.nix`:
+
+   | Knob | What |
+   |---|---|
+   | `local.zramMaxGiB` | roughly half of physical RAM (16 suits 30–32 GB) |
+   | `local.intelForceProbe` | `null` unless mesa doesn't know the GPU yet |
+   | `system.stateVersion` | the release you install from; never bump it |
+
+3. **Fill the three placeholders** in `hosts/<name>/disks-disko.nix`: the `/boot`
+   partition, the LUKS partition, and the existing ESP's UUID. `lsblk -f` and
+   `blkid` on the target machine give you all three.
+
+4. **Follow `docs/install.md`.**
+
+## Host-specific vs. shared
+
+Everything under `modules/` is host-agnostic — no hostname checks anywhere. The
+machine-specific facts are exactly: the `hosts/<name>/` directory, the three
+`local.*` knobs in `modules/options.nix`, and which `nixos-hardware` profiles
+the host imports.
+
+Verification that this actually holds: extracting `common.nix`,
+`hardware-intel.nix` and `options.nix` out of the original single-host config
+left `disco`'s derivation hash **bit-identical**
+(`6wxiy43jqldq4qna09srbg1b9qvfbz75`). The refactor changed no behaviour.
+
+## Dotfiles stay dotfiles
+
+`home/dotfiles.nix` links `~/.config/sway`, `~/.zshrc`, `~/.config/nvim` &c. to
+`~/dotfiles/...` with `mkOutOfStoreSymlink` — real symlinks into the working
+tree, not copies in `/nix/store`. Editing `sway/config` and reloading still works
+with no rebuild and no `git add`. It's `symlinkifier.pl`'s list, verbatim (20
+paths), including the "individual files under `~/.claude`, never the whole
+directory" rule.
+
+Consequence: **clone the repo before the first `nixos-rebuild switch`**, or
+activation creates links into a directory that doesn't exist.
+
+## What stays imperative, on purpose
+
+| Thing | Why |
+|---|---|
+| YubiKey registration (`pamu2fcfg >> ~/.config/Yubico/u2f_keys`) | generated by tapping the physical key, per-key, not worth committing |
+| TPM enrolment (`systemd-cryptenroll`) | writes a LUKS keyslot; the config only opts into using it |
+| `~/wallpapers`, `~/.ssh`, `~/.gnupg`, `~/.claude` state, Firefox profile | restored from backup — `REINSTALL.md` §3.6 |
+| restic repo + password file | secrets; see `docs/backup-and-recovery.md` |
+| Shrinking Windows to free space | only Windows' own Disk Management moves NTFS metadata reliably |
+
+## Verification status
+
+Both hosts evaluate against the pinned inputs (nixpkgs `26.11pre-git`, disko
+`ff8702b`) with **no warnings and no failed assertions**, and `newhost`'s
+`diskoScript` evaluates too. Neither has been **built or booted** — evaluation
+catches wrong option names and type errors, not a missing kernel module or a
+GPU that won't come up.
+
+## Known gaps
+
+- **`voxtype`** (`$mod+x` in `sway/config`) isn't packaged anywhere — bring your
+  own derivation, or drop the binary in `~/.local/bin` and rely on `nix-ld`.
+- **`ncal`**: the `cal` alias in `zsh/alias.zsh` calls `ncal -3wb`, which nixpkgs
+  doesn't ship. `batcat` *is* shimmed (`modules/packages.nix`), `ncal` isn't.
+- **IPU7 webcam** (disco only): `intel-ipu7-dkms` has no nixpkgs equivalent.
+- The sway/kanshi configs name `eDP-1` and `DP-1`. Those are dotfiles, not Nix —
+  check `swaymsg -t get_outputs` on the new machine and update `kanshi/config` if
+  the names differ.
