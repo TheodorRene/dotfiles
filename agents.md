@@ -140,6 +140,13 @@ only your own section** (`git add -p`), never the whole file.
   the process name.
 - Open/optional: `docs/rust-analyzer-memory-cap.md` — plan to cap rust-analyzer
   (a repeat OOM offender) in a memory-limited cgroup slice.
+- **`kdump` reserves 512 MB for a dump it can never write.** `crashkernel=…:512M`
+  is armed, but the capture initrd (built by *initramfs-tools*, not dracut) has no
+  `cryptsetup`/`dm-crypt`, and `/var/crash` is inside LUKS — so it cannot mount its
+  own dump target. Never captured anything. Cause: `cryptsetup-initramfs` isn't
+  installed (nothing needs it, since the boot initrd is dracut). Write-up:
+  `docs/kdump-cannot-capture-on-luks.md`. **Nothing applied** — note that
+  `systemctl disable` alone does *not* release the reservation.
 
 ## Boot / disk
 - Root is **LUKS-encrypted**: `nvme0n1p8` (LUKS) → `dm_crypt-0` → `ubuntu-vg/ubuntu-lv`
