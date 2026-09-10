@@ -96,5 +96,6 @@ alias ai="gh copilot suggest -t shell"
 # alias break="sleep $((60*5)) && aplay /usr/share/sounds/speech-dispatcher/test.wav &&  notify-send -t 5000 -u critical '5 minutter pause'"
 #alias v="vim"
 alias gd="git diff"
+alias br="$HOME/dotfiles/scripts/br.sh"
 # remove build artifacts not compiled in the last 14 days (operates on cwd)
 alias rust_clean="cargo sweep --time 14 ."
