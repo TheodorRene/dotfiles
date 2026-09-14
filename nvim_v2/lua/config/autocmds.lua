@@ -97,6 +97,18 @@ autocmd('BufWritePre', {
     desc = 'Strip trailing whitespace on save',
 })
 
+-- ── Macro recording → statusline refresh ─────────────────────────────────────
+-- The statusline shows reg_recording() (see options.lua), but statusline
+-- redraws are lazy: pressing q to start recording moves no cursor and fires no
+-- redraw, so without this the indicator would not appear until some unrelated
+-- event repainted it — precisely when you most need it to be immediate.
+autocmd({ 'RecordingEnter', 'RecordingLeave' }, {
+    group   = augroup('recording_statusline', { clear = true }),
+    pattern = '*',
+    command = 'redrawstatus',
+    desc    = 'Refresh statusline when macro recording starts or stops',
+})
+
 -- ── LSP progress → statusline refresh ────────────────────────────────────────
 -- vim.lsp.status() consumes progress messages; redraw the statusline each time
 -- a new progress event arrives so the message appears promptly and then clears.
