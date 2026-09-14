@@ -34,9 +34,16 @@ opt.laststatus    = 3           -- single global statusline
 --   left:  mode indicator · git branch · filename · modified/RO flags
 --   mid:   LSP progress (cleared once consumed by vim.lsp.status())
 --   right: filetype · LSP clients · ruler · position
+--
+-- The macro-recording indicator is not decoration. cmdheight=0 means Neovim's
+-- own "recording @q" message has nowhere to appear, and which-key suspends ALL
+-- of its triggers while a macro records or executes (which-key util.in_macro +
+-- triggers.lua). So an unnoticed recording reads as "which-key stopped working
+-- and my leader/g mappings do nothing" — with no cue anywhere on screen.
 opt.statusline = table.concat({
     '%#StatusLine#',
     ' %{mode()} ',               -- current mode (short)
+    '%{reg_recording() != "" ? "  REC @".reg_recording()." " : ""}',
     '│ %f',                       -- relative filepath
     ' %m%r',                      -- [+] modified, [RO] readonly
     '%=',                         -- switch to right-align
