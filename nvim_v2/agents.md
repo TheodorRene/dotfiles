@@ -108,6 +108,36 @@ file that defined it. `:KeymapStats` filters to maps from this config;
 for records predating that field is backfilled by matching **mode + lhs**, not
 lhs alone: a visual-mode `K` here must not claim Neovim's normal-mode `K`.
 
+## :DebugAI — state capture for intermittent bugs
+
+`lua/config/debugai.lua`, lazily required from the `:DebugAI` command. Run it
+**the moment something misbehaves**; it writes a markdown report to
+`stdpath('state')/debug-ai/<timestamp>.md` plus a `latest.md` copy, and puts the
+path on the clipboard.
+
+    :DebugAI                    -- bare report
+    :DebugAI grr did nothing    -- with a description of the symptom
+    :DebugAI!                   -- also appends the tail of the LSP log
+
+Captures the session, attached LSP clients and their `root_dir`s, a probe table
+of keys that matter (including bare-key controls like `K`), which-key's trigger
+mappings, and `:messages`. **`:messages` is the point** — with `cmdheight=0` and
+ui2, a thrown error has nowhere visible to land, so "nothing happened" and "it
+threw" look identical on screen.
+
+The report deliberately lives outside this repo: it contains absolute paths,
+buffer names and message text, and this repo is public.
+
+**Reading it:** the discriminator is bare keys vs prefixed ones. which-key
+installs **buffer-local** triggers on every prefix in use here — `<Space>`, `g`,
+`z`, `[`, `]`, `<C-A>`, `<C-G>`, `<C-X>`, `<C-W>` — so anything under those
+routes through which-key, while `K` and other bare keys do not. If the bare-key
+controls work and the prefixed ones don't, suspect the trigger layer, not LSP.
+
+**Don't** probe which-key by calling `wk.show()`: it opens a popup as a side
+effect and throws whenever which-key isn't UI-initialised, which reads as a
+failure when nothing is wrong. That mistake was made and removed once already.
+
 ## Verifying a change without opening the editor
 
 Headless runs load the real config and surface Lua errors:

@@ -118,6 +118,12 @@ cmd('Dirs', function()
     })
 end, { desc = 'Switch directory (autojump frecency)' })
 
+-- Dump session state for an AI assistant when something misbehaves. Lazily
+-- required so it costs nothing at startup. See lua/config/debugai.lua.
+cmd('DebugAI', function(args)
+    require('config.debugai').dump(args.args, args.bang)
+end, { nargs = '*', bang = true, desc = 'Write a debug report for an AI assistant' })
+
 -- ── LSP helpers ───────────────────────────────────────────────────────────────
 cmd('Hover', function()
     vim.lsp.buf.hover()
