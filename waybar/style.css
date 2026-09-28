@@ -71,6 +71,15 @@ window#waybar {
     padding-left: 0;
 }
 
+/* viz: the cover sits just before the track, the spectrum just after */
+#image.viz {
+    padding: 0 0 0 8px;
+}
+
+#custom-viz {
+    padding-left: 4px;
+}
+
 /* clock as the right-side accent — muted warm sand, not loud */
 #clock {
     color: #d9b08c;

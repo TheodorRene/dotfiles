@@ -5,7 +5,7 @@
     "spacing": 4,
 
     "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
-    "modules-center": ["mpris", "custom/viz"],
+    "modules-center": ["image#viz", "mpris", "custom/viz"],
     "modules-right": ["custom/docker", "network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "pulseaudio#mic", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
 
     "sway/workspaces": {
@@ -36,13 +36,24 @@
     },
 
     // Mini spectrum from viz (~/dev/personal/viz); hides itself when nothing plays.
-    // Click opens viz, right-click plays/pauses Spotify.
+    // Click switches bars/braille, middle-click opens viz, right-click plays/pauses.
+    // Hovering shows the track card.
     "custom/viz": {
         "exec": "~/.nix-profile/bin/viz bar",
         "return-type": "json",
         "restart-interval": 5,
-        "on-click": "~/.nix-profile/bin/viz-launch",
+        "on-click": "~/.nix-profile/bin/viz bar --toggle",
+        "on-click-middle": "~/.nix-profile/bin/viz-launch",
         "on-click-right": "playerctl -p spotify play-pause"
+    },
+
+    // The current cover, kept up to date by `viz bar` (it signals RTMIN+9 on changes).
+    "image#viz": {
+        "exec": "f=\"$HOME/.cache/viz/bar-cover.png\"; [ -f \"$f\" ] && echo \"$f\"",
+        "size": 22,
+        "interval": 10,
+        "signal": 9,
+        "on-click": "~/.nix-profile/bin/viz-launch"
     },
 
     "network": {
