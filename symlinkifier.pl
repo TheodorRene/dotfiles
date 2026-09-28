@@ -52,6 +52,10 @@ symlink_path("$dotfiles/claude/skills", "$home/.claude/skills");
 # docs/bluetooth-reliability-vs-phone.md).
 symlink_path("$dotfiles/systemd/user/obex.service.d", "$home/.config/systemd/user/obex.service.d");
 
+# Notify on external display connect/disconnect (DP on the non-Thunderbolt
+# USB-C port can take ~10s to come up).
+symlink_path("$dotfiles/systemd/user/display-notify.service", "$home/.config/systemd/user/display-notify.service");
+
 # Neovim v2 config.
 symlink_path("$dotfiles/nvim_v2", "$home/.config/nvim");
 

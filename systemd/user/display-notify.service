@@ -1,0 +1,15 @@
+[Unit]
+Description=Notify on external display connect/disconnect
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/dotfiles/scripts/notify-display-connect.sh
+Restart=on-failure
+RestartSec=5
+# Polling sysfs only; keep it out of the way.
+Nice=10
+
+[Install]
+WantedBy=graphical-session.target
