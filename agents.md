@@ -302,6 +302,90 @@ only your own section** (`git add -p`), never the whole file.
   hooks to the phone via ntfy (`scripts/claude-attention.sh` is sway/mako-only, so
   it's silent over SSH). **Nothing applied.**
 
+## Home server (HP Spectre x360, 2018/19)
+- Open/optional: `server/README.md` — plan to make an old HP Spectre x360 an
+  always-on home server on NixOS + Tailscale. **Nothing applied.**
+- **The server is a separate machine with a separate purpose** — it is not an
+  accessory to this laptop, does not back it up, and is not monitored with it.
+  `server/` holds the plan, `inventory.sh`, and **the machine's own flake**.
+- **Deliberately not a host inside `nix/`.** `nix/` is an unbuilt draft for a
+  laptop that doesn't exist; a headless server shares almost nothing with a Sway
+  workstation, and separate `flake.lock`s mean an update can't break both. A
+  flake can only see files under its own root, so the split is enforced by the
+  tool. **Read `nix/modules/` for ideas, import none of it.**
+- **Traps if you copy from `nix/modules/`:** `security.nix` sets
+  `services.openssh.enable = false` as a *plain* definition (not `mkDefault`), so
+  enabling it elsewhere is a conflicting-definition error; `common.nix` drags in
+  the whole desktop and `services.nix` enables CUPS + Avahi; `nix-daemon.nix` is
+  tuned for 16 cores, not four.
+- **Decided 2026-09-22: no disk encryption.** An encrypted root means no
+  unattended reboot after a power cut, which is most of the point. btrfs stays
+  (snapper + btrbk); TPM2 enrolment and initrd unlock are moot. Consequences:
+  anything stored there is in the clear, and **the Tailscale node key is on that
+  disk** — scope the node with tailnet ACLs. Outbound restic keeps its repo
+  encrypted client-side, which is what makes an unencrypted server safe to back
+  up from.
+- **Decided 2026-09-22: the middle path — NixOS base, containers for apps.** Nix
+  owns boot/disks/users/sshd/Tailscale/firewall/systemd units **and their
+  hardening**; upstream images own Immich, Jellyfin, Paperless, via
+  `virtualisation.oci-containers` (Podman) with **pinned tags, never `:latest`**.
+  Two deliberate update paths: `nixos-rebuild` moves the base, an image bump
+  moves one app. **Recorded so it isn't re-argued:** Debian + Compose is what most
+  home servers are and is a fair answer; NixOS earns its keep here for *rollback
+  on a headless box* and for cheap systemd hardening, not for purity.
+- **The rule that keeps a mixed setup honest:** everything imperative lives under
+  one directory, is in the backup path, and has its exact install command written
+  down. Same discipline as the in-place `/etc` edits elsewhere in this file.
+- **OpenClaw is installed imperatively under a Nix-declared hardened unit**, and
+  it's the *last* phase, not a Tier 2 afterthought. It self-updates and installs
+  ClawHub skills at runtime, which fights an immutable store — hence the official
+  Nix docs being Home Manager-shaped and the community flakes being rough. Nix
+  owns the user, unit, `ReadWritePaths` allowlist and firewall; npm owns the bytes.
+  `programs.nix-ld` is required (prebuilt Node + native npm modules).
+- **Gotcha that inverts the usual reasoning: the firewall does not protect
+  OpenClaw's prompt surface.** It connects *outbound* to WhatsApp/Telegram, so
+  messages from arbitrary people reach the agent however tight the tailnet is —
+  Tailscale protects the control plane, not against prompt injection or a
+  malicious skill. Also: `exec` runs **on the host**, "elevated" tools run on the
+  host even when sandboxed, and a documented bypass had `/tools/invoke` ignoring
+  sandbox tool policies. **Don't co-locate it with Vaultwarden, the backup repo or
+  Immich's library.** Containerising it sandboxes `exec` — which also stops it
+  restarting services or writing to the vault; **the container's mounts are the
+  tool policy.**
+- **A laptop server's real enemies are the lid and the battery**, in that order:
+  disable the sleep/suspend/hibernate targets outright (not just `logind`), and
+  **physically inspect a 6–7 year old cell for swelling** before trusting it to
+  run unattended. Leave the lid *open* — free once the switch is ignored, better
+  for the hinge vents.
+- **Gotcha that presents as a network fault months later:** Tailscale node keys
+  expire after 180 days by default. Disable expiry for this node in the admin
+  console. And never make Tailscale SSH the *only* way in — a broken `tailscaled`
+  takes it with it; run a real sshd bound behind `trustedInterfaces`.
+- **Track stable nixpkgs here, not unstable** (the opposite of `nix/flake.nix`, on
+  purpose): 2018 hardware needs no new kernel, and `system.autoUpgrade` against
+  unstable on the always-on box turns a breaking change into a 4 a.m. outage.
+- **`server/INSTALL.md` is the Phase 1 runbook** — USB, BIOS (Secure Boot **off**,
+  and it's the only place to learn whether the machine has power-on-after-AC-loss),
+  disko, `nixos-install --flake`, first boot. Holds the three Nix files to write
+  first; they are **syntax-checked only** (`nix-instantiate --parse`), never
+  evaluated, so option names are unverified.
+- **Gotcha that wastes the first evening: flakes ignore untracked files.** Edit
+  `hardware.nix` in the clone, forget `git add`, and `nixos-install` uses the old
+  version or can't find it — and never says why. Also: `nixos-generate-config`
+  needs **`--no-filesystems`** when disko owns the layout, or you get two
+  conflicting `fileSystems` blocks.
+- **The three tests that make it a server, not a laptop:** ssh from the phone **on
+  mobile data** (not home wifi — that may be the LAN working); **pull the power
+  cord** and it must come back reachable untouched; **close the lid** and it must
+  stay up.
+- `server/inventory.sh` — run it **on the Spectre** (live USB fine, `/sys` only,
+  no root). RAM (8 vs 16 GB, soldered), dGPU (13" vs 15") and battery health each
+  change the plan.
+- Write-up: `server/README.md` — hardware unknowns, the no-encryption decision and
+  what it costs, the Tailscale + sshd shape, a ranked menu of services, and a
+  5-phase order gated on *nothing gets a service until its data is in the backup
+  path*.
+
 ## Work project
 - Main project is `~/dev/impero`: a **Nix flake dev shell** (`nix develop`), run
   in zellij. .NET runs **inside a Docker container** (`docker compose`), the Rust
