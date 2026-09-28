@@ -29,7 +29,8 @@
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
-    "impero-ai-skills@impero-plugins": true
+    "impero-ai-skills@impero-plugins": true,
+    "figma@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "impero-plugins": {
@@ -40,6 +41,11 @@
     }
   },
   "effortLevel": "high",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "high"
+    }
+  },
   "voice": {
     "enabled": true,
     "mode": "hold"
