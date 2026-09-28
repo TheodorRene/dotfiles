@@ -5,3 +5,6 @@
 
 # Per-user Claude Code state (local permissions etc. — not shared)
 .claude/settings.local.json
+
+# Claude Code syncs claude.ai skills here itself — state, not config
+claude/skills/synced/
