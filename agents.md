@@ -26,7 +26,7 @@
   holds a layer-by-layer cheat sheet of the layout as of 2026-08-03.
 
 ## Terminal & Shell
-- **Terminal**: kitty (config ported from Alacritty); Alacritty also still configured
+- **Terminal**: Alacritty (what the user actually runs); kitty is also configured (its config was ported from Alacritty) but is not the daily driver
 - **Shell**: zsh (self-contained config, no framework; `.zshrc` sources
   `~/dotfiles/zsh/*.zsh` and builds its own prompt via a `precmd` hook)
 
