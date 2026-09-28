@@ -60,6 +60,7 @@ window#waybar {
 #power-profiles-daemon,
 #custom-docker,
 #custom-language,
+#custom-viz,
 #tray {
     padding: 0 10px;
     color: @fg;
