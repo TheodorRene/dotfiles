@@ -1,33 +1,54 @@
 # mako — coral theme (matches waybar / wofi / swaylock / alacritty)
 
 font=JetBrainsMono Nerd Font 10
-background-color=#0d0d0dee
-text-color=#d6d6d6
+background-color=#111111fc
+text-color=#b8b8b8
 border-color=#e0645a
-border-size=2
-border-radius=8
-padding=10
-margin=8
-width=360
-height=120
+border-size=1
+border-radius=10
+padding=12,14
+margin=6
+outer-margin=10
+width=420
+height=200
+max-visible=5
 default-timeout=5000
-icons=1
-max-icon-size=48
 anchor=top-right
 layer=overlay
+
+icons=1
+icon-path=/usr/share/icons/Adwaita:/usr/share/icons/Yaru
+max-icon-size=40
+icon-location=left
+icon-border-radius=6
+
+# Bold, brighter summary; body in the softer text colour underneath.
+markup=1
+format=<b><span foreground="#ffffff">%s</span></b>\n%b
+progress-color=over #e0645a44
+
+# Collapse repeats (same app + summary) into one card with a count.
+group-by=app-name,summary
 
 # left-click invokes the notification's default action (e.g. focus Claude's terminal)
 on-button-left=invoke-default-action
 on-button-right=dismiss
 
+[grouped]
+format=<b><span foreground="#ffffff">%s</span></b> <span foreground="#e0645a">×%g</span>\n%b
+
 [urgency=low]
-border-color=#3a3a3a
-text-color=#8a8a8a
+border-color=#2e2e2e
+text-color=#7a7a7a
+format=<span foreground="#a0a0a0">%s</span>\n%b
 
 [urgency=normal]
 border-color=#e0645a
 
 [urgency=high]
+background-color=#1c1110fc
 border-color=#ff5a4d
-text-color=#ffffff
+border-size=2
+text-color=#d6d6d6
+format=<b><span foreground="#ff5a4d">%s</span></b>\n%b
 default-timeout=0
