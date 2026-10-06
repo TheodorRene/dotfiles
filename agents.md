@@ -265,6 +265,30 @@ only your own section** (`git add -p`), never the whole file.
   make the headset mic connect on demand), forcing SBC-XQ over AAC, and disabling
   `autoswitch-to-headset-profile`.
 
+## Audio / suspend-resume
+- **"Videos won't play in Firefox" after a wake from sleep means the speaker output
+  is frozen, not that Firefox is broken.** Firefox times video off the audio
+  output, so a stalled sink means video never starts, and restarting Firefox
+  changes nothing. Seen 2026-10-06 after the **2% battery hybrid-sleep** (UPower's
+  stock `CriticalPowerAction=HybridSleep`).
+- **Fix: `systemctl --user restart pipewire pipewire-pulse wireplumber`**, then
+  reload the tab. Worked first time. If it's still frozen after that, reboot.
+- **How to recognise it:** with something *playing*, `hw_ptr` in
+  `/proc/asound/card0/pcm*p/sub0/status` sits at `RUNNING` but doesn't change
+  between two reads; `pw-top` shows a sink in state **`R` with QUANT 0 / RATE 0**.
+- **Gotcha:** `wpctl status` looks perfectly healthy while this is happening
+  (Firefox linked to `Speaker`, `[active]`). And with nothing playing, every PCM
+  is just `closed` and the sink is `S` 0/0, which is normal, not this problem.
+- **No kernel error is logged** for the sound card when it happens; it fails
+  silently. Not established: SOF DSP vs PipeWire at fault, whether a plain
+  lid-close suspend triggers it too, and whether the 2026-09-30 hybrid-sleeps
+  (rebooted 17s later) were the same thing. **Nothing applied**; a resume hook is
+  sketched in the write-up, only worth it if this recurs.
+- Write-up: `docs/videos-wont-play-after-low-battery-sleep.md`: the frozen
+  `hw_ptr` evidence and its resume timestamp, the 10-second check, verified vs not
+  established, and a dead-ends table (Firefox, the same-day apt upgrade, routing,
+  Bluetooth).
+
 ## Webcam / USB video
 - Built-in camera is the Intel **`ipu7`** block and claims **`/dev/video0`-`video31`**
   on its own. A USB webcam therefore lands somewhere above that (the Anker
