@@ -201,6 +201,160 @@ only your own section** (`git add -p`), never the whole file.
 - `smartmontools` **is** installed, but `smartctl` (and `tune2fs`) need root:
   `sudo smartctl -a /dev/nvme0n1`.
 
+## External displays (USB-C) / kernel choice
+- Monitor is an **LG 27U730A**. **Two problems, one per cable** (2026-09-30):
+  laptop USB-C → the monitor's USB-C input **drops and re-attaches every ~30s**;
+  a no-name USB-C→HDMI adapter (`343c:0000`) is stable but **4K30 only**.
+- **Dead end, don't re-theorise: the OEM kernel didn't fix the drops.**
+  `linux-oem-26.04` (7.0.0-1014, **applied 2026-09-28**, still the default boot)
+  has the corrected UCSI duplicate-altmode patches (LP: #2162695). The warning's
+  wording changed, so the patch is live, but the drops continued unchanged. The
+  `duplicate partner altmode SVID 0xff01` warning is **cosmetic**: DP comes up
+  even when no altmode registers.
+- **Current theory, not verified: the charging negotiation.** The link that drops
+  is the one where the monitor *charges the laptop*; the stable adapter link has
+  the laptop as the power source. The drops re-register the partner (a CC/PD-level
+  detach, not a DP-link loss). **Gotcha:** `UCSI_GET_PDOS failed (-70)` shows up
+  on *every* attach, the stable adapter included, so it isn't the smoking gun. Next tests: another
+  e-marked 5A cable, Dell charger plugged in first, other TB port. **Likely way
+  around it:** a USB-C → DisplayPort cable (no charging negotiation, 4 lanes).
+- **Latest, 2026-10-12, waiting on a report: the direct USB-C cable is at 4K60
+  and hasn't dropped yet** (kernel `7.0.0-1015-oem`), but that was only ~6 min
+  observed and **with a full battery**, so the charging theory isn't tested by it.
+  **Known-good 4K60 paths:** the monitor's USB-C (when it holds) and the ThinkPad
+  TB3 Dock (40AN, needs its own brick). The VIA hub and the HDMI adapter cap at
+  4K30. The doc's *History* table logs every connection; **add a row per test.**
+- **4K30 over HDMI is the adapter, not the monitor.** The adapter gets 4 DP lanes
+  (pin C), and "HDMI ULTRA HD Deep Colour" is on, but the EDID it passes on lists
+  **VIC 95 (4K30) three times** and no 4K60. That looks like the adapter
+  rewriting it to fit an HDMI 1.4-class chip. Don't chase kanshi modes or monitor
+  settings for it.
+- **Gotcha: there is no HDMI connector on this laptop.** DRM exposes only
+  `DP-1..3` + `eDP-1`, so "HDMI" always means a USB-C adapter or hub. **USB-C hubs
+  with USB 3 ports use pin D = 2 DP lanes = 4K30 max** (the 2026-09-11 hub:
+  `max_lane_count: 2`).
+- **`ubuntu-drivers list-oem` printing nothing does not mean there's no OEM
+  kernel**; it only means Ubuntu doesn't recommend one. **Mainline can be *worse*
+  here**: no SAUCE patches, incl. the i915 DP-alt false-disconnect fix
+  (LP: #2143879) the Ubuntu kernels carry. Any installed test kernel **becomes the
+  GRUB default**, and the menu is hidden, so **Esc at boot** is the way back.
+- **Gotcha:** `apt changelog linux-image-*-oem` shows the *signed wrapper's*
+  changelog (packaging resyncs only). Read the source changelog on
+  changelogs.ubuntu.com.
+- **Live `/sys` changes are currently applied (2026-10-13) and are NOT tracked by
+  this repo** — `charge_types` `Fast`→`Custom`, `charge_control_end_threshold`
+  `90`→`55`, and `port0` (plus seemingly `port1`/`port2`) `power_role`
+  `sink`→`source`. Originals and exact revert commands are in the write-up's
+  *Live changes made 2026-10-13* section. **Revert explicitly; a reboot probably
+  won't**, since the charge settings are backed by a BIOS policy.
+- **Gotcha, cost three bad tests: the charge *thresholds* work, the charge *rate*
+  selector does not.** `charge_control_start/end_threshold` apply only from a
+  fresh cycle — written mid-charge they do nothing (which is where the original
+  "sysfs accepts it, the EC ignores it" came from). On a clean start the `50/55`
+  window is exact: 31%→55% at ~31 W, then `pending-charge` at 0.011 W the instant
+  it hit 55. **`charge_types` is cosmetic as a rate** — `[Trickle]` reads back
+  fine and charges at **32.6-32.8 W** anyway, measured both mid-charge and from
+  cold. **There is no slow-charge mode reachable from sysfs on this machine.**
+  Always check `BAT0/current_now` rather than the knob's own readback.
+- **`charge_types` also picks which policy is live**, so `Trickle` drops you out
+  of `Custom` and the `50/55` window stops gating — it then charges past 55 toward
+  full. `echo Custom | sudo tee …/charge_types` restores the window.
+- **`Not charging` with `AC online = 1` is the healthy in-band state** — the
+  battery is between the start and stop thresholds and the EC is holding off. It
+  is *not* the same as `Discharging` (no AC at all), which is what the Type-C
+  power-role swap produces. **DP survived the swap** — 4K60 held with the laptop
+  as power source.
+- **The charge window cannot go below 50/55**: BIOS caps `CustomChargeStart` at
+  `50..95` and `CustomChargeStop` at `55..100`. "Set the window under the current
+  level to stop charging" only works above 55%.
+- **The real control surface is `dell-wmi-sysman`, not `power_supply`** —
+  `/sys/class/firmware-attributes/dell-wmi-sysman/attributes/` has
+  `PrimaryBattChargeCfg`, `CustomChargeStart/Stop`, `UsbPortsExternal`,
+  `ThunderboltPorts`. **Gotcha:** `current_value` is root-read-only and a
+  non-root `cat` returns **empty, not an error** — that is not "unset". No BIOS
+  admin password is set. Untested whether writes stick.
+- **No usable GUI.** BIOS setup (Esc then F2 at boot) is authoritative;
+  `gnome-control-center power` is installed but drives the ignored
+  `charge_control_end_threshold`; TLP would persist the same ignored paths and
+  **TLPUI isn't in the Ubuntu archive**; `cctk` isn't packaged.
+- **Timing trap when testing:** the fault is **bursty, not periodic** (5 re-attaches
+  in 5 min as two clusters with a 2m43s gap), and on 2026-10-13 it went quiet at
+  09:09 **while still fast-charging**, ~5 min *before* the power-role swap. Don't
+  credit a change with a lull; ten quiet minutes is the bar.
+- **CAUSE FOUND 2026-10-13: it is the battery charge current, not the PD
+  negotiation.** Controlled A/B, one session, one cable, one port, one live PD
+  contract, only the charge current changed: **parked** (`pending-charge`, 0.011 W)
+  → 65 min, **0 re-attaches**; **charging** (2.698 A × 12.07 V = **32.6 W**) →
+  11 min, **3 re-attaches** (15:24:10, +4m21, +1m28). ~18 events expected in the
+  parked window at the charging rate; Poisson p ≈ 1e-6.
+- **Dead end, don't re-theorise: the PD negotiation is not the cause.** Through the
+  whole 65-min quiet window the contract was *live and delivering* — 20 V / 4.5 A,
+  `port0 [sink]`, and the battery discharge went 3.4-4.6 W before the replug to
+  0.011 W after, i.e. the cable carried the entire system load. A negotiated,
+  active, power-delivering contract is stable. `GET_PDOS failed (-70)` stays
+  cosmetic.
+- **`pending-charge` at ~0 W is a stable equilibrium, not a decaying workaround.**
+  Plugged in and in-band, the battery neither charges nor drains (capacity unmoved
+  for 66 min), so it never falls below the start threshold and never triggers a
+  charge. **This is the free fix**: `echo Custom | sudo tee …/charge_types` with a
+  `50/55` window. Costs ~55-62% at undock, plus ~6 min of flicker per 5% whenever
+  you do top up.
+- **User-confirmed 2026-10-13: separate-port charging works with the monitor
+  connected; Windows on this Dell has the same disconnects; the vendor-supplied
+  cable works with a Mac.** These are independent user reports, not inferred
+  from the 13:05–13:33 charge with the monitor unplugged. Single-cable operation
+  remains the goal.
+- **`scripts/charge-mode.sh`** — toggles between `park` (Custom 50/55, no charge
+  current, use when the monitor is powering the laptop) and `normal` (Fast 50/90,
+  the factory setting). Also takes `park`/`normal`/`status`. Prompts for sudo
+  itself; writes `/sys` directly so **nothing is installed and nothing persists a
+  reboot**. An automatic udev+systemd version was built and **deliberately
+  dropped as over-built**; don't rebuild it.
+- **Trap when reading the afternoon logs: the 13:05–13:33 charge proves nothing
+  about the display** — it was a charger on a *different port* with the monitor
+  unplugged (display-change hook ran 13:00:01, next at 14:13:13). Check the hook
+  timestamps (`journalctl -b | grep '+ is_active'`) before treating any quiet
+  window as evidence; the monitor may simply not have been attached.
+- **Likely reason the `power_supply` knobs lose: `PrimaryBattChargeCfg` defaults to
+  `Adaptive`**, and the 2024 `dell-laptop` patch says Linux's thresholds drive the
+  **`Custom`** BIOS mode. Theorised, fits the measurements. **`PrimAcUse`
+  ("Primarily AC Use") is the simpler cap** — no thresholds, sidesteps the 50/55 floor.
+- **Gotcha:** `pending_reboot` (world-readable, currently `0`) tells you if a BIOS
+  write needs a reboot; `dell_value_modifier` can force a value from another setting
+  (empty on everything here). No BIOS admin password is set, so no `current_password`
+  dance.
+- **`VideoPowerOnlyPorts`** ("Video/Power only on Type-C Ports", default `Disabled`)
+  is the tempting experiment — the monitor's USB hub is unused on this link anyway.
+  **Semantics unconfirmed by Dell docs**; whether it touches PD is speculation.
+- **Supporting finding (Plugable):** on Dell XPS/Precision the USB-C instability
+  "primarily affects transmission of USB data packets" and DP Alt Mode video "seems
+  much less likely to be impacted" — **exactly the shape here** (DP holds 4K60 while
+  PD churns). A known family-level failure mode, not this monitor.
+- **Latest evidence, 2026-10-13: charging exposes the fault; the electrical root
+  cause is NOT established.** This supersedes the earlier “cause found / PD
+  negotiation ruled out” wording above. The targeted trace caught two cycles:
+  firmware `connected=0` → connected as source → sink, with the old RDO restored.
+  This does not establish physical CC/VBUS behaviour or who initiated a reset.
+  No command events appeared in the `ucsi:*` capture; investigate that next.
+- **Applied 2026-10-13 15:52:51: Custom restored, battery parked.** Charging at
+  32.9 W after 15:51:41 produced interruptions at 15:52:14–15 and 15:52:43–44;
+  BAT0 verified at 62%, `Not charging`, 1000 µA at 15:53:30. Earlier last drop
+  15:31:27 was **before** the Custom write at 15:31:38, not caused by that write.
+- **Gotcha: `Trickle` maps to Dell Primarily AC Use, not a low-current request.**
+  Upstream `dell-laptop.c` uses `BAT_PRI_AC_MODE_TOKEN`; earlier “cosmetic/no-op”
+  and “BIOS PrimAcUse is a new fix” interpretations are superseded. Exact OEM
+  source not verified. Upstream UCSI `current_now`/`voltage_now` are cached
+  RDO/PDO-derived values, **not electrical measurements of the cable**.
+- **Trace saved outside the repo:** `/var/tmp/usbc-20261013-154555.dat`, readable
+  with `trace-cmd report -i …`. Altmode `[FAILED TO PARSE]` is a report-decoder
+  issue; raw fields are present. The doc's *2026-10-13 targeted trace* section
+  has the exact trace, replay/capture commands, limits and corrected conclusions.
+- Write-up: `docs/usb-c-displays-disconnect-and-kernel-options.md`: traces, VDO
+  pin decodes, the EDID decode, the charging theory and its tests, a dated
+  *History* table of every connection tested, the 2026-10-13 live changes with
+  their revert commands, how to try OEM/mainline kernels and revert, where
+  changelogs live, and a dead-ends table.
+
 ## Printing / cellular (unused hardware daemons)
 - **Applied 2026-09-03: printing and `ModemManager` are OFF.** `cups.service`,
   `cups.socket`, `cups.path`, `cups-browsed.service` and `ModemManager.service` are
