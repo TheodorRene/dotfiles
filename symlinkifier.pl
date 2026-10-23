@@ -56,6 +56,11 @@ symlink_path("$dotfiles/systemd/user/obex.service.d", "$home/.config/systemd/use
 # USB-C port can take ~10s to come up).
 symlink_path("$dotfiles/systemd/user/display-notify.service", "$home/.config/systemd/user/display-notify.service");
 
+# Desktop entry overrides. Same basename as the system one wins, since
+# ~/.local/share/applications is searched before XDG_DATA_DIRS. Spotify is
+# CEF, not Electron, so ELECTRON_OZONE_PLATFORM_HINT doesn't reach it.
+symlink_path("$dotfiles/applications/spotify_spotify.desktop", "$home/.local/share/applications/spotify_spotify.desktop");
+
 # Neovim v2 config.
 symlink_path("$dotfiles/nvim_v2", "$home/.config/nvim");
 
