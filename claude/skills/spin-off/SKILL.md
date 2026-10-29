@@ -23,14 +23,7 @@ questions in its own tab.
 3. **Check for an existing session.** `herdr agent list`. If an agent with that name is live, focus
    it (`herdr agent focus <name>`), tell the user and stop.
 
-4. **Open a tab and start Claude in it.** Keep the user's focus where it is; do not split the
-   current pane.
-   ```bash
-   herdr tab create --workspace "$HERDR_WORKSPACE_ID" --cwd <folder> --label "<Name>" --no-focus
-   herdr agent start <name> --kind claude --pane <.result.root_pane.pane_id> --timeout 60000
-   ```
-
-5. **Write the brief.** The new session knows nothing about this conversation, so the prompt has to
+4. **Write the brief.** The new session knows nothing about this conversation, so the prompt has to
    stand on its own:
    - The task, with what is already known: times, error messages, what was tried, file paths.
    - What to report back, e.g. the cause and a proposed fix.
@@ -40,12 +33,26 @@ questions in its own tab.
 
    Keep it to a few sentences. Don't pass on conclusions as facts; say what is a guess.
 
-6. **Send it** and wait only until the agent starts working, not until it finishes:
+5. **Open a tab, start Claude, then send the brief.** Keep the user's focus where it is; do not split
+   the current pane. Put the brief in a variable through a quoted heredoc so quotes in it survive.
    ```bash
-   herdr agent prompt <name> "<brief>" --wait --until working --until blocked --timeout 15000
+   brief=$(cat <<'EOF'
+   <brief>
+   EOF
+   )
+   herdr tab create --workspace "$HERDR_WORKSPACE_ID" --cwd <folder> --label "<Name>" --no-focus
+   herdr agent start <name> --kind claude --pane <.result.root_pane.pane_id> --timeout 60000
+   herdr agent prompt <name> "$brief" --wait --until working --until blocked --timeout 15000
    ```
-   If it reports `blocked`, the new session is waiting on a permission prompt; tell the user to
-   answer it in the tab.
+   Don't pass the brief to `agent start` after `--`: start then waits until the session is ready
+   again, i.e. until the task is finished, and this session is stuck meanwhile.
 
-7. **Reply in one or two lines**: the tab label and what the session is doing. Do not poll the agent
+   If either command reports `blocked` (or `agent_not_ready … blocked`), the new session is waiting
+   on a question in the tab, such as the folder trust prompt or a permission prompt. Never answer
+   it; tell the user to answer it in the tab.
+
+   Start in a folder the user has already trusted (a project folder such as `~/dotfiles` or a repo).
+   Claude Code asks the trust question every time in the home directory, so don't use `~` itself.
+
+6. **Reply in one or two lines**: the tab label and what the session is doing. Do not poll the agent
    or wait for its result.
