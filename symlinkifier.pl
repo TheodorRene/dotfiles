@@ -61,6 +61,9 @@ symlink_path("$dotfiles/systemd/user/display-notify.service", "$home/.config/sys
 # CEF, not Electron, so ELECTRON_OZONE_PLATFORM_HINT doesn't reach it.
 symlink_path("$dotfiles/applications/spotify_spotify.desktop", "$home/.local/share/applications/spotify_spotify.desktop");
 
+# herdr: the config file only; ~/.config/herdr also holds sockets and session state.
+symlink_path("$dotfiles/herdr/config.toml", "$home/.config/herdr/config.toml");
+
 # Neovim v2 config.
 symlink_path("$dotfiles/nvim_v2", "$home/.config/nvim");
 

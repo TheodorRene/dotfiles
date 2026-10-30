@@ -25,6 +25,11 @@ __post_init() {
 
     if command -v direnv >/dev/null 2>&1; then
         eval "$(direnv hook zsh)"
+        # zsh iterates a copy of precmd_functions, so a hook added from inside
+        # precmd first runs at the *next* prompt. Run it once now, or a shell
+        # started inside a direnv dir (e.g. a herdr split) has no env until
+        # the first command.
+        _direnv_hook
     fi
 
     add-zsh-hook -d precmd __post_init

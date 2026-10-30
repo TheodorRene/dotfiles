@@ -1,0 +1,47 @@
+# herdr config, ported from .tmux.conf. Symlinked to ~/.config/herdr/config.toml
+# (file only: that directory also holds herdr's sockets, logs and session state).
+# Reload in a running session with prefix+shift+r. Full reference:
+# `herdr --default-config`.
+
+onboarding = false
+
+[keys]
+# The prefix stays ctrl+b, same as tmux, and every prefix binding is kept.
+# The alt+ chords are the `bind -n M-…` lines from .tmux.conf.
+focus_pane_left  = ["prefix+h", "alt+h"]
+focus_pane_down  = ["prefix+j", "alt+j"]
+focus_pane_up    = ["prefix+k", "alt+k"]
+focus_pane_right = ["prefix+l", "alt+l"]
+
+# tmux windows = herdr tabs.
+previous_tab = ["prefix+p", "alt+shift+h", "alt+q"]
+next_tab     = ["prefix+n", "alt+shift+l", "alt+w"]
+
+# herdr names splits by the divider: split_vertical puts the new pane to the
+# right (tmux split-window -h, M-s), split_horizontal puts it below (M-v).
+split_vertical   = ["prefix+v", "alt+s"]
+split_horizontal = ["prefix+minus", "alt+v"]
+
+[ui]
+# tmux habits: status line at the bottom, new windows without a name prompt.
+tab_bar_position = "bottom"
+prompt_new_tab_name = false
+
+# Default agent rows lead with the workspace, so with one workspace every row
+# read "impero". Lead with the tab and Claude's conversation title instead;
+# the workspace stays, dimmed, for when there are several.
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", "tab", { token = "workspace", dim = true }],
+  ["terminal_title_stripped"],
+]
+
+[ui.sound]
+enabled = false
+
+[ui.toast]
+delivery = "herdr"
+
+[theme]
+name = "catppuccin"
+auto_switch = false
