@@ -110,10 +110,27 @@ _G.LSP_ON_ATTACH = on_attach
 -- root_markers: list of files/dirs that indicate the project root.
 -- Nested lists = equal-priority markers (0.12 feature).
 
+-- Every tsserver inlay hint defaults to off, so without these the server answers
+-- textDocument/inlayHint with nothing and <leader>i has nothing to toggle.
+local ts_inlay_hints = {
+    includeInlayParameterNameHints                        = 'literals',
+    includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+    includeInlayFunctionParameterTypeHints                = true,
+    includeInlayVariableTypeHints                         = true,
+    includeInlayVariableTypeHintsWhenTypeMatchesName      = false,
+    includeInlayPropertyDeclarationTypeHints              = true,
+    includeInlayFunctionLikeReturnTypeHints               = true,
+    includeInlayEnumMemberValueHints                      = true,
+}
+
 vim.lsp.config['ts_ls'] = {
     cmd          = { 'typescript-language-server', '--stdio' },
     filetypes    = { 'typescript', 'typescriptreact', 'javascript', 'javascriptreact' },
     root_markers = { 'pnpm-workspace.yaml', 'tsconfig.json', 'jsconfig.json', 'package.json', '.git' },
+    settings     = {
+        typescript = { inlayHints = ts_inlay_hints },
+        javascript = { inlayHints = ts_inlay_hints },
+    },
 }
 
 vim.lsp.config['eslint'] = {

@@ -108,6 +108,17 @@ file that defined it. `:KeymapStats` filters to maps from this config;
 for records predating that field is backfilled by matching **mode + lhs**, not
 lhs alone: a visual-mode `K` here must not claim Neovim's normal-mode `K`.
 
+**The wrapper must not change what a mapping does.** String rhs are wrapped as
+`expr` mappings that bump the counter and *return the rhs unchanged*. Until
+2026-10-01 they were executed by the wrapper instead (`vim.cmd` for `:…<CR>`,
+`nvim_feedkeys` for the rest), and that silently broke things:
+- **feedkeys appends to the *end* of typeahead**, so keys arriving in the same
+  read as the lhs ran *before* the rhs: `jk` then `dd` in one burst typed `dd`
+  as text. Home-row-mod rolls produce exactly those bursts.
+- **counts were dropped**: `3n` went to the first match.
+- **`<Nop>` is not a keycode.** Returned or fed, it's typed literally: `Q` ran
+  `<n` and then `op>`, inserting `p>` into the buffer. The wrapper maps it to `''`.
+
 ## :DebugAI — state capture for intermittent bugs
 
 `lua/config/debugai.lua`, lazily required from the `:DebugAI` command. Run it
@@ -146,6 +157,22 @@ Headless runs load the real config and surface Lua errors:
 NVIM_SKIP_LSP_CONF=1 nvim --headless -u init.lua \
   -c 'lua print(vim.wo.wrap)' -c 'qa!'
 ```
+
+**Gotcha: a headless run that fires mappings writes into the real
+`keymap-usage.json`** (the tracker persists on `VimLeavePre`). For keystroke
+tests, point the data dir somewhere disposable but keep the plugins and Mason
+binaries visible. Use inline assignments: zsh won't word-split a `$VARS` string,
+and a wrong `XDG_DATA_HOME` makes vim.pack do a full fresh install there.
+
+```sh
+T=$(mktemp -d); mkdir -p $T/data/nvim $T/state
+ln -s ~/.local/share/nvim/site ~/.local/share/nvim/mason $T/data/nvim/
+XDG_DATA_HOME=$T/data XDG_STATE_HOME=$T/state NVIM_SKIP_LSP_CONF=1 \
+  nvim --headless -u init.lua -c 'luafile test.lua' -c 'qa!'
+```
+
+Feed keys with `nvim_feedkeys(keys, 'mtx', false)`: all of them land in
+typeahead at once, which is the burst case that real typing only sometimes hits.
 
 Prefer asserting on observable state (`vim.wo.*`, `vim.b.*`, `vim.fn.exists(':Cmd')`,
 extmark counts) over eyeballing. Note that neo-tree and trouble don't render as

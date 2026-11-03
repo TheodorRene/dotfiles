@@ -5,7 +5,9 @@
 -- keylogger-style privacy footprint.
 --
 -- Mechanism: monkeypatch vim.keymap.set (must load FIRST, before any mapping is
--- defined) and wrap each rhs so triggering it bumps a counter. Counts persist to
+-- defined) and wrap each rhs so triggering it bumps a counter. String rhs become
+-- expr mappings that return themselves, so the wrapper never changes what the
+-- keys do — see the patch below for why. Counts persist to
 -- stdpath('data')/keymap-usage.json and accumulate across sessions. Definitions
 -- are re-derived every session (nothing is lazy-loaded), so :KeymapStats can also
 -- list bindings that have never fired.
@@ -60,14 +62,6 @@ local function bump(lhs, desc, src, own)
     dirty = true
 end
 
--- Faithfully replay a string rhs with noremap so mapping semantics (ranges,
--- <Cmd>, visual '<,'> marks) are preserved exactly. noremap ('n') means the fed
--- keys don't re-trigger this wrapper, so there is no recursion.
-local function replay(rhs)
-    local keys = vim.api.nvim_replace_termcodes(rhs, true, true, true)
-    vim.api.nvim_feedkeys(keys, 'n', false)
-end
-
 -- Record a definition for the "never fired" report (dedup by mode+lhs).
 -- mode() reports a single char at trigger time; a declared mode can produce
 -- several (visual is v/V/<C-v>), and operator-pending reports 'n'.
@@ -115,26 +109,21 @@ vim.keymap.set = function(mode, lhs, rhs, opts)
             return rhs(...)
         end
     elseif type(rhs) == 'string' and not opts.expr then
-        -- <Cmd>…<CR> and plain :…<CR> (no visual range) run silently via vim.cmd.
-        local ex = rhs:match('^%s*<[Cc][Mm][Dd]>(.-)<[Cc][Rr]>%s*$')
-        if not ex then
-            local colon = rhs:match('^%s*:(.-)<[Cc][Rr]>%s*$')
-            -- Only if it's a single command (no trailing keys, no visual range).
-            if colon and not colon:find('<[Cc][Rr]>') and not colon:find("^'<,'>") then
-                ex = colon
-            end
-        end
-        if ex then
-            wrapped = function()
-                bump(lhs, desc, src, own)
-                vim.cmd(ex)
-            end
-        else
-            -- Raw key sequences and visual-range commands: replay verbatim.
-            wrapped = function()
-                bump(lhs, desc, src, own)
-                replay(rhs)
-            end
+        -- Count through an expr mapping that returns the rhs unchanged, so
+        -- Neovim puts the keys into typeahead exactly where the lhs was. That is
+        -- what keeps a count working (3n), keeps keys typed right after the lhs
+        -- after it (a fast `jk` then `dd`), and lets remap/noremap follow opts.
+        -- Running the rhs ourselves (vim.cmd, or feedkeys, which appends to the
+        -- END of typeahead) broke all three.
+        --
+        -- <Nop> only means "nothing" as a mapping's rhs; returned from an expr
+        -- it is typed literally — `<` `n` `o` `p` `>`, i.e. shift-to-next-match
+        -- then open a line and insert "p>" — so it must become the empty string.
+        local keys = rhs:lower() == '<nop>' and '' or rhs
+        opts = vim.tbl_extend('force', opts, { expr = true, replace_keycodes = true })
+        wrapped = function()
+            bump(lhs, desc, src, own)
+            return keys
         end
     end
     -- expr-string mappings are left untouched (wrapping would change semantics);

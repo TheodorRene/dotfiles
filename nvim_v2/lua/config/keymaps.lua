@@ -11,12 +11,14 @@ local function tmap(lhs, rhs, desc) map('t', lhs, rhs, desc) end
 -- ── Insert mode conveniences ──────────────────────────────────────────────────
 imap('jk',   '<Esc>',     'Escape')
 imap('<C-c>', '<Esc>',    'Ctrl-C as Escape (no side effects)')
-imap("''",   "''<Esc>i",  'Auto-close single quotes')
-imap('""',   '""<Esc>i',  'Auto-close double quotes')
-imap('$$',   '$$<Esc>i',  'Auto-close dollar signs')
-imap('((',   '()<Esc>i',  'Auto-close parens')
-imap('[[',   '[]<Esc>i',  'Auto-close brackets')
-imap('{{',   '{}<Esc>i',  'Auto-close braces')
+-- Typing the pair twice leaves the cursor between them. <C-g>U<Left> moves back
+-- without leaving insert mode: the old <Esc>i fired InsertLeave mid-word, which
+-- closed the completion menu and flushed diagnostics (update_in_insert=false).
+-- No ((, [[ or {{ — doubled brackets are real code: JSX style={{…}}, Rust
+-- format!("{{"), Lua [[long strings]], nested calls.
+imap("''",   "''<C-g>U<Left>", 'Auto-close single quotes')
+imap('""',   '""<C-g>U<Left>', 'Auto-close double quotes')
+imap('$$',   '$$<C-g>U<Left>', 'Auto-close dollar signs')
 
 -- ── Copilot (insert mode) ─────────────────────────────────────────────────────
 -- Vimscript needed because copilot#Accept returns an expression
