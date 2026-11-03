@@ -74,10 +74,24 @@ nmap('<A-,>',    '<Cmd>BufferLineCyclePrev<CR>',  'Previous buffer (tabline)')
 nmap('<A-.>',    '<Cmd>BufferLineCycleNext<CR>',  'Next buffer (tabline)')
 
 -- ── Window navigation ─────────────────────────────────────────────────────────
-nmap('<A-h>', '<C-w>h',         'Window left')
-nmap('<A-j>', '<C-w>j',         'Window down')
-nmap('<A-k>', '<C-w>k',         'Window up')
-nmap('<A-l>', '<C-w>l',         'Window right')
+-- Inside herdr these keys reach nvim via scripts/herdr-nav.sh, which forwards
+-- them only when the pane is running nvim. At the last window in a direction,
+-- carry on into the neighbouring herdr pane, so nvim windows and herdr panes
+-- act as one grid.
+local function win_or_herdr(dir, herdr_dir)
+    return function()
+        local before = vim.api.nvim_get_current_win()
+        vim.cmd.wincmd(dir)
+        if vim.api.nvim_get_current_win() == before and vim.env.HERDR_PANE_ID then
+            vim.system({ vim.env.HERDR_BIN_PATH or 'herdr', 'pane', 'focus',
+                '--pane', vim.env.HERDR_PANE_ID, '--direction', herdr_dir })
+        end
+    end
+end
+nmap('<A-h>', win_or_herdr('h', 'left'),  'Window left (herdr pane at the edge)')
+nmap('<A-j>', win_or_herdr('j', 'down'),  'Window down (herdr pane at the edge)')
+nmap('<A-k>', win_or_herdr('k', 'up'),    'Window up (herdr pane at the edge)')
+nmap('<A-l>', win_or_herdr('l', 'right'), 'Window right (herdr pane at the edge)')
 nmap('<A-s>', ':vsplit<CR>',    'Vertical split')
 nmap('<A-v>', ':split<CR>',     'Horizontal split')
 nmap('<A-q>', ':tabprev<CR>',   'Previous tab')

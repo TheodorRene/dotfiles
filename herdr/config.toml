@@ -7,20 +7,62 @@ onboarding = false
 
 [keys]
 # The prefix stays ctrl+b, same as tmux, and every prefix binding is kept.
-# The alt+ chords are the `bind -n M-…` lines from .tmux.conf.
-focus_pane_left  = ["prefix+h", "alt+h"]
-focus_pane_down  = ["prefix+j", "alt+j"]
-focus_pane_up    = ["prefix+k", "alt+k"]
-focus_pane_right = ["prefix+l", "alt+l"]
+# alt+shift+h/l always switch herdr tabs; nvim doesn't use them.
+previous_tab = ["prefix+p", "alt+shift+h"]
+next_tab     = ["prefix+n", "alt+shift+l"]
 
-# tmux windows = herdr tabs.
-previous_tab = ["prefix+p", "alt+shift+h", "alt+q"]
-next_tab     = ["prefix+n", "alt+shift+l", "alt+w"]
+# The other alt+ chords (the `bind -n M-…` lines from .tmux.conf) are shared
+# with nvim, which binds the same keys for its windows, splits and tabs.
+# herdr-nav.sh forwards the key when the pane is running nvim and does the
+# herdr action otherwise; nvim's <A-hjkl> continue into herdr at the edge.
+# herdr names splits by the divider: right = tmux split-window -h (M-s).
+[[keys.command]]
+key = "alt+h"
+type = "shell"
+command = "$HOME/dotfiles/scripts/herdr-nav.sh alt+h focus left"
+description = "pane/window left (nvim-aware)"
 
-# herdr names splits by the divider: split_vertical puts the new pane to the
-# right (tmux split-window -h, M-s), split_horizontal puts it below (M-v).
-split_vertical   = ["prefix+v", "alt+s"]
-split_horizontal = ["prefix+minus", "alt+v"]
+[[keys.command]]
+key = "alt+j"
+type = "shell"
+command = "$HOME/dotfiles/scripts/herdr-nav.sh alt+j focus down"
+description = "pane/window down (nvim-aware)"
+
+[[keys.command]]
+key = "alt+k"
+type = "shell"
+command = "$HOME/dotfiles/scripts/herdr-nav.sh alt+k focus up"
+description = "pane/window up (nvim-aware)"
+
+[[keys.command]]
+key = "alt+l"
+type = "shell"
+command = "$HOME/dotfiles/scripts/herdr-nav.sh alt+l focus right"
+description = "pane/window right (nvim-aware)"
+
+[[keys.command]]
+key = "alt+s"
+type = "shell"
+command = "$HOME/dotfiles/scripts/herdr-nav.sh alt+s split right"
+description = "split right (nvim: :vsplit)"
+
+[[keys.command]]
+key = "alt+v"
+type = "shell"
+command = "$HOME/dotfiles/scripts/herdr-nav.sh alt+v split down"
+description = "split down (nvim: :split)"
+
+[[keys.command]]
+key = "alt+q"
+type = "shell"
+command = "$HOME/dotfiles/scripts/herdr-nav.sh alt+q tab prev"
+description = "previous tab (nvim: :tabprev)"
+
+[[keys.command]]
+key = "alt+w"
+type = "shell"
+command = "$HOME/dotfiles/scripts/herdr-nav.sh alt+w tab next"
+description = "next tab (nvim: :tabnext)"
 
 [ui]
 # tmux habits: status line at the bottom, new windows without a name prompt.
