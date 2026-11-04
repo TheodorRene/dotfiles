@@ -584,3 +584,33 @@ only your own section** (`git add -p`), never the whole file.
   memory dirs (backend, frontend, frontend/spa, dotnet) at the repo root's, so
   all sessions share one set of facts. Idempotent; re-run for new subdirs or
   after a reinstall. Write-up: `docs/claude-memory-across-subdirs.md`.
+
+## Sway for agents
+- **Applied 2026-11-04: `scripts/swayq`**, read-only, compact views of the
+  live session: `tree`, `find <regex>`, `outputs`, `inputs`, `whereami`,
+  `shot`, `validate`. Not on `PATH`, so call it by full path. The **`sway` skill**
+  (`claude/skills/sway/SKILL.md`) says when to use it and what to ask first:
+  never `swaymsg reload` (it re-runs every `exec_always`), and ask before focus
+  or window changes.
+- **Gotcha: under herdr, a session's parent processes never reach a sway
+  window.** The chain is `systemd → herdr server → zsh → claude`; the Alacritty
+  window holds the herdr *client*. So the lookup has to start from the client
+  processes, which `swayq whereami` does. Until 2026-11-04 this silently broke
+  `claude-attention.sh`: no urgent flash and no click-to-focus, only the plain
+  fallback toast.
+- **`claude-attention.sh` now uses `swayq whereami --con`**, keys toasts per herdr
+  pane (every session shares one window), prefixes them with the tab label, and
+  on click runs `herdr tab focus` before focusing the window. **The click path
+  is untested.**
+- **Gotcha: `grim` captures only what is on screen.** `swayq shot` refuses a
+  window marked `-` (hidden workspace, or behind another tab) instead of
+  returning a picture of whatever covers it. Shots go to
+  `$XDG_RUNTIME_DIR/swayq/`; titles and screenshots stay out of this public repo.
+- **Decided 2026-11-04: no wtype or ydotool.** wtype types into whatever has
+  focus, maybe mid-sentence; ydotool needs a uinput daemon that can inject into
+  anything, swaylock included, and Ubuntu ships its old CLI. To trigger a
+  binding, run its command directly. Don't re-propose without a concrete need.
+- Open: with several herdr clients attached, `whereami` takes the first one
+  that owns a window.
+- Write-up: none; the usage table and rules are in the skill, and
+  `swayq --help` lists the commands.

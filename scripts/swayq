@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# swayq: compact, read-only views of the running sway session, for agents and humans.
+# Nothing here changes the session; changes go through plain `swaymsg` (ask first).
+#
+#   swayq tree              one line per window, grouped by output and workspace
+#   swayq find <regex>      windows whose app_id/class/title match (case-insensitive)
+#   swayq outputs           outputs: mode, scale, position, transform
+#   swayq inputs [--all]    keyboards (with layout) and pointers; --all adds the
+#                           0:* platform pseudo-devices (power button, video bus...)
+#   swayq whereami [--con]  the window (and herdr tab) this process is running in
+#   swayq shot [focused|<con_id>|output <name>|all] [-o file.png] [-s scale]
+#                           screenshot; prints the PNG path (default: $XDG_RUNTIME_DIR/swayq/)
+#   swayq validate [config] check a sway config (default: ~/dotfiles/sway/config)
+#
+# Window flags in tree/find: * focused, ! urgent, ~ floating, F fullscreen,
+# - not visible (hidden workspace, or tabbed/stacked behind another window).
+set -uo pipefail
+
+die() { echo "swayq: $*" >&2; exit 1; }
+
+tree_json() { swaymsg -t get_tree 2>/dev/null || die "cannot reach sway (is SWAYSOCK set?)"; }
+
+# Windows as TSV-ready JSON objects, each tagged with its output and workspace.
+# Scratchpad windows show up under output __i3, workspace __i3_scratch.
+views_jq='
+  .nodes[] as $o | $o.nodes[] as $w
+  | $w | (.nodes[]?, .floating_nodes[]?) as $top
+  | ([$top | recurse(.nodes[]?, .floating_nodes[]?) | select(.pid != null)]
+     | map(. + {floating: ($top.type == "floating_con")}))[]
+  | {output: $o.name, ws: $w.name, id, pid, visible, focused, urgent, floating,
+     fs: (.fullscreen_mode != 0),
+     app: (.app_id // .window_properties.class // "?"),
+     title: (.name // ""), r: .rect}'
+
+fmt_jq='
+  def flags: (if .focused then "*" else "" end) + (if .urgent then "!" else "" end)
+    + (if .floating then "~" else "" end) + (if .fs then "F" else "" end)
+    + (if .visible then "" else "-" end);
+  "\(.output)\t\(.ws)\t\(.id)\t\(flags)\t\(.app)\t\(.pid)\t\(.r.width)x\(.r.height)+\(.r.x)+\(.r.y)\t\(.title)"'
+
+print_views() {  # stdin: view objects
+  { printf 'OUTPUT\tWS\tID\tFLAGS\tAPP\tPID\tGEOMETRY\tTITLE\n'; jq -r "$fmt_jq"; } | column -t -s $'\t'
+}
+
+cmd_tree() {
+  tree_json | jq -c "$views_jq" | print_views
+  # Empty workspaces have no windows, so list them separately.
+  swaymsg -t get_workspaces | jq -r '
+    [.[] | select(.representation == null or .representation == "")] as $e
+    | if ($e | length) > 0 then "empty workspaces: " + ($e | map("\(.name)@\(.output)") | join(" ")) else empty end'
+}
+
+cmd_find() {
+  [ $# -ge 1 ] || die "usage: swayq find <regex>"
+  local out
+  out="$(tree_json | jq -c --arg re "$1" "$views_jq"' | select((.app + " " + .title) | test($re; "i"))')"
+  [ -n "$out" ] || { echo "no window matches /$1/" >&2; return 1; }
+  print_views <<<"$out"
+}
+
+cmd_outputs() {
+  swaymsg -t get_outputs | jq -r '
+    (["NAME","ON","MODE","SCALE","POS","TRANSFORM","MODEL"] | @tsv),
+    (.[] | [ .name, (if .active then (if .focused then "yes*" else "yes" end) else "no" end),
+             (if .current_mode then "\(.current_mode.width)x\(.current_mode.height)@\((.current_mode.refresh/1000)|floor)Hz" else "-" end),
+             (.scale // "-" | tostring), (if .active then "\(.rect.x),\(.rect.y)" else "-" end),
+             (.transform // "-"), "\(.make) \(.model)" ] | @tsv)' | column -t -s $'\t'
+}
+
+cmd_inputs() {
+  local all=false; [ "${1:-}" = --all ] && all=true
+  swaymsg -t get_inputs | jq -r --argjson all "$all" '
+    (["TYPE","IDENTIFIER","LAYOUT"] | @tsv),
+    (.[] | select(.type == "keyboard" or .type == "pointer" or .type == "touchpad")
+     | select($all or (.identifier | startswith("0:") | not))
+     | [ .type, .identifier,
+         (if .type == "keyboard" then "\(.xkb_active_layout_name // "-") [\(.xkb_layout_names // [] | join(", "))]" else "" end) ]
+     | @tsv)' | column -t -s $'\t'
+}
+
+# The sway window hosting this process. Walk ancestor PIDs until one owns a
+# window. Under herdr the process tree leads to the herdr *server*, never a
+# window, so start from the herdr *client* processes instead (the server's
+# ancestry simply never matches). Shared with scripts/claude-attention.sh.
+find_con() {
+  local starts p pids=""
+  if [ "${HERDR_ENV:-}" = 1 ]; then
+    starts="$(pgrep -u "$(id -u)" -x herdr)"
+  else
+    starts="$$"
+  fi
+  for p in $starts; do
+    while [ "${p:-0}" -gt 1 ]; do
+      pids+="$p "
+      p="$(awk '{print $4}' "/proc/$p/stat" 2>/dev/null)" || break
+    done
+  done
+  tree_json | jq -r --arg pids "$pids" '
+    ($pids | split(" ") | map(select(length > 0) | tonumber)) as $ps
+    | [recurse(.nodes[]?, .floating_nodes[]?) | select(.pid != null and (.pid as $x | $ps | index($x)))]
+    | (.[0].id // empty)'
+}
+
+cmd_whereami() {
+  local con
+  con="$(find_con)"
+  if [ "${1:-}" = "--con" ]; then [ -n "$con" ] && echo "$con"; [ -n "$con" ]; return; fi
+  if [ -n "$con" ]; then
+    tree_json | jq -c "$views_jq"' | select(.id == '"$con"')' | print_views
+  else
+    echo "window: none found (no attached terminal, or not under sway)"
+  fi
+  if [ "${HERDR_ENV:-}" = 1 ]; then
+    local label
+    label="$(herdr tab get "${HERDR_TAB_ID:-}" 2>/dev/null | jq -r '.result.tab.label // "?"')"
+    echo "herdr: tab ${HERDR_TAB_ID:-?} \"$label\", pane ${HERDR_PANE_ID:-?}"
+  fi
+}
+
+cmd_shot() {
+  local target="focused" name="" file="" scale="" geom=""
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -o) file="${2:?-o needs a path}"; shift 2 ;;
+      -s) scale="${2:?-s needs a factor}"; shift 2 ;;
+      output) target="output"; name="${2:?usage: swayq shot output <name>}"; shift 2 ;;
+      focused|all) target="$1"; shift ;;
+      [0-9]*) target="con"; name="$1"; shift ;;
+      *) die "unknown shot argument: $1" ;;
+    esac
+  done
+  case "$target" in
+    focused|con)
+      local sel v
+      if [ "$target" = focused ]; then sel='select(.focused)'; else sel="select(.id == $name)"; fi
+      v="$(tree_json | jq -c "$views_jq | $sel" | head -n1)"
+      [ -n "$v" ] || die "no such window${name:+: $name} (see swayq tree)"
+      # grim captures what is on screen; a hidden window would come out as whatever covers it.
+      [ "$(jq -r .visible <<<"$v")" = true ] \
+        || die "window $(jq -r '"\(.id) (\(.app)) on workspace \(.ws)"' <<<"$v") is not visible; it would have to be shown first, which changes the session (ask)"
+      geom="$(jq -r '"\(.r.x),\(.r.y) \(.r.width)x\(.r.height)"' <<<"$v")"
+      ;;
+    output)
+      swaymsg -t get_outputs | jq -e --arg n "$name" '.[] | select(.name == $n and .active)' >/dev/null \
+        || die "no active output named $name (see swayq outputs)"
+      ;;
+  esac
+  if [ -z "$file" ]; then
+    local dir="${XDG_RUNTIME_DIR:-/tmp}/swayq"
+    mkdir -p -m 700 "$dir"
+    file="$dir/shot-$(date +%Y%m%d-%H%M%S)-$target${name:+-$name}.png"
+  fi
+  local args=()
+  [ -n "$scale" ] && args+=(-s "$scale")
+  [ -n "$geom" ] && args+=(-g "$geom")
+  [ "$target" = output ] && args+=(-o "$name")
+  grim "${args[@]}" "$file" || die "grim failed"
+  echo "$file"
+}
+
+cmd_validate() {
+  local cfg="${1:-$HOME/dotfiles/sway/config}"
+  [ -r "$cfg" ] || die "cannot read $cfg"
+  if sway -C -c "$cfg"; then echo "ok: $cfg"; else return 1; fi
+}
+
+case "${1:-}" in
+  tree)      shift; cmd_tree "$@" ;;
+  find)      shift; cmd_find "$@" ;;
+  outputs)   shift; cmd_outputs "$@" ;;
+  inputs)    shift; cmd_inputs "$@" ;;
+  whereami)  shift; cmd_whereami "$@" ;;
+  shot)      shift; cmd_shot "$@" ;;
+  validate)  shift; cmd_validate "$@" ;;
+  ""|-h|--help|help) sed -n '2,/^set /{/^set /d;s/^# \{0,1\}//;p}' "$0" ;;
+  *) die "unknown command: $1 (try swayq --help)" ;;
+esac
