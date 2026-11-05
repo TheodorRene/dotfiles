@@ -8,3 +8,17 @@
 
 # Claude Code syncs claude.ai skills here itself — state, not config
 claude/skills/synced/
+
+# Claude Code moves removed skills here. These are Anthropic-owned copies
+# ("all rights reserved"); never publish them.
+claude/skills/.trash/
+__pycache__/
+
+# Written by herdr's opencode integration and overwritten on every herdr update.
+opencode/herdr-opencode/
+opencode/herdr-tui-session.js
+opencode/plugins/herdr-agent-state.js
+opencode/tui.jsonc
+
+# Local scratch dumps (dmesg etc.)
+debug.txt
