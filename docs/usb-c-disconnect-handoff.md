@@ -6,6 +6,13 @@ is `docs/usb-c-displays-disconnect-and-kernel-options.md` (953 lines); this file
 the distilled state of play, including two conclusions reached earlier that the
 latest data **contradicts**.
 
+**Update 2026-11-05: worked around, not fixed.** Since 2026-11-02 the user has
+run a **USB-C → DisplayPort cable** (port0) and charges from **a separate USB-C
+port** (port2 on 2026-11-05). In about 8.5 h docked across three boots:
+**0 `Destroying output DP-1`**, and no `duplicate partner altmode` lines after the
+attach, including 50 min of charging at 2.7 A. Single-cable docking (below) is
+still broken. Rows are in the long-form doc's *History*.
+
 ---
 
 ## 1. The system
@@ -273,7 +280,7 @@ that is a report-decoder issue, the raw fields are present.
 
 | Lever | Status |
 |---|---|
-| **USB-C → DisplayPort cable** (DP 1.4 / HBR3), charging separately | **The leading candidate.** Removes PD and USB entirely, leaving only the video link — which is where the fault now appears to live. Costs single-cable docking. 4K60 8-bit needs ~12.5 Gbit/s; 4 lanes of HBR2 give ~17.3, so DP 1.2 suffices, but buy 1.4 for headroom. |
+| **USB-C → DisplayPort cable** (DP 1.4 / HBR3), charging separately | **In use since 2026-11-02, 0 display losses in about 8.5 h** (see the update at the top). Link trains at HBR2 × 4 lanes. Costs single-cable docking. |
 | BIOS `VideoPowerOnlyPorts` | Staged and **reverted untested** on 2026-10-23. Dell documents it in one ambiguous sentence ("Enable or disable the Type-C port functionality to video or only power") and the Latitude 3420 manual says it applies only to systems **with a discrete video card** — this machine has none, so it is probably inert. It is also **global across all Type-C ports**, not per-port. |
 | Newer/mainline kernel | Mainline can be *worse* (no SAUCE patches). Any installed test kernel becomes the GRUB default and the menu is hidden — **Esc at boot** is the way back. |
 | `TypeCDockOverride`, `ThunderboltPorts`, `DisUsb4Pcie`, `UsbPortsExternal` | All present under `dell-wmi-sysman`, all untouched, semantics unverified. |

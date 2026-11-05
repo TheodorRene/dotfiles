@@ -907,6 +907,9 @@ Latest follow-up:
 | Date | Kernel | Connection | Result |
 |---|---|---|---|
 | 2026-10-13 15:45:55 targeted trace | 7.0.0-1015-oem, BIOS 1.11.0 | Monitor's USB-C, direct, port0; no replug | Parked until `Trickle` write at 15:51:41; battery verified charging at 32.9 W. Interruptions 15:52:14–15 and 15:52:43–44. Both captured as firmware-disconnected → source → sink. `Custom` restored 15:52:51; BAT0 verified stopped at 15:53:30. See targeted trace section for raw events and limitations. |
+| 2026-11-02 09:42 | 7.0.0-1017-oem | **USB-C → DisplayPort cable, port0** (laptop is the power source, nothing to negotiate). **The laptop charges from a separate charger on another USB-C port** | Rest of the boot (to 16:13, about 6.5 h): **0 `Destroying output DP-1`**. One `duplicate partner altmode` line at attach (09:42:44), none afterwards. Link HBR2 × 4 lanes (see `docs/hdr-on-external-monitor.md`). 26 `Page-flip failed on output DP-1` (EBUSY), each a single line |
+| 2026-11-03 08:54 boot | 7.0.0-1017-oem | DP cable, port0; charger on another port | Up from boot until 10:02:34 (68 min), **0 faults**. DP-1 went away at 10:02:34 and **didn't come back that boot**, so it was an unplug, not a fault |
+| 2026-11-05 08:37 boot | 7.0.0-1017-oem | DP cable, port0. Charger on **port2** (`ucsi-source-psy-USBC000:003`, 15 V / 3 A); port0 and port1 `[source]` (port1 is the Voyager) | **0 display losses** as of 09:28 (50 min), while the battery was **charging at 2.7 A on `Fast`**, the condition that set off bursts on the monitor's USB-C cable. 3 `Page-flip failed on output DP-1` (09:11:21, 09:11:28, 09:19:39). The user asked "did my screen just go out?" at 09:27, but nothing was logged. **Unexplained** whether the page-flips are visible or what the user saw |
 
 Caveats on the 2026-10-12 result, so it isn't over-read as a fix:
 
@@ -923,6 +926,11 @@ Caveats on the 2026-10-12 result, so it isn't over-read as a fix:
   UCSI duplicate-altmode patch. Neither obviously explains PD-level re-attaches.
 
 ## Open
+
+- **Superseded in practice since 2026-11-02:** the user runs a USB-C →
+  DisplayPort cable and charges from a separate port, which has had 0 display
+  losses in about 8.5 h docked (see *History*). Single-cable docking is
+  still broken; this is a way around it, not a fix.
 
 - What causes the firmware-reported disconnects captured on 2026-10-13:
   monitor power supply, cable/contact under load, Dell controller behaviour,

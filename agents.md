@@ -403,6 +403,13 @@ only your own section** (`git add -p`), never the whole file.
   ambiguous sentence, it is **global across all Type-C ports**, and the Latitude
   3420 manual says it applies only to systems **with a discrete GPU**, which this
   machine does not have.
+- **Current setup since 2026-11-02: a USB-C → DisplayPort cable on port0, and
+  the charger on a separate USB-C port** (port2 on 2026-11-05). **0 display
+  losses in about 8.5 h docked**, including charging at 2.7 A, so the workaround
+  holds. Single-cable docking is still broken and **not fixed**. **Gotcha:**
+  `Page-flip failed on output DP-1` (EBUSY) still shows up a few times per boot.
+  It is **not** a dropout (no `Destroying output`), and it's unknown whether it's
+  visible.
 - Write-up: `docs/usb-c-displays-disconnect-and-kernel-options.md`: traces, VDO
   pin decodes, the EDID decode, the charging theory and its tests, a dated
   *History* table of every connection tested, the 2026-10-13 live changes with
