@@ -370,6 +370,39 @@ only your own section** (`git add -p`), never the whole file.
   with `trace-cmd report -i …`. Altmode `[FAILED TO PARSE]` is a report-decoder
   issue; raw fields are present. The doc's *2026-10-13 targeted trace* section
   has the exact trace, replay/capture commands, limits and corrected conclusions.
+- **Start here if you pick this up cold: `docs/usb-c-disconnect-handoff.md`** — the
+  distilled state of play for a fresh investigator, and it **supersedes the
+  "CAUSE FOUND" claim above**. Key reframing (2026-10-23): a merged timeline over
+  one boot gives **23 display losses vs 24 PD re-attaches**, and they do *not*
+  pair up — PD re-attaches occur with no display loss and vice versa. Where they
+  do pair, **the display dies 2-3 s BEFORE the PD event**, so `duplicate partner
+  altmode` is the echo, not the trigger. **Count `Destroying output DP-1`, not the
+  PD line.** Charge current still raises the rate sharply (the 2026-10-13 A/B
+  stands) but is **not necessary** — 2026-10-19 and all of 2026-10-23 dropped with
+  the battery parked at 0.0 W.
+- **Gotcha that produced a bogus theory once: classify every display loss by how
+  long the output stayed gone.** 1-2 s is a fault; minutes means the user undocked
+  for a meeting. On 2026-10-23, 3 of 23 losses were 23/40/36-minute unplugs, and
+  counting them as faults generated a whole "two distinct failure patterns"
+  hypothesis that evaporated once they were excluded.
+- **Corrected 2026-10-23 counts: 20 real faults, 3 unplugs, and the accounting
+  closes exactly** — 24 PD re-attaches = 20 faults + 4 plug events. Every real
+  fault has **exactly one** PD re-attach 1-3 s *after* the display loss; every PD
+  event without a display loss is a plug; every display loss without a PD event is
+  an unplug. **One mechanism, not two.** The display recovers by itself in 1-2 s.
+- **The monitor's USB hub is not involved in the faults.** `usb 3-2` last
+  enumerated 12:39:09 and never returned across two later redocks, so all 18
+  afternoon faults happened with **no hub attached**. Separate `3-2` (hub) from
+  `3-1` (Voyager) when grepping — conflating them misleads.
+- **The DRM connector drop logs nothing at all** (no `xe`/`drm` line at default
+  verbosity) — instrumenting the DP/HPD path is the highest-value next step.
+- **Confirmed 2026-10-23: `dell-wmi-sysman` writes do stick** (writing
+  `VideoPowerOnlyPorts` flipped `pending_reboot` to `1`), closing an open question.
+  **Gotcha: `pending_reboot` is at `attributes/pending_reboot`**, not the class root.
+  `VideoPowerOnlyPorts` was **reverted untested** — Dell documents it in one
+  ambiguous sentence, it is **global across all Type-C ports**, and the Latitude
+  3420 manual says it applies only to systems **with a discrete GPU**, which this
+  machine does not have.
 - Write-up: `docs/usb-c-displays-disconnect-and-kernel-options.md`: traces, VDO
   pin decodes, the EDID decode, the charging theory and its tests, a dated
   *History* table of every connection tested, the 2026-10-13 live changes with
