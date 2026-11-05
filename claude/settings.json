@@ -20,6 +20,18 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "^(startup|resume|clear|compact|fork)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash '/home/trc/.claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10
+          }
+        ]
+      }
     ]
   },
   "statusLine": {
@@ -30,7 +42,8 @@
     "typescript-lsp@claude-plugins-official": true,
     "rust-analyzer-lsp@claude-plugins-official": true,
     "impero-ai-skills@impero-plugins": true,
-    "figma@claude-plugins-official": true
+    "figma@claude-plugins-official": true,
+    "cc-plugin-you-should-know@builtin": true
   },
   "extraKnownMarketplaces": {
     "impero-plugins": {
@@ -44,6 +57,9 @@
   "modelSettings": {
     "claude-opus-5-5": {
       "effortLevel": "high"
+    },
+    "claude-opus-5": {
+      "effortLevel": "high"
     }
   },
   "voice": {
@@ -51,5 +67,6 @@
     "mode": "hold"
   },
   "theme": "dark",
+  "switchModelsOnFlag": false,
   "voiceEnabled": true
 }
