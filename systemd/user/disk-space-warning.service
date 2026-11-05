@@ -1,0 +1,6 @@
+[Unit]
+Description=Notify when / has less than 30 GB free
+
+[Service]
+Type=oneshot
+ExecStart=%h/dotfiles/scripts/disk-space-warning.sh 30

@@ -1,0 +1,9 @@
+[Unit]
+Description=Hourly free disk space check
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=1h
+
+[Install]
+WantedBy=timers.target

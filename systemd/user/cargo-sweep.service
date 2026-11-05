@@ -1,0 +1,8 @@
+[Unit]
+Description=Delete Rust build artifacts unused for 14 days (impero + worktrees)
+
+[Service]
+Type=oneshot
+ExecStart=%h/dotfiles/scripts/cargo-sweep-targets.sh 14
+Nice=19
+IOSchedulingClass=idle

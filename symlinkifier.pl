@@ -56,6 +56,12 @@ symlink_path("$dotfiles/systemd/user/obex.service.d", "$home/.config/systemd/use
 # USB-C port can take ~10s to come up).
 symlink_path("$dotfiles/systemd/user/display-notify.service", "$home/.config/systemd/user/display-notify.service");
 
+# Weekly cargo-sweep of Rust build dirs, and an hourly warning when / runs low.
+# Incremental caches in impero's target dirs once filled the disk.
+for my $unit (qw(cargo-sweep.service cargo-sweep.timer disk-space-warning.service disk-space-warning.timer)) {
+    symlink_path("$dotfiles/systemd/user/$unit", "$home/.config/systemd/user/$unit");
+}
+
 # Desktop entry overrides. Same basename as the system one wins, since
 # ~/.local/share/applications is searched before XDG_DATA_DIRS. Spotify is
 # CEF, not Electron, so ELECTRON_OZONE_PLATFORM_HINT doesn't reach it.

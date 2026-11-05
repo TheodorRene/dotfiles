@@ -1,0 +1,10 @@
+[Unit]
+Description=Weekly cargo-sweep of Rust build dirs
+
+[Timer]
+OnCalendar=Mon 12:00
+# Catch up on the next boot if the laptop was off at that time.
+Persistent=true
+
+[Install]
+WantedBy=timers.target
