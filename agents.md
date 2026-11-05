@@ -409,6 +409,31 @@ only your own section** (`git add -p`), never the whole file.
   their revert commands, how to try OEM/mainline kernels and revert, where
   changelogs live, and a dead-ends table.
 
+## HDR
+- **The LG monitor supports HDR10; the laptop panel can't.** The LG's EDID
+  (`LG ULTRAFINE`, product 23740) has ST 2084 (PQ), BT.2020 and 10 bpc, but only
+  400 nits and no sign of local dimming (DisplayHDR 400 class), so expect
+  HDR10 compatibility rather than a dramatic picture. The Sharp `LQ140N1` panel's
+  only colour space/EOTF is sRGB.
+- **Everything below sway is ready (checked 2026-11-02):** `xe` exposes
+  `HDR_OUTPUT_METADATA` and `Colorspace` (incl. `BT2020_RGB`) on the DP
+  connector, and the USB-C→DP cable runs **HBR2 × 4 lanes** (DPCD `14 84`),
+  17.28 Gbit/s against the 16.0 Gbit/s that 4K60 10-bit needs.
+- **The blocker is sway 1.11**, which has no `hdr` output option. HDR10 arrived in
+  **sway 1.12 + wlroots 0.20** and needs **`WLR_RENDERER=vulkan`**. Today
+  sway runs GLES2; the Vulkan driver works.
+- **Gotcha: 4K60 working doesn't prove 4 lanes.** 8-bit 4K60 fits on 2 lanes of
+  HBR3; only 10-bit needs 4. The 2-lane hubs and the HDMI adapter can't carry it.
+  Check with `sudo dd if=/dev/drm_dp_aux1 bs=1 skip=256 count=2 status=none | xxd`.
+- **26.04 stays on 1.11; 26.10 ("stonking") has 1.12-1**, and its sway +
+  `libwlroots-0.20` depend on nothing newer than 26.04 has, so a pinned
+  two-package install works on paper. **Nothing applied** (user chose to wait).
+- **No way to test HDR inside sway 1.11.** Use the installed GNOME session
+  (Settings → Displays → HDR) or mpv on a text console.
+- Write-up: `docs/hdr-on-external-monitor.md`: both EDID decodes, the drm_info
+  and link evidence, the renderer check, the pinned-apt upgrade commands with
+  dependency table and how to reverse it, and verified vs theorised.
+
 ## Printing / cellular (unused hardware daemons)
 - **Applied 2026-09-03: printing and `ModemManager` are OFF.** `cups.service`,
   `cups.socket`, `cups.path`, `cups-browsed.service` and `ModemManager.service` are
