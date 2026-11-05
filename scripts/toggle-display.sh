@@ -16,9 +16,9 @@ outputs="$(swaymsg -t get_outputs)"
 is_active() { echo "$outputs" | jq -e --arg o "$1" '.[] | select(.name==$o and .active==true)' >/dev/null; }
 exists()    { echo "$outputs" | jq -e --arg o "$1" '.[] | select(.name==$o)' >/dev/null; }
 
+# The respawn script replaces the running loop and its waybar itself.
 restart_waybar() {
-  pkill -x waybar 2>/dev/null || true
-  setsid -f waybar >/dev/null 2>&1 || (setsid waybar >/dev/null 2>&1 &)
+  setsid -f ~/dotfiles/scripts/waybar-respawn.sh >/dev/null 2>&1
 }
 
 if is_active "$LAPTOP"; then

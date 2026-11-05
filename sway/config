@@ -243,4 +243,5 @@ bindsym --whole-window $mod+button9 exec playerctl previous
 # Rename workspace (uses swaymsg; rofi prompt as i3-input replacement)
 bindsym $mod+t exec new_name=$(wofi --dmenu -p "Rename workspace:") && swaymsg rename workspace to "$new_name"
 
-exec_always "pkill waybar; waybar"
+# Respawns waybar if it crashes (0.15 mpris bug); see the script header.
+exec_always ~/dotfiles/scripts/waybar-respawn.sh
