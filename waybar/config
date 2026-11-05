@@ -6,7 +6,7 @@
 
     "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
     "modules-center": ["image#viz", "mpris", "custom/viz"],
-    "modules-right": ["custom/docker", "network", "cpu", "temperature", "memory", "disk", "backlight", "pulseaudio", "pulseaudio#mic", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
+    "modules-right": ["custom/docker", "network", "cpu", "temperature", "memory", "disk", "backlight", "custom/eq", "pulseaudio", "pulseaudio#mic", "battery", "power-profiles-daemon", "custom/language", "tray", "clock"],
 
     "sway/workspaces": {
         "disable-scroll": false,
@@ -83,6 +83,16 @@
         "format-icons": ["🔅", "🔆"],
         "on-scroll-up": "brightnessctl set 5%+",
         "on-scroll-down": "brightnessctl set 5%-"
+    },
+
+    // Shows 🎚️ while the headphone EQ (scripts/eq.sh) is on, nothing otherwise.
+    // Dimmed on "flat"; the tooltip names the preset. eq.sh signals RTMIN+10 on
+    // every change, and the 5 s poll catches the EQ dying on its own.
+    "custom/eq": {
+        "exec": "~/dotfiles/scripts/eq.sh waybar",
+        "return-type": "json",
+        "interval": 5,
+        "signal": 10
     },
 
     "pulseaudio": {

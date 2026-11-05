@@ -443,6 +443,45 @@ only your own section** (`git add -p`), never the whole file.
   established, and a dead-ends table (Firefox, the same-day apt upgrade, routing,
   Bluetooth).
 
+## Headphone EQ (3.5mm jack)
+- **Applied 2026-10-15, repo-only: `scripts/eq.sh on|use|ab|pick|list|check|reload|off`**
+  for A/B-testing EQ presets on the jack (HD6XX). Bare `eq.sh` (= `show
+  [preset]`) draws the active preset's curve and bands. Presets are
+  `audio/eq-presets/*.txt` in AutoEQ `ParametricEQ.txt` format, up to 7 at once,
+  switched live with no gap. **`scripts/eq.sh off` restores everything.**
+- **Nothing persists, by design**: it runs as a *transient* user unit `jack-eq`
+  with its config in `$XDG_RUNTIME_DIR/jack-eq/`. **Never move it into
+  `~/.config/pipewire/filter-chain.conf.d/`.** Ubuntu's `filter-chain.service`
+  loads that directory at every boot, and that is how the 2026-10-14 attempt broke
+  the user's audio (that, plus EasyEffects stacked on top).
+- **Verified 2026-10-15:**
+  - **The EQ is really applied**: a tone test through the jack's feed matched
+    the preset's biquads within 0.03 dB, on both channels.
+  - **A killed EQ falls back to the jack by itself**: WirePlumber ranks its
+    *history* of defaults.
+  - **After `off` nothing is left** except two harmless WirePlumber state lines.
+- **Gotcha: `cs42l45 Headphone` *is* the PipeWire sink volume** (UCM
+  `PlaybackMixerElem`, `softVolumes` 1.0), not a second gain stage to max out. So
+  `scripts/volume.sh` moves the jack's node while the EQ is the default, and the
+  EQ sink stays at 100%. **waybar's audio module shows `🔊 100%` while the EQ is
+  on**, because it reads the EQ sink. The real level is in the volume-key popup.
+- **waybar `custom/eq` shows 🎚️ before the audio module while the EQ is on**
+  (dimmed on `flat`). It's fed by `eq.sh waybar` (no `pw-dump`, ~15 ms, 5 s
+  poll), and `eq.sh` sends `RTMIN+10` on every change. RTMIN+9 is already taken
+  by `image#viz`.
+- **Gotcha: PipeWire's `param_eq` reads line 1 as the preamp, whatever it says**,
+  and only understands `PK`/`LSC`/`HSC`. `eq.sh` normalises a copy and refuses
+  other band types rather than dropping them.
+- **Every option, `flat` included, is level-matched** to the most-attenuated
+  preset, so the EQ is about 6 dB quieter than `off`. That's expected, not a fault.
+- **Still left over from 2026-10-14:** the EasyEffects Flatpak (`--user`, not
+  running) and 4 `easyeffects` lines in WirePlumber's `stream-properties`. Don't
+  run EasyEffects alongside this.
+- Write-up: `docs/headphone-eq-presets.md`: usage, how it works, everything it
+  touches, restore steps (incl. by hand if the script is broken), the
+  measurement table, what's not verified (reboot with EQ on, unplug, `pick`),
+  and the 2026-10-14 dead ends.
+
 ## Webcam / USB video
 - Built-in camera is the Intel **`ipu7`** block and claims **`/dev/video0`-`video31`**
   on its own. A USB webcam therefore lands somewhere above that (the Anker

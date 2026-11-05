@@ -66,6 +66,16 @@ window#waybar {
     color: @fg;
 }
 
+/* EQ indicator sits just before the speaker module, same audio group */
+#custom-eq {
+    padding: 0 0 0 10px;
+    color: @fg;
+}
+
+#custom-eq.flat {
+    opacity: 0.45;
+}
+
 /* mic sits flush against the speaker module — they read as one audio group */
 #pulseaudio.mic {
     padding-left: 0;
