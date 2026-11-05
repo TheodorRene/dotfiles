@@ -20,10 +20,31 @@
   the source of truth, and the firmware is flashed from Oryx/Keymapp.
 - The firmware source is **not** kept in this repo; Oryx's "Download source" zip
   is the readable form when a keymap question comes up.
-- Open/optional: `docs/nordic-letters-on-us-layout.md` — plan to get æøå on a US
-  layout (`us(altgr-intl)` + three Oryx remaps), **not applied**; the layout's
-  current Nordic keys are dead and `grp:alt_shift_toggle` is still in place. Also
-  holds a layer-by-layer cheat sheet of the layout as of 2026-08-03.
+- Open/optional: æøå on the Voyager via `us(altgr-intl)` + three Oryx remaps.
+  **Nothing applied**; the Voyager's Nordic keys are still dead.
+  **Revised 2026-10-16: the laptop keyboard stays `us,no`**, because the user
+  types Norwegian on it. So the plan is per-device: `type:keyboard` gets
+  `altgr-intl`, and an `input "1:1:AT_Translated_Set_2_keyboard"` block keeps
+  today's settings (diff passes `sway --validate`).
+- **Gotcha: today the layout switch is shared between keyboards.** sway's
+  default `keyboard_grouping smart` syncs the layout across keyboards with the
+  same keymap, so switching the laptop to `no` also switches the Voyager.
+  Different keymaps mean separate state.
+- **Gotcha: `input` precedence (identifier > `type:` > `*`) applies only in the
+  config file.** A typed `swaymsg input type:keyboard …` overrides per-device
+  settings, so in a live trial run the laptop's commands last.
+- **Checked 2026-10-16: `altgr-intl` doesn't change Alt in nvim or the
+  terminal.** Diffing the compiled keymaps: Left Alt is `Alt_L` on Mod1 in both.
+  Right Alt is Compose today (not on Mod1), so every Alt that works now, the
+  right home-row one included, is already Left Alt. Normal and Shift typing are
+  identical on every key except the modifiers, Menu and the ISO `<>` key.
+- **Gotcha:** waybar's `custom/language` reads the *first* keyboard in
+  `get_inputs`, which is a Voyager device. After the split it has to select the
+  laptop's identifier.
+- Write-up: `docs/nordic-letters-on-us-layout.md`: the per-device sway diff,
+  commands for a live trial, the keymap diff and how to reproduce it, the Oryx
+  remap table, order of operations, how to reverse it, open questions, and a
+  layer-by-layer cheat sheet of the layout as of 2026-08-03.
 
 ## Terminal & Shell
 - **Terminal**: Alacritty (what the user actually runs); kitty is also configured (its config was ported from Alacritty) but is not the daily driver
