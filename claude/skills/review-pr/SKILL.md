@@ -26,7 +26,7 @@ follow-up questions about it.
 
 4. **Open a tab and start Claude in it.** Keep the user's focus where it is.
    ```bash
-   herdr tab create --workspace "$HERDR_WORKSPACE_ID" --cwd "$PWD" --label "PR #<number>" --no-focus
+   herdr tab create --workspace "$HERDR_WORKSPACE_ID" --cwd "$PWD" --label "#<number> <author login>" --no-focus
    herdr agent start pr-<number> --kind claude --pane <.result.root_pane.pane_id> --timeout 60000
    ```
    Do not split the current pane.

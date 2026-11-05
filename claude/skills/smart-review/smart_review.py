@@ -371,16 +371,32 @@ def render_listing(files: list[FileDiff], scope: str) -> str:
     return "\n".join(out) + "\n"
 
 
+def pr_is_merged(session: Path) -> bool:
+    try:
+        url = json.loads((session / "state.json").read_text()).get("pr_url")
+    except (OSError, ValueError):
+        return False
+    if not url:
+        return False
+    result = subprocess.run(["gh", "pr", "view", url, "--json", "state", "--jq", ".state"], capture_output=True)
+    return result.returncode == 0 and result.stdout.decode().strip() == "MERGED"
+
+
+def remove_session(session: Path):
+    worktree = session / "worktree"
+    if worktree.exists():
+        subprocess.run(["git", "worktree", "remove", "--force", str(worktree)], cwd=worktree, capture_output=True)
+    shutil.rmtree(session, ignore_errors=True)
+
+
 def cleanup_old_sessions(max_age_days=7):
+    """Removes sessions older than max_age_days and PR reviews whose PR has been merged."""
     if not CACHE.exists():
         return
     cutoff = time.time() - max_age_days * 86400
     for entry in CACHE.iterdir():
-        if entry.is_dir() and entry.stat().st_mtime < cutoff:
-            worktree = entry / "worktree"
-            if worktree.exists():
-                subprocess.run(["git", "worktree", "remove", "--force", str(worktree)], cwd=worktree, capture_output=True)
-            shutil.rmtree(entry, ignore_errors=True)
+        if entry.is_dir() and (entry.stat().st_mtime < cutoff or pr_is_merged(entry)):
+            remove_session(entry)
 
 
 # --------------------------------------------------------------------------- plan
@@ -572,12 +588,46 @@ def note_html(text: str) -> str:
     return "".join(out)
 
 
-def vscode_link(root: Path, path: str, line: int | None = None) -> str:
-    target = f"vscode://file{root / path}"
-    return f"{target}:{line}" if line else target
+def source_lines(root: Path, file: FileDiff) -> list[str] | None:
+    """The new side of a modified or renamed file, for expanding unchanged lines around hunks.
+    None when the file on disk no longer matches the diff."""
+    if file.binary or file.status not in ("modified", "renamed"):
+        return None
+    try:
+        lines = (root / file.path).read_bytes().decode(errors="replace").split("\n")
+    except OSError:
+        return None
+    if lines and lines[-1] == "":
+        lines.pop()
+    for hunk in file.hunks:
+        new = [text for kind, text in hunk.content() if kind != "-"]
+        start = hunk.new_start - 1 if hunk.new_count else hunk.new_start
+        if lines[start : start + len(new)] != new:
+            return None
+    return lines
 
 
-def render_hunk(card_id: str, hunk: Hunk, file: FileDiff, root: Path, hidden: bool, hidden_reason: str,
+def first_line(start: int, count: int) -> int:
+    """First line a hunk side covers. A side without lines has `start` pointing at the line before."""
+    return start if count else start + 1
+
+
+def gap_html(source_id: str, first: int, last: int, delta: int, lang: str, up: bool, down: bool) -> str:
+    """Unchanged new-side lines first..last, revealed on demand. Old line = new line + delta."""
+    buttons = []
+    if down:
+        buttons.append('<button type="button" data-expand="down" title="Show lines below the previous hunk">↓</button>')
+    if up:
+        buttons.append('<button type="button" data-expand="up" title="Show lines above the next hunk">↑</button>')
+    buttons.append('<button type="button" data-expand="all">Expand all</button>')
+    count = last - first + 1
+    return (
+        f'<tbody class="gap" data-src="{source_id}" data-first="{first}" data-last="{last}" data-delta="{delta}" data-lang="{lang}">'
+        f'<tr class="expander"><td colspan="3">{"".join(buttons)}<span class="gap-count">{count} unchanged line{"" if count == 1 else "s"}</span></td></tr></tbody>'
+    )
+
+
+def render_hunk(card_id: str, hunk: Hunk, file: FileDiff, hidden: bool, hidden_reason: str,
                 hunk_note: str | None, line_notes: dict[str, str], used_line_notes: set[str]) -> str:
     lang = language(file.path)
     side = "old" if file.status == "deleted" else "new"
@@ -600,10 +650,7 @@ def render_hunk(card_id: str, hunk: Hunk, file: FileDiff, root: Path, hidden: bo
     for row in hunk_rows(hunk):
         cls = {"+": "add", "-": "del", " ": "ctx"}[row["kind"]]
         old_cell = f'<td class="n">{row["old"]}</td>' if row["old"] else '<td class="n"></td>'
-        if row["new"]:
-            new_cell = f'<td class="n"><a href="{vscode_link(root, file.path, row["new"])}" title="Open in VS Code">{row["new"]}</a></td>'
-        else:
-            new_cell = '<td class="n"></td>'
+        new_cell = f'<td class="n">{row["new"]}</td>' if row["new"] else '<td class="n"></td>'
         ranges = ",".join(f"{a}-{b}" for a, b in row["ranges"])
         data = f' data-chg="{ranges}"' if ranges else ""
         rows.append(
@@ -624,7 +671,7 @@ COLGROUP = '<colgroup><col class="col-n"><col class="col-n"><col></colgroup>'
 
 
 def note_row(tag: str, text: str) -> str:
-    return f'<tr class="note"><td colspan="3"><div class="note-card"><span class="note-tag">{esc(tag)}</span>{note_html(text)}</div></td></tr>'
+    return f'<tr class="note"><td colspan="3"><div class="note-card"><button type="button" class="dismiss" title="Dismiss note" aria-label="Dismiss note"></button><span class="note-tag">{esc(tag)}</span>{note_html(text)}</div></td></tr>'
 
 
 def status_badge(file: FileDiff) -> str:
@@ -634,20 +681,23 @@ def status_badge(file: FileDiff) -> str:
     return f'<span class="badge {file.status}">{esc(label)}</span>'
 
 
+def copy_button(path: str) -> str:
+    return f'<button type="button" class="copy-path" data-path="{esc(path)}" title="Copy file path">Copy</button>'
+
+
 def render_card(card: Card, root: Path) -> str:
     file = card.file
     card_id = f"f{card.index}"
     added, removed = file.counts()
-    note = f'<div class="file-note">{note_html(card.note)}</div>' if card.note else ""
+    note = f'<div class="file-note"><button type="button" class="dismiss" title="Dismiss note" aria-label="Dismiss note"></button>{note_html(card.note)}</div>' if card.note else ""
     hidden_info = ""
     if card.hidden:
         numbers = ", ".join(str(h.number) for h in card.hidden)
         reason = f" ({note_html(card.hidden_reason)})" if card.hidden_reason else ""
         hidden_info = f'<span class="muted">hidden: {numbers}{reason}</span>'
-    link = "" if file.status == "deleted" else f' href="{vscode_link(root, file.path)}" title="Open in VS Code"'
     head = (
         f'<div class="file-head"><span class="idx">{card.index}</span>{status_badge(file)}'
-        f'<a class="path"{link}>{esc(file.path)}</a>'
+        f'<span class="path">{esc(file.path)}</span>{copy_button(file.path)}'
         f'<span class="counts"><span class="plus">+{added}</span> <span class="minus">−{removed}</span></span>{hidden_info}'
         f'<label class="viewed-box"><input type="checkbox" class="viewed-check"> Viewed</label></div>'
     )
@@ -656,20 +706,33 @@ def render_card(card: Card, root: Path) -> str:
     else:
         used: set[str] = set()
         parts = []
-        for hunk in file.hunks:
+        lines = source_lines(root, file)
+        source_id, lang = f"src-{card_id}", language(file.path)
+        new_end = old_end = 1  # first line after the previous hunk, per side
+        for i, hunk in enumerate(file.hunks):
+            new_first, old_first = first_line(hunk.new_start, hunk.new_count), first_line(hunk.old_start, hunk.old_count)
+            if lines is not None and new_first > new_end:
+                parts.append(gap_html(source_id, new_end, new_first - 1, old_first - new_first, lang, up=True, down=i > 0))
             parts.append(render_hunk(
-                card_id, hunk, file, root, hunk in card.hidden, card.hidden_reason,
+                card_id, hunk, file, hunk in card.hidden, card.hidden_reason,
                 card.hunk_notes.get(str(hunk.number)), card.line_notes, used,
             ))
+            new_end, old_end = new_first + hunk.new_count, old_first + hunk.old_count
+        source = ""
+        if lines is not None:
+            if len(lines) >= new_end:
+                parts.append(gap_html(source_id, new_end, len(lines), old_end - new_end, lang, up=False, down=True))
+            data = json.dumps(lines).replace("<", "\\u003c")  # keeps </script> in the source from ending the tag
+            source = f'<script type="application/json" id="{source_id}">{data}</script>'
         stray = {k: v for k, v in card.line_notes.items() if k not in used}
         for key in stray:
             print(f"warning: {file.path}: line note for line {key} is not inside any hunk; shown at the top", file=sys.stderr)
         stray_rows = "".join(note_row(f"line {k}", v) for k, v in stray.items())
-        body = f'<table class="diff">{COLGROUP}{stray_rows}{"".join(parts)}</table>'
+        body = f'<table class="diff">{COLGROUP}{stray_rows}{"".join(parts)}</table>{source}'
     return f'<section class="file" id="{card_id}">{head}{note}{body}</section>'
 
 
-def render_skipped(entry: dict, file: FileDiff, root: Path, index: int) -> str:
+def render_skipped(entry: dict, file: FileDiff, index: int) -> str:
     added, removed = file.counts()
     reason = note_html(entry.get("reason", ""))
     card_id = f"s{index}"
@@ -683,12 +746,12 @@ def render_skipped(entry: dict, file: FileDiff, root: Path, index: int) -> str:
                 remaining = sum(len(h.lines) - 1 for h in file.hunks[hunk.number - 1 :])
                 parts.append(f'<tbody><tr class="note"><td colspan="3"><div class="muted">… {remaining} more lines not embedded; see diff.patch in the session.</div></td></tr></tbody>')
                 break
-            parts.append(render_hunk(card_id, hunk, file, root, False, "", None, {}, used))
+            parts.append(render_hunk(card_id, hunk, file, False, "", None, {}, used))
             lines += len(hunk.lines) - 1
         body = f'<table class="diff">{COLGROUP}{"".join(parts)}</table>'
     return (
         f'<details class="file skipped" id="{card_id}"><summary class="file-head">{status_badge(file)}'
-        f'<span class="path">{esc(file.path)}</span>'
+        f'<span class="path">{esc(file.path)}</span>{copy_button(file.path)}'
         f'<span class="counts"><span class="plus">+{added}</span> <span class="minus">−{removed}</span></span>'
         f'<span class="muted">{reason}</span></summary>{body}</details>'
     )
@@ -766,7 +829,7 @@ def render_page(review: Review) -> str:
     if review.skipped:
         body.append('<h2 class="section-title">Skipped files</h2><p class="muted">Mechanical or generated; expand to see the raw diff.</p>')
         for i, entry in enumerate(review.skipped, 1):
-            body.append(render_skipped(entry, review.files[entry["path"]], root, i))
+            body.append(render_skipped(entry, review.files[entry["path"]], i))
 
     return PAGE_TEMPLATE.format(
         title=esc(title),
@@ -889,11 +952,16 @@ section.file.viewed .file-head .path { text-decoration: line-through; font-weigh
 .file-head .idx { color: var(--muted); font-variant-numeric: tabular-nums; min-width: 1.5em; }
 .file-head .path { font-family: ui-monospace, monospace; font-size: 13px; font-weight: 600; color: var(--fg); }
 .file-head .counts { font-family: ui-monospace, monospace; font-size: 12px; }
+button.copy-path { font: inherit; font-size: 11px; color: var(--muted); background: transparent; border: 1px solid var(--border); border-radius: 4px; padding: 0 6px; cursor: pointer; }
+button.copy-path:hover { color: var(--fg); }
 .plus { color: var(--badge-add); } .minus { color: var(--badge-del); }
 .muted { color: var(--muted); font-weight: normal; }
 .badge { font-size: 11px; padding: 1px 7px; border-radius: 10px; border: 1px solid currentColor; text-transform: lowercase; }
 .badge.added { color: var(--badge-add); } .badge.deleted { color: var(--badge-del); }
 .badge.modified { color: var(--badge-mod); } .badge.renamed { color: var(--badge-ren); }
+button.dismiss { float: right; margin: -2px 0 0 8px; padding: 0 4px; font: inherit; font-size: 15px; line-height: 1; color: var(--muted); background: transparent; border: 0; cursor: pointer; }
+button.dismiss::before { content: "×"; }
+button.dismiss:hover { color: var(--fg); }
 .file-note { padding: 8px 12px; border-bottom: 1px solid var(--border); background: var(--note-bg); border-left: 4px solid var(--note-border); }
 .empty { padding: 12px; color: var(--muted); }
 table.diff { width: 100%; border-collapse: collapse; font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px; line-height: 20px; table-layout: fixed; }
@@ -917,6 +985,10 @@ button.toggle:hover { color: var(--fg); }
 button.toggle .chev { display: inline-block; width: 1em; transition: transform .1s; }
 button.toggle[aria-expanded="true"] .chev { transform: rotate(90deg); }
 tbody.collapsed tr.l { opacity: .75; }
+tr.expander td { background: var(--hunk-bg); color: var(--hunk-fg); padding: 0 8px; }
+tr.expander button { font: inherit; color: inherit; background: transparent; border: 0; padding: 0 6px; cursor: pointer; }
+tr.expander button:hover { color: var(--fg); background: var(--border); border-radius: 4px; }
+tr.expander .gap-count { color: var(--muted); margin-left: 8px; }
 tr.note td { padding: 6px 12px 8px 60px; background: var(--bg); }
 .note-card { background: var(--note-bg); border: 1px solid var(--note-border); border-left-width: 4px; border-radius: 6px; padding: 6px 10px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; font-size: 13px; line-height: 1.45; max-width: 90ch; white-space: normal; }
 .note-tag { display: inline-block; font-size: 11px; color: var(--muted); margin-right: 8px; text-transform: uppercase; letter-spacing: .03em; }
@@ -968,6 +1040,54 @@ JS = """
   document.querySelectorAll('button.toggle').forEach(function (btn) {
     btn.addEventListener('click', function () { setOpen(btn, btn.getAttribute('aria-expanded') !== 'true'); });
   });
+  var EXPAND_STEP = 20, sources = {};
+  function sourceLines(id) {
+    if (!sources[id]) sources[id] = JSON.parse(document.getElementById(id).textContent);
+    return sources[id];
+  }
+  function contextRow(n, delta, text, lang) {
+    var tr = document.createElement('tr');
+    tr.className = 'l ctx';
+    tr.innerHTML = '<td class="n">' + (n + delta) + '</td><td class="n">' + n + '</td><td class="c"><code class="language-' + lang + '"></code></td>';
+    var code = tr.querySelector('code');
+    code.textContent = text;
+    if (window.hljs && text.trim()) { try { hljs.highlightElement(code); } catch (e) {} }
+    return tr;
+  }
+  function expandGap(gap, dir) {
+    var d = gap.dataset, first = +d.first, last = +d.last, delta = +d.delta;
+    var from = dir === 'up' ? Math.max(first, last - EXPAND_STEP + 1) : first;
+    var to = dir === 'down' ? Math.min(last, first + EXPAND_STEP - 1) : last;
+    var lines = sourceLines(d.src), rows = document.createDocumentFragment();
+    for (var n = from; n <= to; n++) rows.appendChild(contextRow(n, delta, lines[n - 1], d.lang));
+    var expander = gap.querySelector('tr.expander');
+    if (dir === 'up') { expander.after(rows); last = from - 1; } else { expander.before(rows); first = to + 1; }
+    d.first = first; d.last = last;
+    if (first > last) { expander.remove(); return; }
+    var left = last - first + 1;
+    expander.querySelector('.gap-count').textContent = left + ' unchanged line' + (left === 1 ? '' : 's');
+  }
+  document.querySelectorAll('tbody.gap').forEach(function (gap) {
+    gap.querySelectorAll('button[data-expand]').forEach(function (btn) {
+      btn.addEventListener('click', function () { expandGap(gap, btn.dataset.expand); });
+    });
+  });
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    var area = document.createElement('textarea');
+    area.value = text; document.body.appendChild(area); area.select();
+    var ok = document.execCommand('copy'); area.remove();
+    return ok ? Promise.resolve() : Promise.reject();
+  }
+  document.querySelectorAll('button.copy-path').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault(); e.stopPropagation();
+      copyText(btn.dataset.path).then(
+        function () { btn.textContent = 'Copied'; },
+        function () { btn.textContent = 'Copy failed'; }
+      ).then(function () { setTimeout(function () { btn.textContent = 'Copy'; }, 1200); });
+    });
+  });
   var files = Array.prototype.slice.call(document.querySelectorAll('section.file'));
   var links = Array.prototype.slice.call(document.querySelectorAll('.toc a[href^="#f"]'));
   var selected = -1;
@@ -998,6 +1118,40 @@ JS = """
     try { localStorage.setItem(notesKey, hidden ? '1' : '0'); } catch (e) {}
   }
   try { if (localStorage.getItem(notesKey) === '1') setNotesHidden(true); } catch (e) {}
+  var dismissKey = 'smart-review:dismissed:' + location.pathname;
+  var dismissed = [];
+  try { dismissed = JSON.parse(localStorage.getItem(dismissKey) || '[]'); } catch (e) {}
+  var restore = document.createElement('p');
+  restore.className = 'meta';
+  restore.innerHTML = '<a href="#" id="restore-notes"></a>';
+  document.querySelector('main header').appendChild(restore);
+  function noteKey(note) {
+    var file = note.closest('.file');
+    return (file ? file.id : '') + ':' + note.textContent.trim();
+  }
+  function noteTarget(note) { return note.closest('tr.note') || note; }
+  function syncDismissed() {
+    try { localStorage.setItem(dismissKey, JSON.stringify(dismissed)); } catch (e) {}
+    restore.hidden = !dismissed.length;
+    restore.firstChild.textContent = 'Show ' + dismissed.length + ' dismissed note' + (dismissed.length === 1 ? '' : 's');
+  }
+  var notes = Array.prototype.slice.call(document.querySelectorAll('.note-card, .file-note'));
+  notes.forEach(function (note) {
+    if (dismissed.indexOf(noteKey(note)) >= 0) noteTarget(note).hidden = true;
+    note.querySelector('button.dismiss').addEventListener('click', function (e) {
+      e.stopPropagation();
+      noteTarget(note).hidden = true;
+      dismissed.push(noteKey(note));
+      syncDismissed();
+    });
+  });
+  restore.firstChild.addEventListener('click', function (e) {
+    e.preventDefault();
+    notes.forEach(function (note) { noteTarget(note).hidden = false; });
+    dismissed = [];
+    syncDismissed();
+  });
+  syncDismissed();
   var remembered = loadViewed();
   files.forEach(function (f, i) { if (remembered.indexOf(f.id) >= 0) setViewed(i, true); });
   saveViewed();

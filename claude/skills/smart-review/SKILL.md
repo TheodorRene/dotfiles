@@ -162,11 +162,14 @@ Write every note as a plain statement: the fact, then stop. No build-up, no "int
 ## The page
 
 The header lists the commits under review, oldest first, and for a PR links to the PR, each
-commit on GitHub and the Shortcut story. Sidebar with the reading order and skipped files. One file is always selected (blue ring, highlighted
+commit on GitHub and the Shortcut story. Each file header has a Copy button for its repo-relative path. Every note has a × that dismisses it (remembered per page in the browser); a header link brings dismissed notes back. Sidebar with the reading order and skipped files. One file is always selected (blue ring, highlighted
 in the sidebar); `j`/`k` move the selection and scroll to it, clicking a file or sidebar entry selects
 it. Scrolling by itself never changes the selection. `v` marks the selected file as viewed, which collapses it to its header
 (like GitHub; also a checkbox in the header, remembered per page in the browser). `h` toggles all
-hidden hunks, `n` hides or shows all notes. File paths and new-side line numbers link to VS Code via `vscode://file`. Syntax
+hidden hunks, `n` hides or shows all notes. Between and around the hunks of a modified or renamed
+file, expand buttons reveal unchanged lines (20 per click, or all), like GitHub. The new side of
+the file is embedded at render time, so this works offline; it is left out for a file whose copy on
+disk no longer matches the diff. Syntax
 highlighting comes from highlight.js on cdnjs and degrades to plain text offline. Light and dark
 follow the browser's colour scheme.
 
@@ -174,5 +177,6 @@ follow the browser's colour scheme.
 
 Everything lives in `~/Documents/smart-review/<timestamp>/`: `diff.patch`, `hunks.txt`, `state.json`,
 `plan.json` (the last plan rendered) and `review.html`, plus `pr.json` and `worktree/` for a PR.
-Sessions older than seven days are deleted on the next dump, worktree included. The folder is not
+Sessions older than seven days, and PR reviews whose PR has been merged, are deleted on the
+next dump, worktree included. The folder is not
 under `~/.cache` because snap Firefox cannot read hidden directories.
