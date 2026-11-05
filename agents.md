@@ -497,6 +497,22 @@ only your own section** (`git add -p`), never the whole file.
   Open/optional there: narrowing blueman's autoconnect to A2DP (unverified — would
   make the headset mic connect on demand), forcing SBC-XQ over AAC, and disabling
   `autoswitch-to-headset-profile`.
+- **A Bluetooth mouse can show `Connected: yes` but never reach sway if it isn't
+  *paired*.** Seen 2026-10-30 with the MX Master 4 (`MX Master 4 B`): `Paired: no`,
+  `Trusted: yes`, and bluetoothd logged `hog-lib.c … failed: Request attribute has
+  encountered an unlikely error` on every connect, with no kernel input device.
+  **Clicking Connect again doesn't help.** Put the mouse in pairing mode (hold
+  Easy-Switch ~3 s), then **Pair**. **Applied 2026-10-30**: bonded, sway sees
+  `1133:45128:MX_Master_4_B_Mouse`.
+- **Gotcha: `Trusted` isn't `Paired`.** Trusted only allows automatic connects.
+  Check `Paired`/`Bonded` first. The pairing also belongs to one Easy-Switch
+  channel and replaces that channel's previous host.
+- **Verified 2026-11-02: it reconnects by itself after a reboot.** Not checked
+  yet: after suspend, and the extra buttons/hi-res scroll. The kernel uses
+  `hid-generic`, not `hid-logitech-hidpp`.
+- Write-up: `docs/bluetooth-mouse-connected-but-pointer-dead.md`: the log
+  lines, pair commands, verified end state, what to expect after a reboot, the
+  "if it doesn't come back" check, and dead ends.
 
 ## Audio / suspend-resume
 - **"Videos won't play in Firefox" after a wake from sleep means the speaker output
