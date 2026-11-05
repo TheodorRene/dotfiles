@@ -123,6 +123,10 @@
       "rev": "aab6caaffd79b8def22ec4320a5344f7c42f58d2",
       "src": "https://github.com/HiPhish/rainbow-delimiters.nvim"
     },
+    "roslyn.nvim": {
+      "rev": "13103877cd3adcc395e80740fa5de104457eb22b",
+      "src": "https://github.com/seblyng/roslyn.nvim"
+    },
     "rustaceanvim": {
       "rev": "7b8dd7abb9a7f442b356aa03714aefce09610339",
       "src": "https://github.com/mrcjkb/rustaceanvim",
