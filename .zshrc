@@ -68,3 +68,6 @@ export LESS="-RFX"
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# Tab completion for `just worktree`
+[[ -r '/home/trc/dev/impero/tools/worktree/completion.zsh' ]] && source '/home/trc/dev/impero/tools/worktree/completion.zsh'
