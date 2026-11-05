@@ -66,6 +66,10 @@ for my $unit (qw(cargo-sweep.service cargo-sweep.timer disk-space-warning.servic
 # ~/.local/share/applications is searched before XDG_DATA_DIRS. Spotify is
 # CEF, not Electron, so ELECTRON_OZONE_PLATFORM_HINT doesn't reach it.
 symlink_path("$dotfiles/applications/spotify_spotify.desktop", "$home/.local/share/applications/spotify_spotify.desktop");
+# Chromium only auto-selects libsecret on desktops it recognises; sway gets the
+# plaintext basic_text store, so Claude can't persist its login. No
+# X-Claude-Generated=true line, or the app overwrites this on every launch.
+symlink_path("$dotfiles/applications/com.anthropic.Claude.desktop", "$home/.local/share/applications/com.anthropic.Claude.desktop");
 
 # herdr: the config file only; ~/.config/herdr also holds sockets and session state.
 symlink_path("$dotfiles/herdr/config.toml", "$home/.config/herdr/config.toml");
