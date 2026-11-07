@@ -1,12 +1,15 @@
-# A 2018/2019 HP Spectre x360 as an always-on home server
+# A 2016 HP Spectre x360 as an always-on home server
 
-**Status: Nothing applied (2026-09-22).** Design + runbook. No NixOS is installed
-on the Spectre, and no Tailscale account is in use.
+**Status: Nothing applied (2026-11-07).** Design + runbook. No NixOS is installed
+on the Spectre (it still runs Manjaro, hostname `old-disco`), and no Tailscale
+account is in use. **The flake exists and builds**: `server/flake.nix` +
+`hosts/old-disco/` evaluate and build against `nixos-26.05` (checked 2026-11-07
+on the XPS with `nix build`), but have never booted.
 
-**Almost every hardware fact below is assumed, not verified.** Nobody has run a
-command on that laptop yet. `./inventory.sh` turns the assumptions into facts —
-run it first, fill in "Hardware", then re-read the decisions that depend on it.
-Assumptions are marked **(assumed)**.
+**The hardware is now measured, not assumed** (`inventory.sh` over SSH,
+2026-11-07). It is **older and smaller than this plan first assumed**: a late-2016
+`13-ac0XX` with a **2-core** Kaby Lake and **8 GB**. The decisions below that depended
+on it have been re-read; anything still unverified is marked **(assumed)**.
 
 ---
 
@@ -24,8 +27,9 @@ server/
 ├── README.md        this plan — decisions, what to run, order of work
 ├── INSTALL.md       Phase 1, step by step: USB → BIOS → disko → first boot
 ├── inventory.sh     run it on the Spectre; fills in the hardware table
-└── flake.nix        ← the machine's own flake, plus hosts/ (doesn't exist yet;
-                       the three files to write are in INSTALL.md, Stage 0)
+├── flake.nix        the machine's own flake (nixos-26.05 + disko), and flake.lock
+└── hosts/old-disco/ default.nix, disks.nix (disko), hardware.nix (provisional;
+                     regenerated on the machine during the install)
 ```
 
 **Its own flake, not a host inside `nix/`.** The reasoning:
@@ -52,37 +56,50 @@ do copy:
    definition, not an override.
 2. `common.nix` pulls in the whole desktop (sway, GDM, PipeWire, fonts) and
    `services.nix` enables CUPS + Avahi. A headless box wants none of it.
-3. `nix-daemon.nix` is tuned for 16 cores. This machine has four **(assumed)**.
+3. `nix-daemon.nix` is tuned for 16 cores. This machine has two (four threads).
 
 ---
 
 ## Hardware (fill this in)
 
-Run `inventory.sh` on the Spectre — its current OS, an Ubuntu live USB, or the
-NixOS installer ISO all work. If it's still on Windows, boot a live USB; the
-script only reads `/sys` and `/proc`.
+Measured 2026-11-07 by running `inventory.sh` over SSH on the machine's Manjaro
+install (`ssh server`, i.e. `theodorc@192.168.0.102`).
 
-| Fact | Assumed | Actual |
+| Fact | First assumed | Actual (2026-11-07) |
 |---|---|---|
-| Model / chassis | 13" `13-ap0xxx` **(assumed)** | |
-| CPU | i5-8265U or i7-8565U, 4C/8T **(assumed)** | |
-| RAM | 8 or 16 GB, **soldered — not upgradable** **(assumed)** | |
-| Disk | one NVMe, 256–512 GB **(assumed)** | |
-| iGPU | Intel UHD 620, QuickSync ⇒ hardware H.264/HEVC transcode **(assumed)** | |
-| dGPU | none on the 13"; the 15" `15-df` has an MX150/GTX 1050 Ti **(assumed none)** | |
-| Wired ethernet | **none — USB-C/USB-A only** | |
-| Battery health | unknown; **6–7 years old** | |
-| BIOS: power-on after AC loss | unknown — check F10 setup | |
+| Model / chassis | 13" `13-ap0xxx` (2018/19) | **13" `13-ac0XX`, late 2016**, board `827E` |
+| BIOS | — | **F.20, dated 2016-12-01** (AMI); Secure Boot already **off** |
+| CPU | 4C/8T 8th gen | **i7-7500U, Kaby Lake, 2C/4T**, 3.5 GHz turbo, VT-x, AES-NI |
+| RAM | 8 or 16 GB | **8 GB** (7.7 GiB usable), soldered |
+| Disk | 256–512 GB NVMe | **512 GB Samsung PM961** (`MZVLW512HMJP-000H1`) |
+| What's on it | — | **Windows** (335 GB NTFS + recovery) **and Manjaro** (128 GB ext4, 90% full), dual-boot |
+| iGPU | UHD 620 | **HD 620** (Kaby Lake); VAAPI not checked (`vainfo` absent) |
+| dGPU | none | **none** |
+| Wired ethernet | none | **none**, and no USB adapter attached; on 5 GHz wifi (Intel 8265) |
+| USB-C | — | no Thunderbolt controller visible on PCI with nothing plugged in (normal for TB3 power-on-demand) |
+| TPM | — | `tpm0` present (irrelevant: no disk encryption) |
+| Battery health | unknown | **unknown**: firmware reports `cycle_count 0` and `charge_full == charge_full_design`, which is the firmware not reporting rather than a new cell. **No charge limit** in sysfs |
+| Keyboard | — | **Norwegian** (`KEYMAP=no`) |
+| BIOS: power-on after AC loss | unknown | still unknown; only answerable in BIOS setup |
 
-Three of these change the plan materially:
+What changes because of it:
 
-- **RAM.** 8 GB caps what can run at once — Immich and Jellyfin and a metrics
-  stack on 8 GB is a swap-thrash machine. 16 GB is comfortable. Soldered, so
-  this is not fixable later.
-- **dGPU.** A 15" with a 1050 Ti moves local LLM inference from "pointless" to
-  "small models at usable speed". The 13" doesn't.
-- **Disk size.** Anything that accumulates — photos, media — needs external
-  storage; see "Storage".
+- **RAM: 8 GB settles it.** Immich and Jellyfin and a metrics stack together is a
+  swap-thrash machine. Pick Tier 1 services one at a time and watch memory;
+  Immich's ML container alone wants 2–4 GB.
+- **CPU: two cores.** Fine for an always-on box that mostly waits; slow for
+  Immich's initial ML indexing of a large library (days, not hours) and for any
+  software transcode. QuickSync carries Jellyfin, if `vainfo` confirms it.
+- **No dGPU**, so local LLM inference stays in Tier 3 / skip.
+- **The battery can't be capped from Linux**, so it will sit at 100% around the
+  clock. That makes the physical swelling check, and keeping it cool, more
+  important. A BIOS update *might* add an HP battery-care option **(theorised,
+  not checked)**.
+- **The BIOS is the 2016 original.** Update it while Windows still boots,
+  before the disk is wiped; HP's BIOS installers are Windows executables. See
+  `INSTALL.md`, Stage 2.
+- **Disk size** is 512 GB. Anything that accumulates (photos, media) still needs
+  external storage; see "Storage".
 
 ---
 
@@ -100,14 +117,14 @@ The costs:
    server. `logind` must ignore the lid on AC *and* battery, and the sleep,
    suspend, hibernate and hybrid-sleep targets should be disabled outright —
    belt and braces, so no module's default quietly re-enables a path.
-2. **The battery.** A 6–7 year old cell held at 100% and 35 °C is the most likely
+2. **The battery.** A ~10 year old cell held at 100% and 35 °C is the most likely
    hardware failure here, and a swollen one in a sealed chassis is a real fire
    risk, not a hypothetical. **Inspect it physically** — does the bottom panel
    sit flat, does the trackpad click normally — before committing the machine to
    unattended 24/7 duty. If a charge ceiling is exposed
    (`/sys/class/power_supply/BAT*/charge_control_end_threshold`), cap it at
-   60–80%. HP's support for that control is inconsistent; `inventory.sh` checks
-   rather than assumes.
+   60–80%. **On this machine it isn't** (checked 2026-11-07 on Manjaro's 5.4
+   kernel; not re-checked on a current kernel), so the cell will sit at 100%.
 3. **No wired port.** A server on wifi drops transfers mid-stream. Use a **USB3
    gigabit adapter** (~£10) and a static DHCP lease.
 4. **One disk, no ECC, no IPMI.** It is not a NAS. Nothing irreplaceable should
@@ -271,7 +288,7 @@ Simplest thing that works: **the server builds itself** from a git checkout of
 sudo nixos-rebuild switch --flake /etc/nixos#<name>   # or wherever the checkout lives
 ```
 
-Four cores is unexciting but adequate for a headless closure, and it keeps the
+Two cores is slow but adequate for a headless closure, and it keeps the
 machine self-contained — no second machine required to fix it. If a build ever
 gets heavy enough to hurt, `--target-host` from a faster machine with Nix is
 available as a convenience, not a dependency.
@@ -291,14 +308,14 @@ Rules that make rebuilds safe:
 - **`system.autoUpgrade` against `nixos-unstable` is a bad idea on an always-on
   machine** — it turns a breaking change into a 4 a.m. outage. Track a stable
   release (`nixos-25.11`/`26.05`) rather than unstable; there's no new-hardware
-  argument for unstable on a 2018 laptop. A nightly `nixos-rebuild build` that
+  argument for unstable on a 2016 laptop. A nightly `nixos-rebuild build` that
   fails is a useful alert; an unattended `switch` that half-works is an outage.
 
 ---
 
 ## Storage
 
-The internal NVMe is small **(assumed 256–512 GB)** and holds the OS. Anything
+The internal NVMe is 512 GB and holds the OS. Anything
 that accumulates wants external disk over USB3.
 
 - A single **external SSD** is the low-friction choice, and btrfs on it gets
@@ -334,14 +351,15 @@ restores aren't backups.
 
 ## What to run on it
 
-Ranked by how much each earns its keep on a 4-core, 8–16 GB laptop with one
+Ranked by how much each earns its keep on a 2-core, 8 GB laptop with one
 internal disk.
 
 ### Tier 1 — the reasons to build it
 
 **1. Photos: Immich.** The actual replacement for Google Photos — phone
 auto-upload, albums, ML search for faces and objects. The iGPU does transcoding
-**(assumed — verify with `vainfo`)**. This is the service most people find they
+**(assumed — verify with `vainfo`)**. On 2 cores and 8 GB, the first ML pass over a
+big library is slow; run it once and let it finish. This is the service most people find they
 use daily. Wants RAM for the ML side and real storage, and it becomes the primary
 copy of irreplaceable things almost immediately, so it goes *after* backups work.
 
@@ -354,7 +372,7 @@ provide. Small, boring, reliable — the best first data service.
 One flag (`useRoutingFeatures = "server"` plus approving the route), no ongoing
 cost. *Caveat:* home upload bandwidth becomes the phone's ceiling.
 
-**4. Media: Jellyfin.** UHD 620 QuickSync handles H.264/HEVC hardware transcode
+**4. Media: Jellyfin.** HD 620 (Kaby Lake) QuickSync handles H.264/HEVC hardware transcode
 **(assumed — `vainfo`)**. Storage-bound rather than CPU-bound, so it lives or
 dies on the external disk. Fully free, no licence tier, unlike Plex.
 
@@ -387,8 +405,8 @@ dies on the external disk. Fully free, no licence tier, unlike Plex.
 
 - **Home Assistant** — excellent, but only with smart-home hardware to automate.
   Otherwise a dashboard of nothing.
-- **Local LLM inference** — on the 13" with no dGPU, an 8B model on CPU runs at a
-  few tokens/sec. Not worth it. Reconsider only if `inventory.sh` finds a 1050 Ti.
+- **Local LLM inference**: no dGPU and 2 cores (measured), so an 8B model on CPU
+  runs at a few tokens/sec at best. Not worth it.
 - **Kubernetes / k3s** — no. One node, one admin, no scaling problem. Overhead
   shaped like a solution.
 - **A public web host.** Tailscale Funnel exists and works, but anything expected
@@ -518,9 +536,13 @@ entry, per `CLAUDE.md`. This file is the plan; that's the record of what was don
 
 ## Open questions
 
-- **Hostname.** Needs one.
-- **13" or 15"?** Decides the dGPU question, and so the LLM one.
-- **8 or 16 GB?** Decides how much of Tier 1–2 can coexist. Soldered.
+- **Hostname.** The flake uses `old-disco`, the name Manjaro has now. Renaming
+  is three places: the attribute in `flake.nix`, the `hosts/` directory, and
+  `networking.hostName`. Do it before the install, not after.
+- **Ethernet adapter, or wifi for good?** The config works on either
+  (NetworkManager). Wifi is what it has today.
+- **Is anything on the Windows partition worth keeping?** It is 335 GB and will
+  be wiped with everything else.
 - **Does the BIOS have "power on after AC loss"?** If not, a long outage leaves
   the machine off until someone presses the button — which caps how much anything
   should depend on it.
@@ -531,7 +553,7 @@ entry, per `CLAUDE.md`. This file is the plan; that's the record of what was don
   Take Docker only if something specifically needs compose features or a socket.
 - **Stable or unstable nixpkgs?** Recommended stable, for the reasons under
   "Rebuilding it"; note that this is the opposite of what `nix/flake.nix` chose,
-  deliberately — that machine is new hardware, this one is seven years old.
+  deliberately — that machine is new hardware, this one is nearly ten years old.
 
 ## Dead ends — don't re-derive these
 

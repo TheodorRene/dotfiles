@@ -621,9 +621,30 @@ only your own section** (`git add -p`), never the whole file.
   hooks to the phone via ntfy (`scripts/claude-attention.sh` is sway/mako-only, so
   it's silent over SSH). **Nothing applied.**
 
-## Home server (HP Spectre x360, 2018/19)
+## Home server (HP Spectre x360, 2016)
 - Open/optional: `server/README.md` — plan to make an old HP Spectre x360 an
   always-on home server on NixOS + Tailscale. **Nothing applied.**
+- **The flake exists and builds (2026-11-07), but has never booted.**
+  `server/flake.nix` + `server/hosts/old-disco/` (nixos-26.05 + disko) pass
+  `nix build …#nixosConfigurations.old-disco.config.system.build.toplevel` on
+  the XPS. `hardware.nix` is **hand-written and provisional**; the install
+  regenerates it on the machine.
+- **The machine is reachable now as `ssh server`** (`theodorc@192.168.0.102`,
+  Manjaro, hostname `old-disco`, wifi). Passwordless `sudo` is not set up there.
+- **Measured 2026-11-07, older than first assumed:** a **late-2016 `13-ac0XX`**,
+  i7-7500U **2C/4T**, **8 GB** soldered, 512 GB Samsung PM961, HD 620, no dGPU,
+  no wired NIC, **BIOS F.20 of 2016-12-01**, Secure Boot already off, keyboard
+  Norwegian. **Windows (335 GB) and Manjaro share the disk**, and the install
+  wipes both.
+- **Gotcha: the battery reports nothing usable.** `cycle_count 0` and
+  `charge_full == charge_full_design` is the firmware not reporting, not a new
+  cell. No charge limit in sysfs either, so it will sit at 100% around the
+  clock. The physical swelling check is the only health check.
+- **Gotcha: the NixOS installer console is US layout and the installed system is
+  `no`.** Run `loadkeys no` before setting the root password, or the password
+  typed at first boot won't match.
+- **Manjaro's `pcie_aspm=off` is a no-op; don't carry it over.** The kernel logs
+  `ACPI FADT declares the system doesn't support PCIe ASPM`.
 - **The server is a separate machine with a separate purpose** — it is not an
   accessory to this laptop, does not back it up, and is not monitored with it.
   `server/` holds the plan, `inventory.sh`, and **the machine's own flake**.
@@ -681,13 +702,12 @@ only your own section** (`git add -p`), never the whole file.
   console. And never make Tailscale SSH the *only* way in — a broken `tailscaled`
   takes it with it; run a real sshd bound behind `trustedInterfaces`.
 - **Track stable nixpkgs here, not unstable** (the opposite of `nix/flake.nix`, on
-  purpose): 2018 hardware needs no new kernel, and `system.autoUpgrade` against
+  purpose): 2016 hardware needs no new kernel, and `system.autoUpgrade` against
   unstable on the always-on box turns a breaking change into a 4 a.m. outage.
-- **`server/INSTALL.md` is the Phase 1 runbook** — USB, BIOS (Secure Boot **off**,
-  and it's the only place to learn whether the machine has power-on-after-AC-loss),
-  disko, `nixos-install --flake`, first boot. Holds the three Nix files to write
-  first; they are **syntax-checked only** (`nix-instantiate --parse`), never
-  evaluated, so option names are unverified.
+- **`server/INSTALL.md` is the Phase 1 runbook**: USB, the BIOS update and
+  data rescue **while Windows still boots**, BIOS setup (the only place to learn
+  whether the machine has power-on-after-AC-loss), disko, `nixos-install --flake`,
+  first boot (`nmcli` for wifi, then `tailscale up`).
 - **Gotcha that wastes the first evening: flakes ignore untracked files.** Edit
   `hardware.nix` in the clone, forget `git add`, and `nixos-install` uses the old
   version or can't find it — and never says why. Also: `nixos-generate-config`
@@ -697,9 +717,9 @@ only your own section** (`git add -p`), never the whole file.
   mobile data** (not home wifi — that may be the LAN working); **pull the power
   cord** and it must come back reachable untouched; **close the lid** and it must
   stay up.
-- `server/inventory.sh` — run it **on the Spectre** (live USB fine, `/sys` only,
-  no root). RAM (8 vs 16 GB, soldered), dGPU (13" vs 15") and battery health each
-  change the plan.
+- `server/inventory.sh`: run it **on the Spectre** (`ssh server 'bash -s' <
+  server/inventory.sh` works; `/sys` only, no root). Results are in the
+  README's hardware table.
 - Write-up: `server/README.md` — hardware unknowns, the no-encryption decision and
   what it costs, the Tailscale + sshd shape, a ranked menu of services, and a
   5-phase order gated on *nothing gets a service until its data is in the backup
