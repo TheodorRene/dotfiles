@@ -1,10 +1,9 @@
 # A 2016 HP Spectre x360 as an always-on home server
 
-**Status: Nothing applied (2026-11-07).** Design + runbook. No NixOS is installed
-on the Spectre (it still runs Manjaro, hostname `old-disco`), and no Tailscale
-account is in use. **The flake exists and builds**: `server/flake.nix` +
-`hosts/maman/` evaluate and build against `nixos-26.05` (checked 2026-11-07
-on the XPS with `nix build`), but have never booted.
+**Status: Phase 1 APPLIED 2026-11-07.** NixOS 26.05 is installed on the
+Spectre as `maman`, reachable as `ssh trc@maman` over Tailscale (the XPS is on
+the tailnet as `disco`). Phases 2–6 are still plan. The install record and
+what was verified is at the end of `INSTALL.md`.
 
 **The hardware is now measured, not assumed** (`inventory.sh` over SSH,
 2026-11-07). It is **older and smaller than this plan first assumed**: a late-2016

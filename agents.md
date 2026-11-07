@@ -622,41 +622,47 @@ only your own section** (`git add -p`), never the whole file.
   it's silent over SSH). **Nothing applied.**
 
 ## Home server (HP Spectre x360, 2016)
-- Open/optional: `server/README.md` — plan to make an old HP Spectre x360 an
-  always-on home server on NixOS + Tailscale. **Nothing applied.**
-- **The flake exists and builds (2026-11-07), but has never booted.**
-  `server/flake.nix` + `server/hosts/maman/` (nixos-26.05 + disko) pass
-  `nix build …#nixosConfigurations.maman.config.system.build.toplevel` on
-  the XPS. `hardware.nix` is **hand-written and provisional**; the install
-  regenerates it on the machine.
-- **Hostname `maman`** (after Meursault's mother in *L'Étranger*), decided
-  2026-11-07. **Windows is to be wiped** along with Manjaro; nobody needs it.
+- **Applied 2026-11-07: `maman` (the old Spectre) runs NixOS 26.05**, Phase 1
+  of `server/README.md`. Reach it with `ssh trc@maman` over Tailscale (MagicDNS
+  works); the XPS is on the tailnet as `disco`. Phases 2–6 (backups, services,
+  OpenClaw) are still plan. Config: `server/flake.nix` + `server/hosts/maman/`.
+  A clone lives at `~trc/dotfiles` on the server.
+- **Hostname `maman`** (after Meursault's mother in *L'Étranger*). **Windows
+  and Manjaro were wiped** at the install.
 - **Unlike the XPS, an agent can `sudo` on `maman`: passwordless for `trc`, by
   design (2026-11-07)**, so Claude Code administers it over SSH. Deploy from
   the XPS with `nix run --inputs-from ~/dotfiles/server nixpkgs#nixos-rebuild --
   switch --flake ~/dotfiles/server#maman --target-host trc@maman --sudo`
   (checked: `--sudo` is the 26.05 flag; `--use-remote-sudo` is gone). **Cost,
   accepted: the XPS key is root there, so OpenClaw must never run as `trc`.**
-- **Gotcha: the XPS has no Tailscale yet, and `maman`'s SSH is tailnet-only.**
-  Install it on the XPS before the wipe or nothing here can reach the server.
-  The phone needs its SSH key in `authorizedKeys` too.
+- **`maman`'s SSH is tailnet-only** (firewall trusts only `tailscale0`), so a
+  machine off the tailnet can't reach it at all, LAN included. **Open:** the
+  phone's SSH key isn't in `authorizedKeys` yet, and the lid-close and
+  power-cord tests haven't been run.
+- **Gotcha: upower doesn't start on a headless NixOS box.** Its unit is
+  `WantedBy=graphical.target`, so the critical-battery `PowerOff` silently never
+  fired until `systemd.services.upower.wantedBy = [ "multi-user.target" ]`.
+- **The watchdog systemd uses is `intel_oc_wdt` (`/dev/watchdog0`), not
+  `iTCO_wdt` (`/dev/watchdog1`)**, and **neither is proven to reset the box**.
+  Blacklisting `intel_oc_wdt` would hand systemd the standard one.
+- **Gotcha: `-dirty` in `nixos-version --configuration-revision` is about the
+  whole dotfiles repo**, not `server/`: any unrelated uncommitted edit on the
+  XPS marks a deploy dirty.
 - **One source of truth: `main` on GitHub.** Pull before deploying, push after;
   a stale checkout silently rolls back the other side's deploy. Check what's
   live with `nixos-version --configuration-revision` on `maman`.
-- **The machine is reachable now as `ssh server`** (`theodorc@192.168.0.102`,
-  Manjaro, hostname `old-disco`, wifi). Passwordless `sudo` is not set up there.
 - **Measured 2026-11-07, older than first assumed:** a **late-2016 `13-ac0XX`**,
   i7-7500U **2C/4T**, **8 GB** soldered, 512 GB Samsung PM961, HD 620, no dGPU,
   no wired NIC, **BIOS F.20 of 2016-12-01**, Secure Boot already off, keyboard
-  Norwegian. **Windows (335 GB) and Manjaro share the disk**, and the install
-  wipes both.
+  Norwegian.
 - **Gotcha: the battery reports nothing usable.** `cycle_count 0` and
   `charge_full == charge_full_design` is the firmware not reporting, not a new
   cell. No charge limit in sysfs either, so it will sit at 100% around the
   clock. The physical swelling check is the only health check.
 - **Gotcha: the NixOS installer console is US layout and the installed system is
   `no`.** Run `loadkeys no` before setting the root password, or the password
-  typed at first boot won't match.
+  typed at first boot won't match. **Wifi in the 26.05 installer is `nmtui`**;
+  `wpa_cli` fails there.
 - **Manjaro's `pcie_aspm=off` is a no-op; don't carry it over.** The kernel logs
   `ACPI FADT declares the system doesn't support PCIe ASPM`.
 - **The server is a separate machine with a separate purpose** — it is not an

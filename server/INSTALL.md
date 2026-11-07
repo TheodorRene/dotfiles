@@ -1,11 +1,9 @@
 # Installing NixOS on the Spectre, from a blank disk to an SSH you can reach from your phone
 
-**Status: Nothing applied (2026-11-07).** The Spectre still runs Manjaro. The
-config is written and **evaluates and builds** against `nixos-26.05` (checked
-2026-11-07 on the XPS: `nix build .#nixosConfigurations.maman.config.system.build.toplevel`
-succeeded). That proves the option names and the closure. It does **not** prove
-the machine boots it: `hardware.nix` is hand-written until Stage 4 regenerates
-it, and nothing has run on the real disk.
+**Status: APPLIED 2026-11-07.** `maman` is installed and reachable as
+`ssh trc@maman` over Tailscale; it was driven from the XPS over SSH into the
+installer. What was verified on the running system, and what wasn't, is in
+*Install record, 2026-11-07* at the end of this file.
 
 This is Phase 1 of `README.md` and nothing more: a machine that boots, stays up,
 and is reachable. No apps, no containers, no OpenClaw.
@@ -321,3 +319,55 @@ first.
 `README.md`'s Phase 2: the external disk, snapper + btrbk, and restic to
 somewhere offsite, **and a restore actually performed**, because an untested
 restore isn't a backup. Nothing that stores data gets installed before that.
+
+---
+
+## Install record, 2026-11-07
+
+How it actually went, so the next reinstall knows where the edges are.
+
+- **The USB stick wasn't booted at first.** The firmware saw it (it added
+  `Boot0006`/`Boot0007`, "USB Drive (UEFI) - VendorCo ProductCode") but put
+  those entries **last**, behind Manjaro. Fixed from the running Manjaro with
+  `sudo efibootmgr --bootnext 0006 && sudo reboot`. Esc → F9 at power-on is the
+  other way; the menu timeout is 0, so press Esc before the logo.
+- **Wifi in the installer: `nmtui`**, not `wpa_cli` (see Stage 3).
+- **Driving it remotely:** `curl https://github.com/TheodorRene.keys >
+  ~/.ssh/authorized_keys` in the installer, then `ssh nixos@<ip>`. The ISO has
+  `screen` but no `tmux`; `screen -dmS install` + `screen -x install` on the
+  console showed every command live on the Spectre's screen.
+- **`--no-root-passwd` would have locked everyone out.** No root password, `trc`
+  has none yet, and SSH is tailnet-only, so nobody could log in to run
+  `tailscale up`. The root password was typed at the Spectre's keyboard.
+- The generated `hardware.nix` matched the hand-written one in substance (same
+  initrd modules, `kvm-intel`, microcode).
+- **First deploy from the XPS worked** (`--target-host trc@maman --sudo`).
+
+Verified on the running system (`ssh trc@maman`, same day):
+
+| Check | Result |
+|---|---|
+| Failed units | none |
+| sleep / suspend / hibernate / hybrid-sleep | all `masked` |
+| logind `HandleLidSwitch`, `…ExternalPower` | `ignore`, `ignore` |
+| Watchdog | systemd armed **`intel_oc_wdt`** (`/dev/watchdog0`) at 30 s; `iTCO_wdt` is `/dev/watchdog1`. **Neither proven to reset the machine** (test started, result not recorded) |
+| `kernel.panic` | 10 |
+| upower | **was `inactive`** (its unit is `WantedBy=graphical.target`); fixed with `wantedBy = [ "multi-user.target" ]`, now active, battery 79% |
+| smartd, thermald, sshd, tailscaled, NetworkManager | active |
+| btrfs scrub timer | monthly, first run 2026-12-01 |
+| Firewall | `tailscale0` accepted, UDP 41641 open, nothing else |
+| Wifi power save | off (`wifi.powersave=2`) |
+| Memory at idle | 531 MB used of 7.6 GB; zram 3.8 GB |
+| Disk | `/` 2.3 GB used of 476 GB; `/boot` 55 MB of 1 GB |
+
+**Not done yet:** the lid-close and power-cord tests, and SSH from the phone on
+mobile data (needs the phone's key in `authorizedKeys`).
+
+Harmless noise in `journalctl -b -p err`: `ACPI BIOS Error (bug):
+AE_AML_BUFFER_LIMIT … \_SB.WMID.WQBE` (the 2016 HP firmware's WMI tables),
+`dbus-broker-launch … Ignoring duplicate name`, and a Bluetooth `Reading
+supported features failed (-16)`.
+
+**`-dirty` on `nixos-version --configuration-revision` doesn't mean the server
+config was dirty.** `dirtyRev` covers the whole dotfiles repo, so any
+uncommitted edit anywhere (herdr, sway) makes a deploy from the XPS show it.
