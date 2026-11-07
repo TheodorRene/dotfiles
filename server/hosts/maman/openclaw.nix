@@ -126,8 +126,11 @@ in
       UMask = "0077";
       # NOT MemoryDenyWriteExecute: Node's JIT needs W+X pages.
 
-      # 8 GB box: keep a runaway agent from taking the machine with it.
-      MemoryMax = "2G";
+      # 8 GB box: keep a runaway agent from taking the machine with it. The
+      # gateway alone sat at ~1.6 GB of heap when idle (2026-11-07) and hit a
+      # 2G cap, so: reclaim pressure above 2.5G, hard kill at 3.5G.
+      MemoryHigh = "2560M";
+      MemoryMax = "3584M";
       TasksMax = 512;
     };
   };
