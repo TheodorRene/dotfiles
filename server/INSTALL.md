@@ -350,7 +350,7 @@ Verified on the running system (`ssh trc@maman`, same day):
 | Failed units | none |
 | sleep / suspend / hibernate / hybrid-sleep | all `masked` |
 | logind `HandleLidSwitch`, `…ExternalPower` | `ignore`, `ignore` |
-| Watchdog | systemd armed **`intel_oc_wdt`** (`/dev/watchdog0`) at 30 s; `iTCO_wdt` is `/dev/watchdog1`. **Neither proven to reset the machine** (test started, result not recorded) |
+| Watchdog | systemd armed **`intel_oc_wdt`** (`/dev/watchdog0`) at 30 s; `iTCO_wdt` is `/dev/watchdog1`. **Neither proven to reset the machine.** One attempt was invalid: the process holding `/dev/watchdog1` exited at once, and the kernel then keeps pinging a running watchdog nobody holds (`watchdog did not stop!`, `timeleft` stuck at 30). A real test needs a holder that stays alive, e.g. `sudo sh -c 'exec 3>/dev/watchdog1; exec /run/current-system/sw/bin/sleep 600'` |
 | `kernel.panic` | 10 |
 | upower | **was `inactive`** (its unit is `WantedBy=graphical.target`); fixed with `wantedBy = [ "multi-user.target" ]`, now active, battery 79% |
 | smartd, thermald, sshd, tailscaled, NetworkManager | active |

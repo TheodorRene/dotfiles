@@ -644,7 +644,9 @@ only your own section** (`git add -p`), never the whole file.
   fired until `systemd.services.upower.wantedBy = [ "multi-user.target" ]`.
 - **The watchdog systemd uses is `intel_oc_wdt` (`/dev/watchdog0`), not
   `iTCO_wdt` (`/dev/watchdog1`)**, and **neither is proven to reset the box**.
-  Blacklisting `intel_oc_wdt` would hand systemd the standard one.
+  Blacklisting `intel_oc_wdt` would hand systemd the standard one. **Gotcha when
+  testing:** the holder must keep the fd open; if it exits, the kernel pings the
+  orphaned watchdog itself (`watchdog did not stop!`) and nothing resets.
 - **Gotcha: `-dirty` in `nixos-version --configuration-revision` is about the
   whole dotfiles repo**, not `server/`: any unrelated uncommitted edit on the
   XPS marks a deploy dirty.
