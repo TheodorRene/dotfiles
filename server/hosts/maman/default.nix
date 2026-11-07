@@ -150,5 +150,11 @@
     SystemMaxUse=1G
   '';
 
-  environment.systemPackages = with pkgs; [ git vim htop tmux ];
+  environment.systemPackages = with pkgs; [ git vim htop tmux weechat fzf ];
+
+  # --- Login shell -----------------------------------------------------------
+  # zsh for trc. ~/.zshrc on maman is a server subset of the dotfiles one
+  # (sources ~/dotfiles/zsh/{history,alias,functions}.zsh); not tracked here.
+  programs.zsh.enable = true;
+  users.users.trc.shell = pkgs.zsh;
 }
