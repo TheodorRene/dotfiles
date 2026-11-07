@@ -1,5 +1,5 @@
 {
-  description = "old-disco — home server (HP Spectre x360 13-ac0XX)";
+  description = "maman — home server (HP Spectre x360 13-ac0XX)";
 
   inputs = {
     # Stable, deliberately: the opposite of nix/flake.nix, and for the opposite
@@ -17,11 +17,11 @@
   outputs = { self, nixpkgs, disko, ... }: {
     # Renaming the host = renaming this attribute, hosts/<dir>, and
     # networking.hostName in hosts/<dir>/default.nix.
-    nixosConfigurations.old-disco = nixpkgs.lib.nixosSystem {
+    nixosConfigurations.maman = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
       modules = [
         disko.nixosModules.disko
-        ./hosts/old-disco
+        ./hosts/maman
       ];
     };
   };

@@ -1,4 +1,4 @@
-# old-disco: HP Spectre x360 13-ac0XX (late 2016) as an always-on home server.
+# maman: HP Spectre x360 13-ac0XX (late 2016) as an always-on home server.
 # Phase 1 of ../../README.md only: boots, stays up, reachable over Tailscale.
 # No apps, no containers.
 { config, lib, pkgs, ... }:
@@ -6,7 +6,7 @@
 {
   imports = [ ./hardware.nix ./disks.nix ];
 
-  networking.hostName = "old-disco";
+  networking.hostName = "maman";
   # The release you install from. Set once, never bump. It isn't a version
   # number; it records which defaults this machine's state was created under.
   system.stateVersion = "26.05";

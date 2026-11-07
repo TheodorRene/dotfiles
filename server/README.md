@@ -3,7 +3,7 @@
 **Status: Nothing applied (2026-11-07).** Design + runbook. No NixOS is installed
 on the Spectre (it still runs Manjaro, hostname `old-disco`), and no Tailscale
 account is in use. **The flake exists and builds**: `server/flake.nix` +
-`hosts/old-disco/` evaluate and build against `nixos-26.05` (checked 2026-11-07
+`hosts/maman/` evaluate and build against `nixos-26.05` (checked 2026-11-07
 on the XPS with `nix build`), but have never booted.
 
 **The hardware is now measured, not assumed** (`inventory.sh` over SSH,
@@ -28,7 +28,7 @@ server/
 ├── INSTALL.md       Phase 1, step by step: USB → BIOS → disko → first boot
 ├── inventory.sh     run it on the Spectre; fills in the hardware table
 ├── flake.nix        the machine's own flake (nixos-26.05 + disko), and flake.lock
-└── hosts/old-disco/ default.nix, disks.nix (disko), hardware.nix (provisional;
+└── hosts/maman/     default.nix, disks.nix (disko), hardware.nix (provisional;
                      regenerated on the machine during the install)
 ```
 
@@ -536,13 +536,8 @@ entry, per `CLAUDE.md`. This file is the plan; that's the record of what was don
 
 ## Open questions
 
-- **Hostname.** The flake uses `old-disco`, the name Manjaro has now. Renaming
-  is three places: the attribute in `flake.nix`, the `hosts/` directory, and
-  `networking.hostName`. Do it before the install, not after.
 - **Ethernet adapter, or wifi for good?** The config works on either
   (NetworkManager). Wifi is what it has today.
-- **Is anything on the Windows partition worth keeping?** It is 335 GB and will
-  be wiped with everything else.
 - **Does the BIOS have "power on after AC loss"?** If not, a long outage leaves
   the machine off until someone presses the button — which caps how much anything
   should depend on it.
@@ -554,6 +549,13 @@ entry, per `CLAUDE.md`. This file is the plan; that's the record of what was don
 - **Stable or unstable nixpkgs?** Recommended stable, for the reasons under
   "Rebuilding it"; note that this is the opposite of what `nix/flake.nix` chose,
   deliberately — that machine is new hardware, this one is nearly ten years old.
+
+## Decided 2026-11-07
+
+- **Hostname: `maman`**, after Meursault's mother in *L'Étranger*. (Manjaro
+  calls the machine `old-disco` until the install.)
+- **Windows goes.** The whole disk is wiped, Windows and recovery partitions
+  included; data is rescued and the BIOS updated first (`INSTALL.md`, Stage 2).
 
 ## Dead ends — don't re-derive these
 

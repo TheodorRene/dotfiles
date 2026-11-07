@@ -2,7 +2,7 @@
 
 **Status: Nothing applied (2026-11-07).** The Spectre still runs Manjaro. The
 config is written and **evaluates and builds** against `nixos-26.05` (checked
-2026-11-07 on the XPS: `nix build .#nixosConfigurations.old-disco.config.system.build.toplevel`
+2026-11-07 on the XPS: `nix build .#nixosConfigurations.maman.config.system.build.toplevel`
 succeeded). That proves the option names and the closure. It does **not** prove
 the machine boots it: `hardware.nix` is hand-written until Stage 4 regenerates
 it, and nothing has run on the real disk.
@@ -23,9 +23,8 @@ Plan for an evening, most of it waiting on downloads.
 | Your phone | To approve the Tailscale login, and to prove SSH works from outside |
 | ~30 min of attention, plus download time | |
 
-The hostname is **`old-disco`** (what Manjaro calls it today). To change it,
-change it now, in three places: the attribute in `flake.nix`, the
-`hosts/old-disco/` directory, and `networking.hostName`.
+The hostname is **`maman`** (decided 2026-11-07; Meursault's mother in
+*L'Étranger*). Manjaro calls the machine `old-disco` until the install.
 
 ---
 
@@ -36,14 +35,14 @@ Already in the repo, and it builds:
 | File | What |
 |---|---|
 | `server/flake.nix` + `flake.lock` | `nixos-26.05` + disko, one host |
-| `server/hosts/old-disco/default.nix` | systemd-boot, no sleep, NetworkManager, Tailscale, sshd on `tailscale0` only, user `trc` with the XPS's key, `console.keyMap = "no"`, zram, GC |
-| `server/hosts/old-disco/disks.nix` | GPT → 1 GB ESP + btrfs subvolumes, no LUKS. The disk id is filled in (`nvme-SAMSUNG_MZVLW512HMJP-000H1_S36ENX0HB49001`) |
-| `server/hosts/old-disco/hardware.nix` | **Provisional**, written from Manjaro's `lspci`/`lsmod`. Replaced in Stage 4 |
+| `server/hosts/maman/default.nix` | systemd-boot, no sleep, NetworkManager, Tailscale, sshd on `tailscale0` only, user `trc` with the XPS's key, `console.keyMap = "no"`, zram, GC |
+| `server/hosts/maman/disks.nix` | GPT → 1 GB ESP + btrfs subvolumes, no LUKS. The disk id is filled in (`nvme-SAMSUNG_MZVLW512HMJP-000H1_S36ENX0HB49001`) |
+| `server/hosts/maman/hardware.nix` | **Provisional**, written from Manjaro's `lspci`/`lsmod`. Replaced in Stage 4 |
 
 Check it still builds before you go (from `~/dotfiles/server` on the XPS):
 
 ```bash
-nix build --no-link .#nixosConfigurations.old-disco.config.system.build.toplevel
+nix build --no-link .#nixosConfigurations.maman.config.system.build.toplevel
 ```
 
 **Commit and push** before the install. The installer clones from GitHub, and
@@ -73,8 +72,8 @@ sudo dd if=nixos-minimal-*-x86_64-linux.iso of=/dev/sdX bs=4M status=progress co
 
 ## Stage 2: while Windows still boots
 
-Windows is still on the disk (`nvme0n1p3`, 335 GB, labelled `Windows`), and
-this is the last chance to use it.
+Windows is still on the disk (`nvme0n1p3`, 335 GB, labelled `Windows`).
+**Decided 2026-11-07: it gets wiped**, so this is the last chance to use it.
 
 1. **Get anything off it that matters.** It's 335 GB that nobody has looked at
    from the Linux side. Same for Manjaro's `/home`.
@@ -142,13 +141,13 @@ cd /tmp/dotfiles/server
 # confirm the disk id matches disks.nix. If udev names it differently here,
 # the nvme-eui.002538bb61b5d443 link is the same disk; put that in instead.
 ls -l /dev/disk/by-id/ | grep -v part
-grep device hosts/old-disco/disks.nix
+grep device hosts/maman/disks.nix
 
 # partition + format + mount, declaratively. DESTROYS the disk.
 sudo nix --experimental-features "nix-command flakes" \
   run github:nix-community/disko -- \
   --mode destroy,format,mount \
-  hosts/old-disco/disks.nix
+  hosts/maman/disks.nix
 
 # sanity check before going further: / /boot /nix /var /home /srv all mounted?
 findmnt -R /mnt
@@ -156,14 +155,14 @@ findmnt -R /mnt
 # hardware facts. --no-filesystems because disko already declares them;
 # without it you get a second, conflicting fileSystems block.
 sudo nixos-generate-config --no-filesystems --root /mnt
-cp /mnt/etc/nixos/hardware-configuration.nix hosts/old-disco/hardware.nix
-git diff hosts/old-disco/hardware.nix     # expect small differences only
+cp /mnt/etc/nixos/hardware-configuration.nix hosts/maman/hardware.nix
+git diff hosts/maman/hardware.nix     # expect small differences only
 
 # THE STEP EVERYONE FORGETS: a flake cannot see uncommitted changes to
 # untracked files
 git add -A
 
-sudo nixos-install --flake /tmp/dotfiles/server#old-disco
+sudo nixos-install --flake /tmp/dotfiles/server#maman
 ```
 
 It asks for a **root password** at the end. Set one you can type at the
@@ -205,7 +204,7 @@ Now prove the three properties that make it a server rather than a laptop:
 
 | # | Test | Why it's the test |
 |---|---|---|
-| 1 | `ssh trc@old-disco` **from your phone on mobile data**, not the home wifi | Proves the tailnet, not the LAN |
+| 1 | `ssh trc@maman` **from your phone on mobile data**, not the home wifi | Proves the tailnet, not the LAN |
 | 2 | **Pull the power cord, wait, plug it back in.** It must return to a reachable SSH with nobody touching it | With a battery, a short cut is invisible. A long one drains it, and whether it powers back on depends on the BIOS answer from Stage 2 |
 | 3 | **Close the lid.** It must stay up | Proves both halves of the sleep config |
 
@@ -213,7 +212,7 @@ Then push `hardware.nix` back so the repo describes the real machine (from the
 XPS is easiest: `scp` it over and commit there).
 
 After this, physical access is optional: everything is
-`sudo nixos-rebuild switch --flake ~/dotfiles/server#old-disco` over SSH.
+`sudo nixos-rebuild switch --flake ~/dotfiles/server#maman` over SSH.
 
 ---
 
@@ -259,7 +258,7 @@ The same USB stick is the rescue disk. Boot it, then:
 
 ```bash
 sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- \
-  --mode mount hosts/old-disco/disks.nix
+  --mode mount hosts/maman/disks.nix
 sudo nixos-enter --root /mnt          # a shell inside the installed system
 ```
 

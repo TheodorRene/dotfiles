@@ -625,10 +625,12 @@ only your own section** (`git add -p`), never the whole file.
 - Open/optional: `server/README.md` — plan to make an old HP Spectre x360 an
   always-on home server on NixOS + Tailscale. **Nothing applied.**
 - **The flake exists and builds (2026-11-07), but has never booted.**
-  `server/flake.nix` + `server/hosts/old-disco/` (nixos-26.05 + disko) pass
-  `nix build …#nixosConfigurations.old-disco.config.system.build.toplevel` on
+  `server/flake.nix` + `server/hosts/maman/` (nixos-26.05 + disko) pass
+  `nix build …#nixosConfigurations.maman.config.system.build.toplevel` on
   the XPS. `hardware.nix` is **hand-written and provisional**; the install
   regenerates it on the machine.
+- **Hostname `maman`** (after Meursault's mother in *L'Étranger*), decided
+  2026-11-07. **Windows is to be wiped** along with Manjaro; nobody needs it.
 - **The machine is reachable now as `ssh server`** (`theodorc@192.168.0.102`,
   Manjaro, hostname `old-disco`, wifi). Passwordless `sudo` is not set up there.
 - **Measured 2026-11-07, older than first assumed:** a **late-2016 `13-ac0XX`**,
