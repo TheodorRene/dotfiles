@@ -116,17 +116,22 @@ The installer console is US layout, and the installed system is Norwegian
 (`console.keyMap = "no"`). Skip this and the root password you type in Stage 4
 isn't the one you'll type at first boot, for any password with symbols.
 
-Network. With a USB ethernet adapter it just works. On wifi:
+Network. With a USB ethernet adapter it just works. On wifi, **use `nmtui`**:
+the 26.05 minimal ISO ships NetworkManager (found 2026-11-07). The
+`wpa_supplicant` + `wpa_cli` route from older manuals failed there with
+`Could not connect to wpa_supplicant: (nil) - re-trying`.
 
 ```bash
-sudo systemctl start wpa_supplicant
-wpa_cli
-> add_network
-> set_network 0 ssid "YOUR-SSID"
-> set_network 0 psk "YOUR-PASSWORD"
-> enable_network 0
-> quit
+sudo nmtui            # "Activate a connection", pick the network, type the password
 ping -c3 nixos.org
+```
+
+To finish the install from the XPS over SSH instead of at this keyboard (the
+installer runs sshd; GitHub serves the XPS's public key):
+
+```bash
+mkdir -p ~/.ssh && curl -sL https://github.com/TheodorRene.keys > ~/.ssh/authorized_keys
+ip -br a              # then from the XPS: ssh nixos@<that address>
 ```
 
 The inventory was already taken over SSH on 2026-11-07, so it isn't needed
@@ -260,8 +265,8 @@ working at the wipe, since SSH isn't open on the LAN any more.
   `git add -A` before every install or rebuild.
 - **The installer is US layout, the installed system is Norwegian.** `loadkeys
   no` before setting any password.
-- **No network after first boot, on wifi.** The installer's `wpa_supplicant`
-  setup doesn't carry over; NetworkManager needs `nmcli device wifi connect`
+- **No network after first boot, on wifi.** The installer's wifi setup
+  doesn't carry over; NetworkManager needs `nmcli device wifi connect`
   once, at the keyboard. Until then there's no `tailscale up` and no SSH.
 - **SSH is not reachable on the LAN, by design** (`openFirewall = false`, only
   `tailscale0` is trusted). Before `tailscale up`, the keyboard is the only way in.
