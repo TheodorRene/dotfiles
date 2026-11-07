@@ -42,7 +42,7 @@ in
     (pkgs.writeShellScriptBin "openclaw-as" ''
       exec sudo -u openclaw -H env \
         HOME=${home} NPM_CONFIG_PREFIX=${prefix} OPENCLAW_NO_RESPAWN=1 \
-        PATH=${prefix}/bin:${node}/bin:/run/current-system/sw/bin \
+        PATH=${prefix}/bin:${node}/bin:${pkgs.e2fsprogs}/bin:/run/current-system/sw/bin \
         "$@"
     '')
   ];
@@ -60,6 +60,7 @@ in
     path = (with pkgs; [
       bashInteractive coreutils findutils gnugrep gnused gawk diffutils
       git curl jq ripgrep procps which gnutar gzip
+      e2fsprogs # chattr: OpenClaw turns off btrfs CoW for its SQLite files
     ]) ++ [ node ];
 
     environment = {
@@ -106,12 +107,53 @@ in
       AmbientCapabilities = "";
       RestrictAddressFamilies = [ "AF_UNIX" "AF_INET" "AF_INET6" "AF_NETLINK" ];
       SystemCallArchitectures = "native";
+
+      # --- No reaching into the home network or the tailnet ------------------
+      # Decided 2026-11-07: the agent must not be able to connect to the XPS
+      # (192.168.0.202 / 100.97.135.11) or anything else at home. Enforced by
+      # the kernel (cgroup BPF) for every process in this unit, i.e. for every
+      # command the agent runs. The public internet stays reachable (the model
+      # API needs it). Allow beats Deny for the more specific entries below.
+      IPAddressDeny = [
+        "10.0.0.0/8" "172.16.0.0/12" "192.168.0.0/16"   # LANs
+        "100.64.0.0/10" "fd7a:115c:a1e0::/48"           # the tailnet
+        "169.254.0.0/16" "fe80::/10" "fc00::/7"         # link-local, ULA
+      ];
+      IPAddressAllow = [
+        "localhost"                                     # its own gateway; Serve
+        "100.100.100.100" "fd7a:115c:a1e0::53"          # Tailscale DNS (resolv.conf)
+      ];
       UMask = "0077";
       # NOT MemoryDenyWriteExecute: Node's JIT needs W+X pages.
 
       # 8 GB box: keep a runaway agent from taking the machine with it.
       MemoryMax = "2G";
       TasksMax = 512;
+    };
+  };
+
+  # --- Reaching it: Tailscale Serve, run by root -----------------------------
+  # https://maman.tailce1bce.ts.net -> 127.0.0.1:18789, tailnet only (not
+  # Funnel). Root does this rather than OpenClaw's own gateway.tailscale.mode,
+  # which would need the sandboxed user to be a Tailscale operator.
+  # (services.tailscale.serve is for Tailscale *Services* (svc:), a different
+  # feature.) Needs HTTPS certificates enabled for the tailnet (admin console,
+  # DNS page); `tailscale serve` waits for that.
+  systemd.services.tailscale-serve-openclaw = {
+    description = "Tailscale Serve for the OpenClaw gateway";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "tailscaled.service" ];
+    requires = [ "tailscaled.service" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      # Without HTTPS enabled it waits for an admin to click; don't let that
+      # hang a deploy. Retry every minute until it works.
+      TimeoutStartSec = 30;
+      Restart = "on-failure";
+      RestartSec = 60;
+      ExecStart = "${config.services.tailscale.package}/bin/tailscale serve --bg --https=443 http://127.0.0.1:18789";
+      ExecStop = "${config.services.tailscale.package}/bin/tailscale serve --https=443 off";
     };
   };
 }
