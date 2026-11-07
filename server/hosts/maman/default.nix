@@ -4,7 +4,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  imports = [ ./hardware.nix ./disks.nix ];
+  imports = [ ./hardware.nix ./disks.nix ./openclaw.nix ];
 
   networking.hostName = "maman";
   # The release you install from. Set once, never bump. It isn't a version
