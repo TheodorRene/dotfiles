@@ -95,8 +95,9 @@ What changes because of it:
   clock. That makes the physical swelling check, and keeping it cool, more
   important. A BIOS update *might* add an HP battery-care option **(theorised,
   not checked)**.
-- **The BIOS is the 2016 original.** Update it while Windows still boots,
-  before the disk is wiped; HP's BIOS installers are Windows executables. See
+- **The BIOS is the 2016 original. Updating it is optional** (decided
+  2026-11-07): the OS loads current CPU microcode anyway. If it's done, do it
+  while Windows still boots; HP's BIOS installers are Windows executables. See
   `INSTALL.md`, Stage 2.
 - **Disk size** is 512 GB. Anything that accumulates (photos, media) still needs
   external storage; see "Storage".
@@ -555,7 +556,7 @@ entry, per `CLAUDE.md`. This file is the plan; that's the record of what was don
 - **Hostname: `maman`**, after Meursault's mother in *L'Étranger*. (Manjaro
   calls the machine `old-disco` until the install.)
 - **Windows goes.** The whole disk is wiped, Windows and recovery partitions
-  included; data is rescued and the BIOS updated first (`INSTALL.md`, Stage 2).
+  included; data is rescued first, and the BIOS optionally updated (`INSTALL.md`, Stage 2).
 
 ## Dead ends — don't re-derive these
 

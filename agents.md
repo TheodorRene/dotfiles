@@ -706,8 +706,8 @@ only your own section** (`git add -p`), never the whole file.
 - **Track stable nixpkgs here, not unstable** (the opposite of `nix/flake.nix`, on
   purpose): 2016 hardware needs no new kernel, and `system.autoUpgrade` against
   unstable on the always-on box turns a breaking change into a 4 a.m. outage.
-- **`server/INSTALL.md` is the Phase 1 runbook**: USB, the BIOS update and
-  data rescue **while Windows still boots**, BIOS setup (the only place to learn
+- **`server/INSTALL.md` is the Phase 1 runbook**: USB, data rescue (and the
+  **optional** BIOS update) **while Windows still boots**, BIOS setup (the only place to learn
   whether the machine has power-on-after-AC-loss), disko, `nixos-install --flake`,
   first boot (`nmcli` for wifi, then `tailscale up`).
 - **Gotcha that wastes the first evening: flakes ignore untracked files.** Edit

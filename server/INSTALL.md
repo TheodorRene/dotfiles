@@ -77,11 +77,17 @@ Windows is still on the disk (`nvme0n1p3`, 335 GB, labelled `Windows`).
 
 1. **Get anything off it that matters.** It's 335 GB that nobody has looked at
    from the Linux side. Same for Manjaro's `/home`.
-2. **Update the BIOS.** It's **F.20 from 2016-12-01**, the original. HP's BIOS
-   updates for this model ship as Windows `.exe` SoftPaqs (HP Support Assistant,
-   or the model's support page for `13-ac0XX`). Doing it from Linux later is
-   possible but more awkward. That HP published newer BIOSes for this model, and
-   that one would add a battery-care setting, are **both unchecked**.
+2. **Optional: update the BIOS.** It's **F.20 from 2016-12-01**, the original.
+   NixOS doesn't need a newer one. CPU microcode, the main security fix, is
+   loaded by the OS at every boot (`hardware.cpu.intel.updateMicrocode`)
+   whatever the BIOS version. What only a BIOS update brings is fixes to the
+   firmware itself (e.g. Intel ME), which matter less on a Tailscale-only box.
+   **Do it if Windows boots and it's quick; skip it otherwise.** HP's updates for
+   this model ship as Windows `.exe` SoftPaqs (HP Support Assistant, or the
+   support page for `13-ac0XX`), so after the wipe it means HP's USB recovery
+   route instead. On AC, with the battery charged. That HP published newer
+   BIOSes for this model, and that one adds a battery-care setting, are **both
+   unchecked**.
 
 Then reboot into BIOS setup: **`Esc`** at power-on for HP's menu, **`F10`** for
 setup, **`F9`** for a one-time boot menu.
