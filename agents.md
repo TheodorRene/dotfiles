@@ -631,6 +631,12 @@ only your own section** (`git add -p`), never the whole file.
   regenerates it on the machine.
 - **Hostname `maman`** (after Meursault's mother in *L'Étranger*), decided
   2026-11-07. **Windows is to be wiped** along with Manjaro; nobody needs it.
+- **Unlike the XPS, an agent can `sudo` on `maman`: passwordless for `trc`, by
+  design (2026-11-07)**, so Claude Code administers it over SSH. Deploy from
+  the XPS with `nix run --inputs-from ~/dotfiles/server nixpkgs#nixos-rebuild --
+  switch --flake ~/dotfiles/server#maman --target-host trc@maman --sudo`
+  (checked: `--sudo` is the 26.05 flag; `--use-remote-sudo` is gone). **Cost,
+  accepted: the XPS key is root there, so OpenClaw must never run as `trc`.**
 - **The machine is reachable now as `ssh server`** (`theodorc@192.168.0.102`,
   Manjaro, hostname `old-disco`, wifi). Passwordless `sudo` is not set up there.
 - **Measured 2026-11-07, older than first assumed:** a **late-2016 `13-ac0XX`**,

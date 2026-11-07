@@ -217,8 +217,24 @@ Now prove the three properties that make it a server rather than a laptop:
 Then push `hardware.nix` back so the repo describes the real machine (from the
 XPS is easiest: `scp` it over and commit there).
 
-After this, physical access is optional: everything is
-`sudo nixos-rebuild switch --flake ~/dotfiles/server#maman` over SSH.
+After this, physical access is optional. On the server itself:
+`sudo nixos-rebuild switch --flake ~/dotfiles/server#maman`. Or from the XPS,
+which builds on 16 cores and copies the result over (no NixOS needed there,
+just Nix; `--inputs-from` pins `nixos-rebuild` to the flake's own nixpkgs):
+
+```bash
+nix run --inputs-from ~/dotfiles/server nixpkgs#nixos-rebuild -- \
+  switch --flake ~/dotfiles/server#maman --target-host trc@maman --sudo
+```
+
+Use `test` instead of `switch` for anything touching networking, the firewall
+or Tailscale: a power cycle undoes it.
+
+**From here an agent can take over.** `trc` has passwordless sudo (decided
+2026-11-07, see `README.md`), so Claude Code on the XPS can run both commands
+above over SSH. Add a `Host maman` / `User trc` entry to the XPS's
+`~/.ssh/config`; the old `Host server` entry (`theodorc@192.168.0.102`) stops
+working at the wipe, since SSH isn't open on the LAN any more.
 
 ---
 

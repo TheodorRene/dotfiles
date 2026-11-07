@@ -89,6 +89,16 @@
     ];
   };
 
+  # --- Agent access (decided 2026-11-07) -------------------------------------
+  # Claude Code on the XPS administers this machine over SSH, so `sudo` must
+  # work non-interactively. Consequence, accepted: the XPS key above IS root
+  # here, and so is anything running as `trc`. That's why OpenClaw (README.md,
+  # Phase 6) must run as its own user, never as trc.
+  security.sudo.wheelNeedsPassword = false;
+  # Lets `nixos-rebuild --target-host trc@maman` copy a closure built on the XPS
+  # (unsigned store paths need a trusted user).
+  nix.settings.trusted-users = [ "@wheel" ]; # merged with the default "root"
+
   # --- Locale ----------------------------------------------------------------
   time.timeZone = "Europe/Oslo";
   i18n.defaultLocale = "en_US.UTF-8";

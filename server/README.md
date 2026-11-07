@@ -495,6 +495,9 @@ nvm's Node tarballs and bob's Neovim builds, so it's a trodden path.)
 4. **The disk is unencrypted** (decided above), so its credential store — model
    API keys, WhatsApp session, chat tokens — is in cleartext on that NVMe.
 
+**It must never run as `trc`**, who has passwordless sudo for agent
+administration (see "Decided 2026-11-07"); that would hand it root.
+
 **Therefore: do not co-locate it with Vaultwarden, the backup repo, or Immich's
 library.** An agent with host shell access sharing a filesystem with the password
 vault and the only copy of the photos is one prompt injection from a bad
@@ -557,6 +560,14 @@ entry, per `CLAUDE.md`. This file is the plan; that's the record of what was don
   calls the machine `old-disco` until the install.)
 - **Windows goes.** The whole disk is wiped, Windows and recovery partitions
   included; data is rescued first, and the BIOS optionally updated (`INSTALL.md`, Stage 2).
+- **An agent (Claude Code on the XPS) administers it with full access.** So
+  `trc` has **passwordless sudo** (`security.sudo.wheelNeedsPassword = false`)
+  and is a Nix trusted user (for `nixos-rebuild --target-host` from the XPS).
+  What that costs, accepted: **the XPS's SSH key is root on `maman`**, and so is
+  any process running as `trc`. Two rules follow: **OpenClaw runs as its own
+  user, never `trc`** (it takes instructions from chat messages), and nothing
+  that isn't the admin logs in as `trc`. Tailscale-only SSH keeps the key the
+  only way in.
 
 ## Dead ends — don't re-derive these
 
