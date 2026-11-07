@@ -55,6 +55,10 @@
     # A ~10-year-old cell's gauge is not to be trusted near empty.
     percentageAction = 5;
   };
+  # upower is D-Bus activated and its unit is WantedBy=graphical.target, which
+  # a headless box never reaches. Unstarted, the PowerOff above never fires
+  # (found inactive on first boot, 2026-11-07).
+  systemd.services.upower.wantedBy = [ "multi-user.target" ];
 
   # Catch the 2016 NVMe failing before it takes data with it.
   services.btrfs.autoScrub = { enable = true; interval = "monthly"; };
