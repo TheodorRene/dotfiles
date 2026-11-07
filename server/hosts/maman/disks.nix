@@ -41,11 +41,18 @@
                 "/root" = { mountpoint = "/"; mountOptions = opts; };
                 "/nix" = { mountpoint = "/nix"; mountOptions = opts; };
                 "/var" = { mountpoint = "/var"; mountOptions = opts; };
+                # Split out of /var so snapshots of service state don't carry
+                # journal churn or re-pullable container layers (Phase 4,
+                # rootful podman via oci-containers).
+                "/var/log" = { mountpoint = "/var/log"; mountOptions = opts; };
+                "/var/lib/containers" = { mountpoint = "/var/lib/containers"; mountOptions = opts; };
                 "/home" = { mountpoint = "/home"; mountOptions = opts; };
                 # Everything imperative lives here; see README.md's rule for
                 # keeping a mixed declarative/imperative setup honest.
                 "/srv" = { mountpoint = "/srv"; mountOptions = opts; };
-                "/snapshots" = { mountpoint = "/.snapshots"; mountOptions = opts; };
+                # No top-level snapshots subvolume: snapper creates a nested
+                # .snapshots per config (/srv, /home, /var/lib are the ones
+                # worth it; / rolls back through generations instead). Phase 2.
               };
           };
         };

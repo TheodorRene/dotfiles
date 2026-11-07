@@ -18,10 +18,13 @@
     # Renaming the host = renaming this attribute, hosts/<dir>, and
     # networking.hostName in hosts/<dir>/default.nix.
     nixosConfigurations.maman = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
+      # The platform comes from nixpkgs.hostPlatform in hardware.nix.
       modules = [
         disko.nixosModules.disko
         ./hosts/maman
+        # Records which commit is live, so a deploy from a stale checkout shows
+        # up: `nixos-version --configuration-revision` on the server.
+        { system.configurationRevision = self.rev or self.dirtyRev or "unknown"; }
       ];
     };
   };

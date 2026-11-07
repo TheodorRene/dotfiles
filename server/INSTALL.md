@@ -19,6 +19,7 @@ Plan for an evening, most of it waiting on downloads.
 | | |
 |---|---|
 | A USB stick | 4 GB is plenty; its contents will be destroyed |
+| **Tailscale on the XPS** | **Not installed yet, and required**: SSH on `maman` is open only on the tailnet, so without it the XPS (and Claude Code on it) can't reach the server at all after the wipe. Needs sudo, so run it yourself: `curl -fsSL https://tailscale.com/install.sh \| sh`, then `sudo tailscale up` and `sudo tailscale set --operator=$USER` |
 | Network | The machine has **no wired port**. A USB ethernet adapter makes the installer easy; without one it's wifi by hand (Stage 3) |
 | Your phone | To approve the Tailscale login, and to prove SSH works from outside |
 | ~30 min of attention, plus download time | |
@@ -150,8 +151,9 @@ ls -l /dev/disk/by-id/ | grep -v part
 grep device hosts/maman/disks.nix
 
 # partition + format + mount, declaratively. DESTROYS the disk.
+# --inputs-from . runs the disko version flake.lock pins, not whatever is newest
 sudo nix --experimental-features "nix-command flakes" \
-  run github:nix-community/disko -- \
+  run --inputs-from . disko -- \
   --mode destroy,format,mount \
   hosts/maman/disks.nix
 
@@ -210,7 +212,7 @@ Now prove the three properties that make it a server rather than a laptop:
 
 | # | Test | Why it's the test |
 |---|---|---|
-| 1 | `ssh trc@maman` **from your phone on mobile data**, not the home wifi | Proves the tailnet, not the LAN |
+| 1 | `ssh trc@maman` **from your phone on mobile data**, not the home wifi. **Needs the phone's SSH public key in `authorizedKeys`** (`default.nix`) first, or it's refused | Proves the tailnet, not the LAN |
 | 2 | **Pull the power cord, wait, plug it back in.** It must return to a reachable SSH with nobody touching it | With a battery, a short cut is invisible. A long one drains it, and whether it powers back on depends on the BIOS answer from Stage 2 |
 | 3 | **Close the lid.** It must stay up | Proves both halves of the sleep config |
 
@@ -230,6 +232,14 @@ nix run --inputs-from ~/dotfiles/server nixpkgs#nixos-rebuild -- \
 Use `test` instead of `switch` for anything touching networking, the firewall
 or Tailscale: a power cycle undoes it.
 
+**One source of truth: `main` on GitHub.** Edit anywhere (the XPS, or Claude
+Code on the server), but `git pull --ff-only` before every deploy and push
+after. Deploying from a stale checkout silently rolls back whatever the other
+one deployed. The guard: every generation records its commit, so
+`nixos-version --configuration-revision` on the server shows what's live (a
+`-dirty` suffix means uncommitted changes went out); compare it with
+`git log -1` before deploying.
+
 **From here an agent can take over.** `trc` has passwordless sudo (decided
 2026-11-07, see `README.md`), so Claude Code on the XPS can run both commands
 above over SSH. Add a `Host maman` / `User trc` entry to the XPS's
@@ -239,6 +249,10 @@ working at the wipe, since SSH isn't open on the LAN any more.
 ---
 
 ## Gotchas
+
+- **Watchdog**: after the install, `ls /dev/watchdog0` should exist (likely
+  `iTCO_wdt` on this chipset; not checked). If it doesn't,
+  `RuntimeWatchdogSec` does nothing and a hang still needs the power button.
 
 - **Flakes ignore untracked files.** Edit `hardware.nix`, forget `git add`, and
   `nixos-install` silently uses the old version, or fails to find the file at
@@ -279,7 +293,8 @@ working at the wipe, since SSH isn't open on the LAN any more.
 The same USB stick is the rescue disk. Boot it, then:
 
 ```bash
-sudo nix --experimental-features "nix-command flakes" run github:nix-community/disko -- \
+git clone https://github.com/TheodorRene/dotfiles /tmp/dotfiles && cd /tmp/dotfiles/server
+sudo nix --experimental-features "nix-command flakes" run --inputs-from . disko -- \
   --mode mount hosts/maman/disks.nix
 sudo nixos-enter --root /mnt          # a shell inside the installed system
 ```
@@ -287,7 +302,7 @@ sudo nixos-enter --root /mnt          # a shell inside the installed system
 From there you can edit the config and `nixos-rebuild boot` without reinstalling.
 
 If the system boots but is broken, you don't need the USB at all: **pick an
-older generation in the boot menu.** That's what `configurationLimit = 20` is
+older generation in the boot menu.** That's what `configurationLimit = 10` is
 for.
 
 ## Reversing it

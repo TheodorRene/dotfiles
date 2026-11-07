@@ -637,6 +637,12 @@ only your own section** (`git add -p`), never the whole file.
   switch --flake ~/dotfiles/server#maman --target-host trc@maman --sudo`
   (checked: `--sudo` is the 26.05 flag; `--use-remote-sudo` is gone). **Cost,
   accepted: the XPS key is root there, so OpenClaw must never run as `trc`.**
+- **Gotcha: the XPS has no Tailscale yet, and `maman`'s SSH is tailnet-only.**
+  Install it on the XPS before the wipe or nothing here can reach the server.
+  The phone needs its SSH key in `authorizedKeys` too.
+- **One source of truth: `main` on GitHub.** Pull before deploying, push after;
+  a stale checkout silently rolls back the other side's deploy. Check what's
+  live with `nixos-version --configuration-revision` on `maman`.
 - **The machine is reachable now as `ssh server`** (`theodorc@192.168.0.102`,
   Manjaro, hostname `old-disco`, wifi). Passwordless `sudo` is not set up there.
 - **Measured 2026-11-07, older than first assumed:** a **late-2016 `13-ac0XX`**,
@@ -658,9 +664,10 @@ only your own section** (`git add -p`), never the whole file.
   `server/` holds the plan, `inventory.sh`, and **the machine's own flake**.
 - **Deliberately not a host inside `nix/`.** `nix/` is an unbuilt draft for a
   laptop that doesn't exist; a headless server shares almost nothing with a Sway
-  workstation, and separate `flake.lock`s mean an update can't break both. A
-  flake can only see files under its own root, so the split is enforced by the
-  tool. **Read `nix/modules/` for ideas, import none of it.**
+  workstation, and separate `flake.lock`s mean an update can't break both.
+  **Gotcha: Nix does *not* enforce the split** — it copies the whole repo, so a
+  subdir flake can `import ../…` (tested 2026-11-07). It's a rule. **Read
+  `nix/modules/` for ideas, import none of it.**
 - **Traps if you copy from `nix/modules/`:** `security.nix` sets
   `services.openssh.enable = false` as a *plain* definition (not `mkDefault`), so
   enabling it elsewhere is a conflicting-definition error; `common.nix` drags in

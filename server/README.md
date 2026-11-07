@@ -43,9 +43,11 @@ server/
 - Independent flakes means independent `flake.lock`s: an update that breaks the
   laptop config can't break the server, and vice versa.
 
-**A flake can only see files under its own root**, so `server/flake.nix` cannot
-reach `../nix/` and `nix/flake.nix` cannot reach here. That's the desired
-property, not an obstacle — the separation is enforced by the tool.
+**The separation is a rule, not something Nix enforces.** Both flakes live in
+one git repo, and Nix copies the whole repo, so `server/flake.nix` *could*
+`import ../nix/...` and it would evaluate (tested 2026-11-07 with a scratch
+repo on Determinate Nix 2.34). What keeps them apart is separate `flake.lock`s
+and the rule that nothing imports across.
 
 `nix/modules/` is still worth *reading* for ideas (`backup.nix` in particular has
 its reasoning written out). Copy what applies; import nothing. Three traps if you
@@ -229,25 +231,15 @@ Why Tailscale rather than raw WireGuard is already argued in
 IP, MagicDNS; the free tier covers 100 devices / 3 users). It applies unchanged.
 What's specific to a server:
 
-```nix
-services.tailscale = {
-  enable = true;
-  # "server" turns on IP forwarding + the sysctls for exit-node / subnet-router
-  # duty. "client" is enough to merely be reachable. Start narrow, widen later.
-  useRoutingFeatures = "client";
-  # Lets a local reverse proxy fetch HTTPS certs for *.ts.net, if one exists.
-  # permitCertUid = "caddy";
-};
+The live config is `hosts/maman/default.nix`: `useRoutingFeatures = "client"`
+(which also sets the loose reverse-path check; `"server"` adds forwarding for
+exit-node duty), `openFirewall = true` for direct UDP connections, and
+`trustedInterfaces = [ "tailscale0" ]` as the whole security model: services
+bind normally, only the tailnet reaches them. `permitCertUid = "caddy"` is the
+knob if a reverse proxy ever wants `*.ts.net` certs.
 
-networking.firewall = {
-  enable = true;
-  # The whole security model: services bind normally, the firewall makes them
-  # reachable only over the tailnet. Nothing is exposed to the LAN or the WAN.
-  trustedInterfaces = [ "tailscale0" ];
-  # Needed if this ever becomes an exit node; harmless otherwise.
-  checkReversePath = "loose";
-};
-```
+**Every machine that administers it must be on the tailnet**, the XPS included
+(not installed there as of 2026-11-07). SSH isn't open anywhere else.
 
 **Do the first `tailscale up` by hand.** `authKeyFile` wants a secret that must
 not be in git, which means agenix or sops-nix — a framework for a one-time
@@ -282,17 +274,18 @@ later, that's `tailscale funnel`, which needs no inbound port at all.
 
 ## Rebuilding it
 
-Simplest thing that works: **the server builds itself** from a git checkout of
-`server/` on the machine.
+Two ways, both supported (exact commands in `INSTALL.md`, end of Stage 5):
+`nixos-rebuild switch` on the server from `~/dotfiles/server`, or
+`--target-host trc@maman` from the XPS, which builds on 16 cores. The server
+can always rebuild itself, so the XPS is a convenience, not a dependency.
 
-```bash
-sudo nixos-rebuild switch --flake /etc/nixos#<name>   # or wherever the checkout lives
-```
-
-Two cores is slow but adequate for a headless closure, and it keeps the
-machine self-contained — no second machine required to fix it. If a build ever
-gets heavy enough to hurt, `--target-host` from a faster machine with Nix is
-available as a convenience, not a dependency.
+**One source of truth: `main` on GitHub.** Edit anywhere (the XPS, or Claude
+Code on the server), but `git pull --ff-only` before every deploy and push
+after. Deploying from a stale checkout silently rolls back whatever the other
+one deployed. The guard: every generation records its commit, so
+`nixos-version --configuration-revision` on the server shows what's live (a
+`-dirty` suffix means uncommitted changes went out); compare it with
+`git log -1` before deploying.
 
 Note the layering means **two update paths, deliberately**: `nixos-rebuild` moves
 the base, and bumping a pinned image tag (a one-line diff) moves an app. Neither
@@ -336,7 +329,11 @@ what makes a home server useful and also what makes it dangerous. Three layers,
 same shape as `nix/modules/backup.nix` argues for, adapted:
 
 1. **snapper** — btrfs timeline snapshots on the same disk. Instant, ~free, and
-   the answer to "I broke that config an hour ago". **Not a backup.**
+   the answer to "I broke that config an hour ago". **Not a backup.** One
+   config per subvolume worth it: `/srv`, `/home`, and `/var/lib` (which would
+   need its own subvolume; `/var/log` and `/var/lib/containers` already have
+   theirs so they stay out). Not `/`: on NixOS that rolls back through
+   generations. Snapper creates each `.snapshots` itself.
 2. **btrbk** — send/receive to the external USB disk. Incremental, so daily runs
    are seconds. Survives the internal NVMe dying.
 3. **restic, offsite** — encrypted and deduplicated, to somewhere that isn't this

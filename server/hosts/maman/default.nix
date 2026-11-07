@@ -13,9 +13,11 @@
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  # Keep plenty of generations: on a headless box the boot menu IS the recovery
-  # plan. 20 kernels+initrds fit easily in the 1 GB ESP.
-  boot.loader.systemd-boot.configurationLimit = 20;
+  # Keep generations: on a headless box the boot menu IS the recovery plan.
+  # Each distinct generation costs ~54 MB of ESP (13 MB kernel + 41 MB systemd
+  # initrd, measured 2026-11-07), so 10 is ~0.55 GB of the 1 GB ESP. 20 would
+  # not fit if every generation had its own kernel.
+  boot.loader.systemd-boot.configurationLimit = 10;
 
   # Blank the console after 60 s so the panel isn't lit 24/7 with the lid open.
   # (Manjaro had `pcie_aspm=off` here; it's not carried over: the firmware's
@@ -36,6 +38,27 @@
     hibernate.enable = false;
     hybrid-sleep.enable = false;
   };
+
+  # --- Coming back by itself -------------------------------------------------
+  # A kernel hang or panic would otherwise wait for someone to press the power
+  # button. The watchdog reboots if systemd stops petting it; panics reboot
+  # after 10 s. Check /dev/watchdog0 exists after the install.
+  systemd.settings.Manager.RuntimeWatchdogSec = "30s";
+  boot.kernel.sysctl."kernel.panic" = 10;
+
+  # A long power cut drains the battery. Shut down cleanly before it dies.
+  # NOT the default (HybridSleep): the sleep targets are masked above, so that
+  # would silently do nothing and the machine would just lose power.
+  services.upower = {
+    enable = true;
+    criticalPowerAction = "PowerOff";
+    # A ~10-year-old cell's gauge is not to be trusted near empty.
+    percentageAction = 5;
+  };
+
+  # Catch the 2016 NVMe failing before it takes data with it.
+  services.btrfs.autoScrub = { enable = true; interval = "monthly"; };
+  services.smartd.enable = true;
 
   # --- Hardware --------------------------------------------------------------
   # Firmware for the Intel 8265 wifi (and CPU microcode via hardware.nix).
@@ -63,6 +86,8 @@
 
   services.tailscale = {
     enable = true;
+    # UDP 41641, for direct (not DERP-relayed) connections.
+    openFirewall = true;
     # "client" also sets the loose reverse-path check Tailscale needs. Widen to
     # "server" if this ever becomes an exit node or subnet router.
     useRoutingFeatures = "client";
