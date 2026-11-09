@@ -157,4 +157,11 @@
   # (sources ~/dotfiles/zsh/{history,alias,functions}.zsh); not tracked here.
   programs.zsh.enable = true;
   users.users.trc.shell = pkgs.zsh;
+
+  # ~/.local/bin on PATH for every shell: Claude Code's native installer puts
+  # itself there (`curl -fsSL https://claude.ai/install.sh | bash`, done
+  # 2026-11-09) and updates itself in place. Not from nixpkgs on purpose: its
+  # claude-code was 2.1.223 against 2.1.319 upstream. Runs via nix-ld
+  # (openclaw.nix enables programs.nix-ld).
+  environment.localBinInPath = true;
 }
