@@ -624,9 +624,11 @@ only your own section** (`git add -p`), never the whole file.
 ## Home server (HP Spectre x360, 2016)
 - **Applied 2026-11-07: `maman` (the old Spectre) runs NixOS 26.05**, Phase 1
   of `server/README.md`. Reach it with `ssh trc@maman` over Tailscale (MagicDNS
-  works); the XPS is on the tailnet as `disco`. Phases 2–6 (backups, services,
-  OpenClaw) are still plan. Config: `server/flake.nix` + `server/hosts/maman/`.
-  A clone lives at `~trc/dotfiles` on the server.
+  works); the XPS is on the tailnet as `disco`. Config: `server/flake.nix` +
+  `server/hosts/maman/`. A clone lives at `~trc/dotfiles` on the server.
+  **OpenClaw (Phase 6) went in first, 2026-11-07, with no backups: the user's
+  call.** Phases 2–5 (backups, Syncthing, containers) are still plan. A USB
+  drive was offered for backups "if we ever deem it necessary".
 - **Hostname `maman`** (after Meursault's mother in *L'Étranger*). **Windows
   and Manjaro were wiped** at the install.
 - **Unlike the XPS, an agent can `sudo` on `maman`: passwordless for `trc`, by
@@ -639,6 +641,38 @@ only your own section** (`git add -p`), never the whole file.
   machine off the tailnet can't reach it at all, LAN included. **Open:** the
   phone's SSH key isn't in `authorizedKeys` yet, and the lid-close and
   power-cord tests haven't been run.
+- **Applied 2026-11-07: OpenClaw runs on `maman`** as system unit
+  `openclaw-gateway`, user `openclaw` (no sudo), home `/var/lib/openclaw`;
+  module `server/hosts/maman/openclaw.nix`. npm-installed (2026.11.1) with
+  `openclaw-as npm i -g openclaw@latest --allow-scripts=openclaw`; `openclaw-as`
+  runs any command as that user with the right Node. **Config and credentials
+  live in `/var/lib/openclaw/.openclaw/` and are not in git** (gateway token,
+  ChatGPT login). Model: the user's **ChatGPT subscription**
+  (`openclaw models auth login --provider openai --device-code`).
+- **No chat channels, on purpose: it's reachable only over Tailscale Serve**,
+  `https://maman.tailce1bce.ts.net` (Control UI; phone app via `openclaw qr`),
+  token auth, gateway on loopback. Telegram was chosen, then dropped for this,
+  because Serve leaves no prompt surface for strangers.
+- **Verified 2026-11-07 by a real agent turn:** runs as `openclaw`, `/home`
+  denied, `/etc` read-only, `sudo` refused (`NoNewPrivileges`), **the XPS
+  unreachable**, internet fine. The block is systemd `IPAddressDeny` on all
+  private ranges and the tailnet, allowing only Tailscale DNS
+  (`100.100.100.100`, `fd7a:115c:a1e0::53`) and localhost. Proof it's the block
+  and not a closed port: blocked = timeout, unblocked = instant refusal.
+- **Gotchas from the OpenClaw setup:** `config get` prints secrets as
+  `__OPENCLAW_REDACTED__` (the real token is plain text in `openclaw.json`);
+  `models auth login --set-default` is refused while the gateway runs; behind
+  Serve, **`gateway.trustedProxies` must be localhost** or every visitor looks
+  local (the audit flags it); `tailscale serve` blocks on first use until an
+  admin approves Serve/HTTPS, so its unit times out and retries; the gateway
+  idles at **~1.6 GB of heap** and hit a 2G cap (now `MemoryHigh` 2.5G /
+  `MemoryMax` 3.5G); nixpkgs' `openclaw` was 2026.5.7, six months stale; NixOS's
+  `services.tailscale.serve` is for Tailscale *Services* (`svc:`), not plain
+  Serve, so a root oneshot unit runs `tailscale serve` instead.
+- **Claude Code on `maman` is the native install** (`~/.local/bin/claude`,
+  2.1.319, self-updating), **not nixpkgs** (2.1.223 at the time). It needs
+  `environment.localBinInPath` and runs via nix-ld. herdr has `maman` as a saved
+  machine (`herdr --machine maman …`).
 - **Gotcha: upower doesn't start on a headless NixOS box.** Its unit is
   `WantedBy=graphical.target`, so the critical-battery `PowerOff` silently never
   fired until `systemd.services.upower.wantedBy = [ "multi-user.target" ]`.
@@ -706,7 +740,8 @@ only your own section** (`git add -p`), never the whole file.
   owns the user, unit, `ReadWritePaths` allowlist and firewall; npm owns the bytes.
   `programs.nix-ld` is required (prebuilt Node + native npm modules).
 - **Gotcha that inverts the usual reasoning: the firewall does not protect
-  OpenClaw's prompt surface.** It connects *outbound* to WhatsApp/Telegram, so
+  OpenClaw's prompt surface** (moot while it has no chat channel; it matters
+  again the moment one is added). It connects *outbound* to WhatsApp/Telegram, so
   messages from arbitrary people reach the agent however tight the tailnet is —
   Tailscale protects the control plane, not against prompt injection or a
   malicious skill. Also: `exec` runs **on the host**, "elevated" tools run on the
