@@ -687,6 +687,24 @@ only your own section** (`git add -p`), never the whole file.
 - **One source of truth: `main` on GitHub.** Pull before deploying, push after;
   a stale checkout silently rolls back the other side's deploy. Check what's
   live with `nixos-version --configuration-revision` on `maman`.
+- **Applied 2026-11-11: `maman` upgrades itself nightly from GitHub `main`**
+  (`system.autoUpgrade`, ~04:00-04:30, reboots only 04:00-06:00 and only if the
+  kernel/initrd changed). It overrides `nixpkgs` to the tip of
+  `nixos-<release>` without touching `flake.lock`. **Gotcha: a deploy that
+  isn't pushed is rolled back the next night**, and a deploy from the XPS with
+  an older `flake.lock` moves nixpkgs back until that night's run. **maman
+  can't push** (no GitHub credentials): commit there, then on the XPS
+  `git pull trc@maman:dotfiles main && git push`.
+- **Applied 2026-11-11: OpenClaw's sandbox tightened** (exposure 3.1 → 1.1):
+  `SystemCallFilter = [ "@system-service mincore" "~@privileged @resources" ]`
+  with `EPERM`, `ProtectProc=invisible`, `PrivateUsers`, `RemoveIPC`.
+  **Gotcha: it needs `mincore`** (outside `@system-service`), or startup logs
+  `database page-cache warm failed … Operation not permitted`. Found with
+  `SystemCallLog=~@system-service` in a `/run` drop-in, which logs any
+  disallowed syscall to `journalctl -k` without killing anything; use the same
+  trick for the next one. **Not `ProcSubset=pid`**: it hides `/proc/stat` and
+  `/proc/meminfo`, which breaks Node's `os.cpus()` and `free`. `nice` is
+  refused (EPERM), harmlessly.
 - **Measured 2026-11-07, older than first assumed:** a **late-2016 `13-ac0XX`**,
   i7-7500U **2C/4T**, **8 GB** soldered, 512 GB Samsung PM961, HD 620, no dGPU,
   no wired NIC, **BIOS F.20 of 2016-12-01**, Secure Boot already off, keyboard

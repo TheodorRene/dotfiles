@@ -107,6 +107,24 @@ in
       AmbientCapabilities = "";
       RestrictAddressFamilies = [ "AF_UNIX" "AF_INET" "AF_INET6" "AF_NETLINK" ];
       SystemCallArchitectures = "native";
+      # systemd's recommended service allowlist, minus privileged and
+      # resource-control calls. EPERM rather than SIGSYS: a blocked call fails
+      # like any other permission error instead of killing the agent's process.
+      # Tested 2026-11-11 in a transient unit: node (child_process, workers),
+      # git, tar, cp -p, curl, ps, free all fine; only `nice` is refused.
+      # + mincore: not in @system-service, and without it the gateway logs
+      # "database page-cache warm failed … access-denied: Operation not
+      # permitted" at startup (its SQLite page-cache residency check). Found
+      # with SystemCallLog=~@system-service: syscall 27, the only one outside.
+      SystemCallFilter = [ "@system-service mincore" "~@privileged @resources" ];
+      SystemCallErrorNumber = "EPERM";
+      # Its /proc shows only its own processes (not trc's command lines).
+      # NOT ProcSubset = "pid": that hides /proc/stat and /proc/meminfo, which
+      # breaks Node's os.cpus() and the agent's free/uptime/top.
+      ProtectProc = "invisible";
+      # Own user namespace: every uid but root and openclaw shows as nobody.
+      PrivateUsers = true;
+      RemoveIPC = true;
 
       # --- No reaching into the home network or the tailnet ------------------
       # Decided 2026-11-07: the agent must not be able to connect to the XPS

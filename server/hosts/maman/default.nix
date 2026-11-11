@@ -139,6 +139,27 @@
   # 8 GB of soldered RAM; zram at half of it.
   zramSwap = { enable = true; memoryPercent = 50; };
 
+  # Nightly security updates, decided 2026-11-11. Pulls `main` from GitHub (the
+  # one source of truth: an unpushed deploy from the XPS gets rolled back here
+  # the next night) and moves nixpkgs to the tip of this release's stable
+  # branch without touching flake.lock. The release in the URL follows the
+  # pinned nixpkgs, so bumping flake.nix to 26.11 moves this along with it.
+  # Reboots only inside the window, and only when the kernel, initrd or
+  # kernel modules changed.
+  system.autoUpgrade = {
+    enable = true;
+    flake = "github:TheodorRene/dotfiles?dir=server#maman";
+    flags = [
+      "--override-input" "nixpkgs"
+      "github:NixOS/nixpkgs/nixos-${config.system.nixos.release}"
+      # (the module already adds --refresh, so GitHub is re-fetched each run)
+    ];
+    dates = "04:00";
+    randomizedDelaySec = "30min";
+    allowReboot = true;
+    rebootWindow = { lower = "04:00"; upper = "06:00"; };
+  };
+
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
   nix.gc = {
     automatic = true;
